@@ -1,0 +1,11 @@
+ant-classes
+bin
+dist
+javadoc
+rsyntaxtextarea_*.zip
+*.java~
+build
+.gradle
+/.settings/
+.checkstyle
+

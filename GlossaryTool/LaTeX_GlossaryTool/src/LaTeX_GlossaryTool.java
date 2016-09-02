@@ -11,6 +11,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringReader;
 import javax.swing.JOptionPane;
+import org.fife.ui.rtextarea.*;
+import org.fife.ui.rsyntaxtextarea.*;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -29,6 +31,7 @@ public class LaTeX_GlossaryTool extends javax.swing.JFrame {
     String holdText;
     String fn;
     String dir;
+ //   RSyntaxTextArea textArea2 = new RSyntaxTextArea(20, 60);
     boolean textChanged = false;
     String fileName;
     Clipboard clip = getToolkit().getSystemClipboard();
@@ -50,6 +53,8 @@ public class LaTeX_GlossaryTool extends javax.swing.JFrame {
                 sb.append(line + "\n");
             }
             textArea1.setText(sb.toString());
+            // textArea2.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_LATEX);
+            
 
             read.close();
         } catch (FileNotFoundException e) {
