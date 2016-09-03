@@ -26,6 +26,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
+import java.awt.event.TextListener;
 import java.awt.font.FontRenderContext;
 import java.io.File;
 import java.lang.reflect.Method;
@@ -438,6 +439,10 @@ private boolean fractionalFontMetricsEnabled;
 		listenerList.add(ActiveLineRangeListener.class, l);
 	}
 
+
+    public void addTextListener(TextListener l) {
+		listenerList.add(TextListener.class, l);
+	}
 
 	/**
 	 * Adds a hyperlink listener to this text area.
@@ -863,6 +868,16 @@ private boolean fractionalFontMetricsEnabled;
 		}
 	}
 
+	/**
+	 * created - nidal
+	 * line 556
+	 *
+	 * @param e The event to textevent
+	 */
+@Override
+public void textValueChanged(TextEvent e) {
+			super.TextEvent(e);
+		}
 
 	/**
 	 * Notifies all listeners that have registered interest for notification

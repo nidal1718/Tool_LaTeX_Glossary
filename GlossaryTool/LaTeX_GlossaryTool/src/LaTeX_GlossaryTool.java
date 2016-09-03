@@ -11,8 +11,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringReader;
 import javax.swing.JOptionPane;
-import org.fife.ui.rtextarea.*;
 import org.fife.ui.rsyntaxtextarea.*;
+
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -31,7 +31,7 @@ public class LaTeX_GlossaryTool extends javax.swing.JFrame {
     String holdText;
     String fn;
     String dir;
- //   RSyntaxTextArea textArea2 = new RSyntaxTextArea(20, 60);
+    //RSyntaxTextArea textArea2 = new RSyntaxTextArea();
     boolean textChanged = false;
     String fileName;
     Clipboard clip = getToolkit().getSystemClipboard();
@@ -46,14 +46,17 @@ public class LaTeX_GlossaryTool extends javax.swing.JFrame {
     public void checkFile() {
         BufferedReader read;
         StringBuffer sb = new StringBuffer();
+        
         try {
             read = new BufferedReader(new FileReader(fileName));
             String line;
             while ((line = read.readLine()) != null) {
                 sb.append(line + "\n");
             }
-            textArea1.setText(sb.toString());
-            // textArea2.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_LATEX);
+           // textArea1.setText(sb.toString());
+            textArea3.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_LATEX);
+            textArea3.setText(sb.toString());
+            
             
 
             read.close();
@@ -74,6 +77,8 @@ public class LaTeX_GlossaryTool extends javax.swing.JFrame {
     private void initComponents() {
 
         textArea1 = new java.awt.TextArea();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        textArea3 = new org.fife.ui.rsyntaxtextarea.RSyntaxTextArea();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         newMenu = new javax.swing.JMenuItem();
@@ -97,6 +102,37 @@ public class LaTeX_GlossaryTool extends javax.swing.JFrame {
                 textArea1TextValueChanged(evt);
             }
         });
+
+        textArea3.setColumns(20);
+        textArea3.setRows(5);
+        textArea3.addActiveLineRangeListener(new org.fife.ui.rsyntaxtextarea.ActiveLineRangeListener() {
+            public void activeLineRangeChanged(org.fife.ui.rsyntaxtextarea.ActiveLineRangeEvent evt) {
+                textArea3ActiveLineRangeChanged(evt);
+            }
+        });
+        textArea3.addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentHidden(java.awt.event.ComponentEvent evt) {
+                textArea3ComponentHidden(evt);
+            }
+        });
+        textArea3.addInputMethodListener(new java.awt.event.InputMethodListener() {
+            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
+                textArea3InputMethodTextChanged(evt);
+            }
+            public void caretPositionChanged(java.awt.event.InputMethodEvent evt) {
+            }
+        });
+        textArea3.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                textArea4TextValueChanged(evt);
+            }
+        });
+        textArea3.addTextListener(new java.awt.event.TextListener() {
+            public void textValueChanged(java.awt.event.TextEvent evt) {
+                textArea3TextValueChanged(evt);
+            }
+        });
+        jScrollPane1.setViewportView(textArea3);
 
         jMenu1.setText("File");
 
@@ -160,11 +196,19 @@ public class LaTeX_GlossaryTool extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(textArea1, javax.swing.GroupLayout.DEFAULT_SIZE, 516, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 512, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(textArea1, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(textArea1, javax.swing.GroupLayout.DEFAULT_SIZE, 482, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(textArea1, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(414, Short.MAX_VALUE))
+            .addComponent(jScrollPane1)
         );
 
         pack();
@@ -172,7 +216,8 @@ public class LaTeX_GlossaryTool extends javax.swing.JFrame {
 
     private void openMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openMenuActionPerformed
         // TODO add your handling code here:
-        if (textArea1.getText().length() < 1) {
+       // if (textArea1.getText().length() < 1) {
+          if (textArea3.getText().length() < 1) {
             FileDialog fd = new FileDialog(this, "Choose File", FileDialog.LOAD);
             fd.show();
             if (fd.getFile() != null) {
@@ -180,7 +225,9 @@ public class LaTeX_GlossaryTool extends javax.swing.JFrame {
                 setTitle(fileName);
                 checkFile();
             }
-            textArea1.requestFocus();
+           // textArea1.requestFocus();
+           textArea3.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_LATEX);
+            textArea3.requestFocus();
 
         } else if (!textChanged) {
             FileDialog fd = new FileDialog(this, "Choose File", FileDialog.LOAD);
@@ -191,7 +238,10 @@ public class LaTeX_GlossaryTool extends javax.swing.JFrame {
                 checkFile();
 
             }
-            textArea1.requestFocus();
+           // textArea1.requestFocus();
+              textArea3.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_LATEX);
+              textArea3.requestFocus();
+            
         } else {
             int confirm = JOptionPane.showConfirmDialog(null, "Do you want to save before exiting this application? "); 
 
@@ -211,7 +261,10 @@ public class LaTeX_GlossaryTool extends javax.swing.JFrame {
                     checkFile();
 
                 }
-                textArea1.requestFocus();
+             //   textArea1.requestFocus();
+              textArea3.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_LATEX);
+              textArea3.requestFocus();
+             
             } else if (confirm == JOptionPane.NO_OPTION) {
                
                 FileDialog fd = new FileDialog(this, "Choose File", FileDialog.LOAD);
@@ -240,13 +293,13 @@ public class LaTeX_GlossaryTool extends javax.swing.JFrame {
 
     private void textArea1TextValueChanged(java.awt.event.TextEvent evt) {//GEN-FIRST:event_textArea1TextValueChanged
         // TODO add your handling code here:
-        if (TextEvent.TEXT_VALUE_CHANGED != 0) {
-            if (!textChanged) 
-                setTitle("* " + getTitle());
-            
-            textChanged = true;
-            saveMenu.setEnabled(true);
-        }
+//        if (TextEvent.TEXT_VALUE_CHANGED != 0) {
+//            if (!textChanged)
+//                setTitle("* " + getTitle());
+//            
+//            textChanged = true;
+//            saveMenu.setEnabled(true);
+//        }
     }//GEN-LAST:event_textArea1TextValueChanged
 
     private void newMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newMenuActionPerformed
@@ -256,7 +309,8 @@ public class LaTeX_GlossaryTool extends javax.swing.JFrame {
 
     private void exitMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitMenuActionPerformed
         // TODO add your handling code here:
-        if ("".equals(textArea1.getText())) {
+       // if ("".equals(textArea1.getText())) {
+       if ("".equals(textArea3.getText())) {
             System.exit(0);
         } else if (!textChanged) {
             System.exit(0);
@@ -278,7 +332,8 @@ public class LaTeX_GlossaryTool extends javax.swing.JFrame {
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         // TODO add your handling code here:
-        if ("".equals(textArea1.getText())) {
+      //  if ("".equals(textArea1.getText())) {
+       if ("".equals(textArea3.getText())) {
             System.exit(0);
         } else if (!textChanged) {
             System.exit(0);
@@ -299,6 +354,33 @@ public class LaTeX_GlossaryTool extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_formWindowClosing
 
+    private void textArea3ActiveLineRangeChanged(org.fife.ui.rsyntaxtextarea.ActiveLineRangeEvent evt) {//GEN-FIRST:event_textArea3ActiveLineRangeChanged
+        // TODO add your handling code here:
+      
+    }//GEN-LAST:event_textArea3ActiveLineRangeChanged
+
+    private void textArea4TextValueChanged(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_textArea4TextValueChanged
+        // TODO add your handling code here:
+    }//GEN-LAST:event_textArea4TextValueChanged
+
+    private void textArea3ComponentHidden(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_textArea3ComponentHidden
+        // TODO add your handling code here:
+    }//GEN-LAST:event_textArea3ComponentHidden
+
+    private void textArea3InputMethodTextChanged(java.awt.event.InputMethodEvent evt) {//GEN-FIRST:event_textArea3InputMethodTextChanged
+        // TODO add your handling code here:
+    }//GEN-LAST:event_textArea3InputMethodTextChanged
+
+    private void textArea3TextValueChanged(java.awt.event.TextEvent evt) {                                           
+        // TODO add your handling code here:
+        if (TextEvent.TEXT_VALUE_CHANGED != 0) {
+            if (!textChanged)
+                setTitle("* " + getTitle());
+            
+            textChanged = true;
+            saveMenu.setEnabled(true);
+        }
+    } 
     /**
      * @param args the command line arguments
      */
@@ -339,12 +421,14 @@ public class LaTeX_GlossaryTool extends javax.swing.JFrame {
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JMenuItem newMenu;
     private javax.swing.JMenuItem openMenu;
     private javax.swing.JMenuItem saveMenu;
     private javax.swing.JMenuItem saveasMenu;
     private javax.swing.JMenuItem testMenu;
     private java.awt.TextArea textArea1;
+    private org.fife.ui.rsyntaxtextarea.RSyntaxTextArea textArea3;
     // End of variables declaration//GEN-END:variables
 
     private void saveAs() {
@@ -360,7 +444,8 @@ public class LaTeX_GlossaryTool extends javax.swing.JFrame {
 
             try {
                 DataOutputStream d = new DataOutputStream(new FileOutputStream(filename));
-                holdText = textArea1.getText();
+//                holdText = textArea1.getText();
+                   holdText = textArea3.getText();
                 BufferedReader br = new BufferedReader(new StringReader(holdText));
 
                 while ((holdText = br.readLine()) != null) {
@@ -372,7 +457,9 @@ public class LaTeX_GlossaryTool extends javax.swing.JFrame {
                 System.out.println("File not found");
             }
 
-            textArea1.requestFocus();
+            //textArea1.requestFocus();
+            textArea3.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_LATEX);
+            textArea3.requestFocus();
             save(filename);
         }
 
@@ -384,7 +471,8 @@ public class LaTeX_GlossaryTool extends javax.swing.JFrame {
         try {
             FileWriter out;
             out = new FileWriter(fn);
-            out.write(textArea1.getText());
+          //  out.write(textArea1.getText());
+          out.write(textArea3.getText());
             out.close();
 
         } catch (Exception err) {
@@ -397,14 +485,17 @@ public class LaTeX_GlossaryTool extends javax.swing.JFrame {
 
     private void newFile() {
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        if (textArea1.getText().length() < 1) {
+//        if (textArea1.getText().length() < 1) {
+        if (textArea3.getText().length() < 1) {
             setTitle("Untitled-" + applicationName);
-            textArea1.setText("");
+//            textArea1.setText("");
+            textArea3.setText("");
             textChanged = false;
 
         } else if (!textChanged) {
             setTitle("Untitled-" + applicationName);
-            textArea1.setText("");
+//            textArea1.setText("");
+            textArea3.setText("");
             textChanged = false;
 
         } else {
@@ -419,12 +510,14 @@ public class LaTeX_GlossaryTool extends javax.swing.JFrame {
 
                 setTitle(applicationName);
                 filename = "";
-                textArea1.setText("");
+              //  textArea1.setText("");
+                textArea3.setText("");
                 textChanged = false;
 
             } else if (confirm == JOptionPane.NO_OPTION) {
                 setTitle(applicationName);
-                textArea1.setText("");
+              //  textArea1.setText("");
+                textArea3.setText("") ;
                 textChanged = false;
 
             }
