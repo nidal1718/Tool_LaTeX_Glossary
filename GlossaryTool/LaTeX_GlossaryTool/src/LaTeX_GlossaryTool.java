@@ -12,6 +12,22 @@ import java.io.IOException;
 import java.io.StringReader;
 import javax.swing.JOptionPane;
 import org.fife.ui.rsyntaxtextarea.*;
+import org.fife.rsta.ui.GoToDialog;
+import org.fife.rsta.ui.GoToDialog;
+import org.fife.rsta.ui.SizeGripIcon;
+import org.fife.rsta.ui.search.FindDialog;
+import org.fife.rsta.ui.search.ReplaceDialog;
+import org.fife.rsta.ui.search.ReplaceToolBar;
+import org.fife.rsta.ui.search.SearchEvent;
+import org.fife.rsta.ui.search.SearchListener;
+import org.fife.rsta.ui.search.FindToolBar;
+import org.fife.ui.rsyntaxtextarea.ErrorStrip;
+import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
+import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
+import org.fife.ui.rtextarea.RTextScrollPane;
+import org.fife.ui.rtextarea.SearchContext;
+import org.fife.ui.rtextarea.SearchEngine;
+import org.fife.ui.rtextarea.SearchResult;
 
 
 /*
@@ -23,6 +39,7 @@ import org.fife.ui.rsyntaxtextarea.*;
  *
  * @author nidal 
  * //ref : https://www.youtube.com/watch?v=gfjqCD-akv4
+ *     https://github.com/bobbylight/RSyntaxTextArea
  */
 public class LaTeX_GlossaryTool extends javax.swing.JFrame {
 
