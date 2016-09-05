@@ -1,4 +1,5 @@
 
+import java.awt.BorderLayout;
 import java.awt.FileDialog;
 import java.awt.datatransfer.Clipboard;
 import java.awt.event.TextEvent;
@@ -11,6 +12,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringReader;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import org.fife.ui.rsyntaxtextarea.*;
 import org.fife.rsta.ui.GoToDialog;
 import org.fife.rsta.ui.GoToDialog;
@@ -93,9 +95,10 @@ public class LaTeX_GlossaryTool extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        textArea1 = new java.awt.TextArea();
+        jPanel1 = new JPanel(new BorderLayout());
         jScrollPane1 = new javax.swing.JScrollPane();
         textArea3 = new org.fife.ui.rsyntaxtextarea.RSyntaxTextArea();
+        rTextScrollPane1 = new RTextScrollPane(textArea3);
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         newMenu = new javax.swing.JMenuItem();
@@ -111,12 +114,6 @@ public class LaTeX_GlossaryTool extends javax.swing.JFrame {
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 formWindowClosing(evt);
-            }
-        });
-
-        textArea1.addTextListener(new java.awt.event.TextListener() {
-            public void textValueChanged(java.awt.event.TextEvent evt) {
-                textArea1TextValueChanged(evt);
             }
         });
 
@@ -150,6 +147,27 @@ public class LaTeX_GlossaryTool extends javax.swing.JFrame {
             }
         });
         jScrollPane1.setViewportView(textArea3);
+        textArea3.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_LATEX);
+        textArea3.setCodeFoldingEnabled(true);
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addComponent(rTextScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 695, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(rTextScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 568, Short.MAX_VALUE))
+                .addContainerGap())
+        );
 
         jMenu1.setText("File");
 
@@ -213,20 +231,17 @@ public class LaTeX_GlossaryTool extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 512, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(textArea1, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(textArea1, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(414, Short.MAX_VALUE))
-            .addComponent(jScrollPane1)
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
+
+        jPanel1.add(jScrollPane1);
+        setContentPane(jPanel1);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -307,17 +322,6 @@ public class LaTeX_GlossaryTool extends javax.swing.JFrame {
          else 
             save(filename);
     }//GEN-LAST:event_saveMenuActionPerformed
-
-    private void textArea1TextValueChanged(java.awt.event.TextEvent evt) {//GEN-FIRST:event_textArea1TextValueChanged
-        // TODO add your handling code here:
-//        if (TextEvent.TEXT_VALUE_CHANGED != 0) {
-//            if (!textChanged)
-//                setTitle("* " + getTitle());
-//            
-//            textChanged = true;
-//            saveMenu.setEnabled(true);
-//        }
-    }//GEN-LAST:event_textArea1TextValueChanged
 
     private void newMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newMenuActionPerformed
         // TODO add your handling code here:
@@ -438,13 +442,14 @@ public class LaTeX_GlossaryTool extends javax.swing.JFrame {
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JMenuItem newMenu;
     private javax.swing.JMenuItem openMenu;
+    private org.fife.ui.rtextarea.RTextScrollPane rTextScrollPane1;
     private javax.swing.JMenuItem saveMenu;
     private javax.swing.JMenuItem saveasMenu;
     private javax.swing.JMenuItem testMenu;
-    private java.awt.TextArea textArea1;
     private org.fife.ui.rsyntaxtextarea.RSyntaxTextArea textArea3;
     // End of variables declaration//GEN-END:variables
 
