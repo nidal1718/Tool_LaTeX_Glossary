@@ -23,9 +23,10 @@
  *
  */
 
-package org.fife.ui.rsyntaxtextarea;
+package org.nidal.latex.glossarytool;
 
-import java.util.EventListener;
+import org.fife.ui.rsyntaxtextarea.TextListener;
+import org.nidal.latex.glossarytool.RTextEvent;
 
 /**
  * The listener interface for receiving text events.
@@ -39,18 +40,19 @@ import java.util.EventListener;
  *
  * @author Georges Saab
  *
- * @see TextEvent
+ * @see RTextEvent
  *
  * @since 1.1
  */
-public interface TextListener extends EventListener {
+public interface RTextListener extends TextListener {
 
     /**
      * Invoked when the value of the text has changed.
      * The code written for this method performs the operations
      * that need to occur when text changes.
+     * @param e
      */
-    public void textValueChanged(TextEvent e);
+    public void textValueChanged(RTextEvent e);
     
 
 }

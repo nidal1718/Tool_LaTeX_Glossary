@@ -10,7 +10,9 @@ import java.awt.FileDialog;
 import java.awt.datatransfer.Clipboard;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.FileNotFoundException;
@@ -38,6 +40,7 @@ import javax.swing.JRadioButtonMenuItem;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.JTextComponent;
 import javax.swing.text.TextAction;
@@ -65,10 +68,11 @@ import org.fife.ui.rtextarea.SearchResult;
  * @author nidal
  */
 //public class GlossaryTool extends JFrame implements ActionListener {
-public class GlossaryTool extends JFrame implements SearchListener {
-    RSyntaxTextArea textArea = new RSyntaxTextArea();
+public class GlossaryTool extends JFrame implements SearchListener{
+    RSyntaxTextArea textArea = new RSyntaxTextArea(25,80);
 
     String filename = "";
+    private KeyListener k1 ;
     String applicationName = "LaTeX_GlossaryTool";
     String holdText;
     String fn;
@@ -79,6 +83,7 @@ public class GlossaryTool extends JFrame implements SearchListener {
   //  private RSyntaxTextArea textArea;
     private FindDialog findDialog;
     private ReplaceDialog replaceDialog;
+    private ReplaceDialog add_glsDialog;
     private FindToolBar findToolBar;
     private ReplaceToolBar replaceToolBar;
     private StatusBar statusBar;
@@ -117,6 +122,8 @@ public class GlossaryTool extends JFrame implements SearchListener {
 
         initSearchDialogs();
         JPanel cp = new JPanel(new BorderLayout());
+         int c = getToolkit().getMenuShortcutKeyMask();
+            
     
         csp = new CollapsibleSectionPanel();
         cp.add(csp);
@@ -138,6 +145,8 @@ public class GlossaryTool extends JFrame implements SearchListener {
         this.setContentPane(cp);
 
         
+        textArea.addKeyListener(k1);
+        
         statusBar = new StatusBar();
         cp.add(statusBar, BorderLayout.SOUTH);
         // add our menu bar into the GUI
@@ -156,7 +165,7 @@ public class GlossaryTool extends JFrame implements SearchListener {
 
         // new
         this.newFile.setLabel("New"); // set the label of the menu item
-        newFile.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
+        newFile.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, c)); 
         newFile.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 newMenuActionPerformed(evt);
@@ -173,92 +182,113 @@ public class GlossaryTool extends JFrame implements SearchListener {
                 openMenuActionPerformed(evt);
             }
         });
-        //     this.openFile.setShortcut(new MenuShortcut(KeyEvent.VK_O, false)); // set a keyboard shortcut
+      openFile.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, c)); 
         this.file.add(this.openFile); // add it to the "File" menu
 
         // and the save...
         this.saveFile.setLabel("Save");
-        //  this.saveFile.addActionListener(this);
+        //  this.saveFile.addActionListener(this);    
+        saveFile.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                saveMenuActionPerformed(evt);
+            }
+        });     
+          saveFile.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, c));    
+        this.file.add(this.saveFile);
+     
+
+        // and the save as
+        this.saveasFile.setLabel("Save As"); // set the label of the menu item
+        //  this.saveasFile.addActionListener(this); // add an action listener (so we know when it's been clicked
         saveasFile.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 saveasMenuActionPerformed(evt);
             }
         });
-        //      this.saveFile.setShortcut(new MenuShortcut(KeyEvent.VK_S, false));
-        this.file.add(this.saveFile);
-
-        // and the save as
-        this.saveasFile.setLabel("Save As"); // set the label of the menu item
-        //  this.saveasFile.addActionListener(this); // add an action listener (so we know when it's been clicked
-        saveFile.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                saveMenuActionPerformed(evt);
-            }
-        });
-// this.openFile.setShortcut(new MenuShortcut(KeyEvent.VK_N, false)); // set a keyboard shortcut
+       // saveasFile.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, c)); 
         this.file.add(this.saveasFile); // add it to the "File" menu
 
         //  close option
-        this.exitFile.setLabel("Close");
-        // this.close.addActionListener(this);
+        this.exitFile.setLabel("Exit");
         exitFile.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+          public void actionPerformed(java.awt.event.ActionEvent evt) {
                 exitMenuActionPerformed(evt);
             }
         });
-        //  this.close.setShortcut(new MenuShortcut(KeyEvent.VK_F4, false));
+        exitFile.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, c));   
         this.file.add(this.exitFile);
 
-        popup.addSeparator();
-        popup.add(new JMenuItem(new add_gls()));
+     
+         
+          //Edit Menu tool
+         
+           this.undo.setLabel("Undo"); // set the label of the menu item
       
-      
-        //    popup.add(addToGlossary());
-        //  popup.add(newFile);
-        //   popup.add(a)
-        //  popup.add(new JMenuItem(newFile()));
-
-        //      this.saveFile.setShortcut(new MenuShortcut(KeyEvent.VK_S, false));
-        this.file.add(this.saveFile);
-
-        /**
-         * //Edit Menu tool
-         *
-         * // Undo this.undo.setLabel("Undo"); // set the label of the menu item
-         * this.undo.addActionListener(this); // add an action listener (so we
-         * know when it's been clicked // this.undo.setShortcut(new
-         * MenuShortcut(KeyEvent.VK_Z, false)); // set a keyboard shortcut
-         * this.edit.add(this.undo); // add it to the "File" menu
-         *
-         * // Redo this.redo.setLabel("Redo"); // set the label of the menu item
-         * this.redo.addActionListener(this); // add an action listener (so we
-         * know when it's been clicked // this.redo.setShortcut(new
-         * MenuShortcut(KeyEvent.VK_Y, false)); // set a keyboard shortcut
-         * this.edit.add(this.redo); // add it to the "File" menu
-         *
-         * // and cut this.cut.setLabel("Cut");
-         * this.cut.addActionListener(this); // this.cut.setShortcut(new
-         * MenuShortcut(KeyEvent.VK_X, false)); this.edit.add(this.cut);
-         *
-         * // and copy this.copy.setLabel("Copy");
-         * this.copy.addActionListener(this); // this.copy.setShortcut(new
-         * MenuShortcut(KeyEvent.VK_C, false)); this.edit.add(this.copy);
-         *
-         * // and paste this.paste.setLabel("Paste");
-         * this.paste.addActionListener(this); // this.paste.setShortcut(new
-         * MenuShortcut(KeyEvent.VK_V, false)); this.edit.add(this.paste);
-         */
+          this.undo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                undoEditActionPerformed(evt);
+            }
+        });
+         this.undo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, c)); 
+          this.edit.add(this.undo); // add it to the "File" menu
+        
+        
+     
+         
+          // Redo 
+          this.redo.setLabel("Redo"); // set the label of the menu item
+         this.redo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                redoEditActionPerformed(evt);
+            }
+        });
+          this.redo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, c)); 
+          this.edit.add(this.redo); // add it to the "File" menu
+         
+          // and cut 
+          this.cut.setLabel("Cut");
+         this.cut.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cutEditActionPerformed(evt);
+            }
+        });
+          this.cut.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, c)); 
+          this.edit.add(this.cut); // add it to the "File" menu
+         
+          // and copy 
+          this.copy.setLabel("Copy");
+         this.copy.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                copyEditActionPerformed(evt);
+            }
+        });
+          this.copy.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, c)); 
+           this.edit.add(this.copy); // add it to the "File" menu
+         
+          // and paste 
+          this.paste.setLabel("Paste");
+        this.paste.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                pasteEditActionPerformed(evt);
+            }
+        });
+         paste.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, c)); 
+          this.edit.add(this.paste); // add it to the "File" menu
+         
+        
+        
+        edit.addSeparator();
         edit.add(new JMenuItem(new ShowFindDialogAction()));
         edit.add(new JMenuItem(new ShowReplaceDialogAction()));
-        edit.addSeparator();
-        Action a = csp.addBottomComponent(ks, findToolBar);
-        a.putValue(Action.NAME, "Show Find Search Bar");
-        edit.add(new JMenuItem(a));
+      
+//        Action a = csp.addBottomComponent(ks, findToolBar);
+//        a.putValue(Action.NAME, "Show Find Search Bar");
+//        edit.add(new JMenuItem(a));
 
         //ks = KeyStroke.getKeyStroke(KeyEvent.VK_H, ctrl|shift);
-        a = csp.addBottomComponent(ks, replaceToolBar);
-        a.putValue(Action.NAME, "Show Replace Search Bar");
-        edit.add(new JMenuItem(a));
+//        a = csp.addBottomComponent(ks, replaceToolBar);
+//        a.putValue(Action.NAME, "Show Replace Search Bar");
+//        edit.add(new JMenuItem(a));
         /*
         
         //Tools menu
@@ -277,12 +307,32 @@ public class GlossaryTool extends JFrame implements SearchListener {
 //        this.help.add(this.about);
         
          */
+        
+           popup.addSeparator();
+        popup.add(new JMenuItem(new add_gls()));
+        
+        
         addWindowListener(new java.awt.event.WindowAdapter() {
 
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 formWindowClosing(evt);
             }
         });
+        
+        
+//        k1 = new KeyAdapter() {
+    textArea.addKeyListener(new KeyAdapter() {
+		public void keyPressed(KeyEvent e) {
+		 // TODO add your handling code here:
+        if (RTextEvent.TEXT_VALUE_CHANGED != 0) {
+            if (!textChanged)
+                setTitle("* " + getTitle());
+            
+            textChanged = true;
+            saveFile.setEnabled(true);
+		}
+                }
+	});
 
 //textArea.addTextListener((TextListener) this);
         //textArea.addT
@@ -293,17 +343,31 @@ public class GlossaryTool extends JFrame implements SearchListener {
 //              actionPerformed(evt);
 //            }
 //        });
-//  textArea.addTextListener(new org.fife.ui.rsyntaxtextarea.TextListener() {
+
+
+
+
+
+
+//  addRTextListener(new org.fife.ui.rsyntaxtextarea.RTextListener() {
 //           
-//            public void textValueChanged(org.fife.ui.rsyntaxtextarea.TextEvent evt) {
-////                textAreaTextValueChanged(evt);
-//  actionPerformed(evt);
+//            
+//            public void textValueChanged(org.fife.ui.rsyntaxtextarea.RTextEvent evt) {
+//              textAreaTextValueChanged(evt);
+//  //actionPerformed(evt);
 //            }
+
 //        });
+
+
+
+
+
         pack();
         setLocationRelativeTo(null);
 
     }
+            
     
     private void addItem(Action a, ButtonGroup bg, JMenu menu) {
 		JRadioButtonMenuItem item = new JRadioButtonMenuItem(a);
@@ -417,6 +481,7 @@ public class GlossaryTool extends JFrame implements SearchListener {
         }
     }
 
+    
     private void newMenuActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
         newFile();
@@ -445,6 +510,30 @@ public class GlossaryTool extends JFrame implements SearchListener {
         }
     }
 
+    private void undoEditActionPerformed(java.awt.event.ActionEvent evt) {
+        // TODO add your handling code here:
+       
+    }
+    
+    private void redoEditActionPerformed(java.awt.event.ActionEvent evt) {
+        // TODO add your handling code here:
+        
+    }
+    private void cutEditActionPerformed(java.awt.event.ActionEvent evt) {
+        // TODO add your handling code here:
+       
+    }
+    
+    private void copyEditActionPerformed(java.awt.event.ActionEvent evt) {
+        // TODO add your handling code here:
+        
+    }
+    private void pasteEditActionPerformed(java.awt.event.ActionEvent evt) {
+        // TODO add your handling code here:
+       
+    }
+  
+    
     private void formWindowClosing(java.awt.event.WindowEvent evt) {
         // TODO add your handling code here:
         //  if ("".equals(textArea1.getText())) {
@@ -563,16 +652,16 @@ public class GlossaryTool extends JFrame implements SearchListener {
     }
 
     // private void textAreaTextValueChanged(TextEvent evt) {    
-//     private void textAreaTextValueChanged(java.awt.event.TextEvent evt) {                                           
-//        // TODO add your handling code here:
-//        if (TextEvent.TEXT_VALUE_CHANGED != 0) {
-//            if (!textChanged)
-//                setTitle("* " + getTitle());
-//            
-//            textChanged = true;
-//            saveFile.setEnabled(true);
-//        }
-//    } 
+     private void textAreaTextValueChanged(org.nidal.latex.glossarytool.RTextEvent evt) {                                           
+        // TODO add your handling code here:
+        if (RTextEvent.TEXT_VALUE_CHANGED != 0) {
+            if (!textChanged)
+                setTitle("* " + getTitle());
+            
+            textChanged = true;
+            saveFile.setEnabled(true);
+        }
+    } 
     //public void actionPerformed(java.awt.event.TextEvent evt) {
     //  JTextComponent tc  = getTextComponent(evt);
     //   if (TextEvent.TEXT_VALUE_CHANGED != 0) {
@@ -672,10 +761,10 @@ public class GlossaryTool extends JFrame implements SearchListener {
         replaceDialog.setSearchContext(context);
 
         // Create tool bars and tie their search contexts together also.
-        findToolBar = new FindToolBar((SearchListener) this);
-        findToolBar.setSearchContext(context);
-        replaceToolBar = new ReplaceToolBar((SearchListener) this);
-        replaceToolBar.setSearchContext(context);
+      //  findToolBar = new FindToolBar((SearchListener) this);
+        //findToolBar.setSearchContext(context);
+        //replaceToolBar = new ReplaceToolBar((SearchListener) this);
+        //replaceToolBar.setSearchContext(context);
 
     }
 
@@ -739,6 +828,8 @@ public class GlossaryTool extends JFrame implements SearchListener {
         });
         // TODO code application logic here
     }
+
+    
 
     // private class add_gls extends  TextAction {
     private class add_gls extends TextAction {
@@ -816,6 +907,11 @@ public class GlossaryTool extends JFrame implements SearchListener {
         }
 
     }
+    
+//   private static class RTTextEvents extends java.awt.TextArea {
+//
+//  
+//    }
 
     private static class StatusBar extends JPanel {
 

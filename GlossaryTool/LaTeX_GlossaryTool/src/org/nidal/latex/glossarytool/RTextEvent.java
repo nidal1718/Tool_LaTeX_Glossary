@@ -23,9 +23,9 @@
  *
  */
 
-package org.fife.ui.rsyntaxtextarea;
+package org.nidal.latex.glossarytool;
 
-import java.awt.AWTEvent;
+import org.fife.ui.rsyntaxtextarea.TextEvent;
 
 /**
  * A semantic event which indicates that an object's text changed.
@@ -35,12 +35,12 @@ import java.awt.AWTEvent;
  * events using the component's <code>addTextListener</code> method.
  * <P>
  * The object that implements the <code>TextListener</code> interface gets
- * this <code>TextEvent</code> when the event occurs. The listener is
+ * this <code>RTextEvent</code> when the event occurs. The listener is
  * spared the details of processing individual mouse movements and key strokes
  * Instead, it can process a "meaningful" (semantic) event like "text changed".
  * <p>
  * An unspecified behavior will be caused if the {@code id} parameter
- * of any particular {@code TextEvent} instance is not
+ * of any particular {@code RTextEvent} instance is not
  * in the range from {@code TEXT_FIRST} to {@code TEXT_LAST}.
  *
  * @author Georges Saab
@@ -51,7 +51,7 @@ import java.awt.AWTEvent;
  * @since 1.1
  */
 
-public class TextEvent extends AWTEvent {
+public class RTextEvent extends TextEvent {
 
     /**
      * The first number in the range of ids used for text events.
@@ -67,6 +67,7 @@ public class TextEvent extends AWTEvent {
      * This event id indicates that object's text changed.
      */
     public static final int TEXT_VALUE_CHANGED  = TEXT_FIRST;
+   
 
     /*
      * JDK 1.1 serialVersionUID
@@ -88,7 +89,7 @@ public class TextEvent extends AWTEvent {
      * @see #getSource()
      * @see #getID()
      */
-    public TextEvent(Object source, int id) {
+    public RTextEvent(Object source, int id) {
         super(source, id);
     }
 
