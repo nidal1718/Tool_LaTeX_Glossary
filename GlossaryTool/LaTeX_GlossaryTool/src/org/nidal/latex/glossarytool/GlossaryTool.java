@@ -6,8 +6,12 @@
 package org.nidal.latex.glossarytool;
 
 import java.awt.BorderLayout;
+import java.awt.ComponentOrientation;
+import java.awt.Container;
 import java.awt.FileDialog;
-import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.datatransfer.Clipboard;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -23,8 +27,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import static javax.swing.Action.ACCELERATOR_KEY;
@@ -45,8 +47,6 @@ import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.JTextComponent;
 import javax.swing.text.TextAction;
 import org.fife.rsta.ui.CollapsibleSectionPanel;
 import org.fife.rsta.ui.SizeGripIcon;
@@ -93,6 +93,10 @@ public class GlossaryTool extends JFrame implements SearchListener{
     private ReplaceToolBar replaceToolBar;
     private StatusBar statusBar;
     Clipboard clip = getToolkit().getSystemClipboard();
+    
+    final static boolean shouldFill = true;
+    final static boolean shouldWeightX = true;
+    final static boolean RIGHT_TO_LEFT = false;
 
     private JMenuBar menubar = new JMenuBar(); //menubar item
     private JPopupMenu popup = textArea.getPopupMenu();
@@ -419,6 +423,7 @@ public class GlossaryTool extends JFrame implements SearchListener{
 
                 if (fd.getFile() != null) {
                     fileName = fd.getDirectory() + fd.getFile();
+                     this.filename_final = fd.getDirectory() + fd.getFile().replaceFirst(".tex", ".gls");
                     setTitle(fileName);
                     checkFile();
 
@@ -434,6 +439,7 @@ public class GlossaryTool extends JFrame implements SearchListener{
 
                 if (fd.getFile() != null) {
                     fileName = fd.getDirectory() + fd.getFile();
+                     this.filename_final = fd.getDirectory() + fd.getFile().replaceFirst(".tex", ".gls");
                     setTitle(fileName);
                     checkFile();
                 }
@@ -544,7 +550,8 @@ public class GlossaryTool extends JFrame implements SearchListener{
         if (fd.getFile() != null) {
             fn = fd.getFile();
             dir = fd.getDirectory();
-            filename = dir + fn + ".txt";
+            filename = dir + fn + ".tex";
+             this.filename_final = fd.getDirectory() + fd.getFile().replaceFirst(".tex", ".gls");
 
             setTitle(filename);
 
@@ -763,9 +770,17 @@ public class GlossaryTool extends JFrame implements SearchListener{
         
         JPanel dpan=new JPanel();
 
-         dpan.setLayout(new FlowLayout());   
+        // dpan.setLayout(new FlowLayout());  
+       dpan.setLayout(new GridBagLayout()); 
        
+       GridBagConstraints c = new GridBagConstraints();
+  //       if(shouldFill) {
+                //natural height, maximum width
+             //   c.fill = GridBagConstraints.HORIZONTAL;
+//}
        // setDefaultCloseOperation(EXIT_ON_CLOSE);
+       
+     //  d1.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
        // setLayout(new FlowLayout());
 
         // Must be called before creating JDialog for
@@ -779,23 +794,112 @@ public class GlossaryTool extends JFrame implements SearchListener{
         
         // Set size
         d1.setSize(400,400);
-        
+      
+//        if (RIGHT_TO_LEFT) 
+//            dpan.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
+//        
         // Set some layout
       //  d1.setLayout(new FlowLayout());
+    JLabel tag_label = new JLabel("Tag");
+    //if (shouldWeightX) {
+    c.weightx = 1;
+    //}
+    c.fill = GridBagConstraints.HORIZONTAL;
+    c.gridx = 0;
+    c.gridy = 0;
+    dpan.add(tag_label, c);
+    
+    JTextField tag_tf = new JTextField("");
+    //c.fill = GridBagConstraints.LAST_LINE_END;
+    c.weightx = 1;
+    c.gridx = 1;
+    c.gridy = 0;
+    dpan.add(tag_tf, c);
+ 
+     JLabel name_label = new JLabel("Name");
+    c.fill = GridBagConstraints.HORIZONTAL;
+    c.weightx = 1;
+    c.gridx = 0;
+    c.gridy = 1;
+    dpan.add(name_label, c);
+    
+    JTextField name_tf = new JTextField("");
+    //c.fill = GridBagConstraints.SOUTH;
+    c.weightx = 1;
+    c.gridx = 2;
+    c.gridy = 0;
+    dpan.add(name_tf, c);
+ 
+    JLabel plural_label = new JLabel("Plural");
+    c.fill = GridBagConstraints.HORIZONTAL;
+    c.weightx = 1;
+    c.gridx = 0;
+    c.gridy = 2;
+    dpan.add(plural_label, c);
+    
+    JTextField plural_tf = new JTextField("");
+   // c.fill = GridBagConstraints.HORIZONTAL;
+    c.weightx = 1;
+    c.gridx = 3;
+    c.gridy = 0;
+    dpan.add(plural_tf, c);
+ 
+    JLabel symbol_label = new JLabel("Symbol");
+    c.fill = GridBagConstraints.HORIZONTAL;
+   // c.ipady = 40;      //make this component tall
+    c.weightx = 1;
+   // c.gridwidth = 3;
+    c.gridx = 0;
+    c.gridy = 3;
+    dpan.add(symbol_label, c);
+    
+    JTextField symbol_tf = new JTextField("");
+   // c.fill = GridBagConstraints.HORIZONTAL;
+    c.weightx = 1;
+    c.gridx = 4;
+    c.gridy = 0;
+    dpan.add(symbol_tf, c);
+    
+    JButton cancel_gls = new JButton("Cancel");
+    c.fill = GridBagConstraints.HORIZONTAL;
+   // c.ipady = 0;       //reset to default
+   c.weightx = 1.0;   
+   c.weighty = 1.0;   //request any extra vertical space
+    c.anchor = GridBagConstraints.PAGE_END; //bottom of space
+    //c.insets = new Insets(10,0,0,0);  //top padding
+    c.gridx = 0;       //aligned with button 2
+    c.gridwidth = 2;   //2 columns wide
+    c.gridy = 4;       //third row
+    dpan.add(cancel_gls, c);
+    
+ 
+     JButton save_gls = new JButton("Save");
+   // c.fill = GridBagConstraints.VERTICAL;
+   // c.ipady = 0;       //reset to default
+   c.weightx = 0;   
+    c.weighty = 1.0;   //request any extra vertical space
+   // c.anchor = GridBagConstraints.PAGE_END; //bottom of space
+  //  c.insets = new Insets(10,0,0,0);  //top padding
+    c.gridx = 5;       //aligned with button 2
+    c.gridwidth = 2;   //2 columns wide
+    c.gridy = 0;       //third row
+    dpan.add(save_gls, c);
+    
+ 
         
       
-        dpan.add(new JLabel("Tag"));
-        dpan.add(new JTextField(20));
-        dpan.add(new JLabel("Name"));
-        dpan.add(new JTextField(20));
-        dpan.add(new JLabel("Plural"));
-        dpan.add(new JTextField(20));
-        dpan.add(new JLabel("Symbol"));
-        dpan.add(new JTextField(20));
+       
+//        dpan.add(new JTextField(20));
+//        dpan.add(new JLabel("Name"));
+//        dpan.add(new JTextField(20));
+//        dpan.add(new JLabel("Plural"));
+//        dpan.add(new JTextField(20));
+//        dpan.add(new JLabel("Symbol"));
+//        dpan.add(new JTextField(20));
         
     
-        JButton cancel_gls = new JButton("Cancel");
-        JButton save_gls = new JButton("Save");
+       
+      
         
         cancel_gls.addActionListener(new ActionListener() {
 
@@ -833,7 +937,8 @@ public class GlossaryTool extends JFrame implements SearchListener{
     
         d1.setVisible(true);
     }
-
+      //part of the gls dialog
+      
     /**
      * @param args the command line arguments
      */
@@ -847,6 +952,8 @@ public class GlossaryTool extends JFrame implements SearchListener{
         });
         // TODO code application logic here
     }
+
+   
 
     
 
