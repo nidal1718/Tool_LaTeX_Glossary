@@ -6,12 +6,10 @@
 package org.nidal.latex.glossarytool;
 
 import java.awt.BorderLayout;
-import java.awt.ComponentOrientation;
-import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.FileDialog;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.datatransfer.Clipboard;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -45,6 +43,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
+import javax.swing.SpringLayout;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.text.TextAction;
@@ -74,6 +73,7 @@ import org.fife.ui.rtextarea.SearchResult;
 //public class GlossaryTool extends JFrame implements ActionListener {
 public class GlossaryTool extends JFrame implements SearchListener{
     RSyntaxTextArea textArea = new RSyntaxTextArea(25,80);
+     
 
     String filename = "";
     String filename_final ;
@@ -767,13 +767,30 @@ public class GlossaryTool extends JFrame implements SearchListener{
     
       private void createAndShowadd_glsDialog()
     {
-        
-        JPanel dpan=new JPanel();
-
-        // dpan.setLayout(new FlowLayout());  
-       dpan.setLayout(new GridBagLayout()); 
        
-       GridBagConstraints c = new GridBagConstraints();
+        //https://docs.oracle.com/javase/tutorial/displayCode.html?code=https://docs.oracle.com/javase/tutorial/uiswing/examples/layout/SpringBoxProject/src/layout/SpringBox.java
+        JPanel dpan=new JPanel();
+          JPanel dpan1 =new JPanel();
+           JPanel dpanel_master =new JPanel();
+      //  Container dpan = d1.getContentPane();
+        
+      
+
+        // dpan.setLayout(new BorderLayout());  
+          dpan.setLayout(new SpringLayout());
+         //  dpan.setLayout(new GridLayout(5,2)); 
+          // dpan.setLayout(new FlowLayout());
+           dpan1.setLayout(new FlowLayout());
+          //  dpan1.setLayout(new GridLayout(0,3));  
+            
+          dpan.setMaximumSize(new Dimension(520, 400));
+            dpan1.setMaximumSize(new Dimension(520, 150));
+           // dpan1.setLayout(null);
+                dpanel_master.setLayout(new BorderLayout());
+               // dpanel_master.setLayout(new GridLayout(2,0));
+       //dpan.setLayout(new GridBagLayout()); 
+       
+     //  GridBagConstraints c = new GridBagConstraints();
   //       if(shouldFill) {
                 //natural height, maximum width
              //   c.fill = GridBagConstraints.HORIZONTAL;
@@ -793,113 +810,70 @@ public class GlossaryTool extends JFrame implements SearchListener{
         d1=new JDialog(this,"Add to Glossary",true);
         
         // Set size
-        d1.setSize(400,400);
+       
       
 //        if (RIGHT_TO_LEFT) 
 //            dpan.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
 //        
         // Set some layout
       //  d1.setLayout(new FlowLayout());
+      
+//    current_y += 30;
     JLabel tag_label = new JLabel("Tag");
-    //if (shouldWeightX) {
-    c.weightx = 1;
-    //}
-    c.fill = GridBagConstraints.HORIZONTAL;
-    c.gridx = 0;
-    c.gridy = 0;
-    dpan.add(tag_label, c);
-    
+
     JTextField tag_tf = new JTextField("");
-    //c.fill = GridBagConstraints.LAST_LINE_END;
-    c.weightx = 1;
-    c.gridx = 1;
-    c.gridy = 0;
-    dpan.add(tag_tf, c);
- 
+   tag_label.setLabelFor(tag_tf);
+
      JLabel name_label = new JLabel("Name");
-    c.fill = GridBagConstraints.HORIZONTAL;
-    c.weightx = 1;
-    c.gridx = 0;
-    c.gridy = 1;
-    dpan.add(name_label, c);
-    
+
     JTextField name_tf = new JTextField("");
-    //c.fill = GridBagConstraints.SOUTH;
-    c.weightx = 1;
-    c.gridx = 2;
-    c.gridy = 0;
-    dpan.add(name_tf, c);
- 
+
     JLabel plural_label = new JLabel("Plural");
-    c.fill = GridBagConstraints.HORIZONTAL;
-    c.weightx = 1;
-    c.gridx = 0;
-    c.gridy = 2;
-    dpan.add(plural_label, c);
-    
+
     JTextField plural_tf = new JTextField("");
-   // c.fill = GridBagConstraints.HORIZONTAL;
-    c.weightx = 1;
-    c.gridx = 3;
-    c.gridy = 0;
-    dpan.add(plural_tf, c);
- 
+
     JLabel symbol_label = new JLabel("Symbol");
-    c.fill = GridBagConstraints.HORIZONTAL;
-   // c.ipady = 40;      //make this component tall
-    c.weightx = 1;
-   // c.gridwidth = 3;
-    c.gridx = 0;
-    c.gridy = 3;
-    dpan.add(symbol_label, c);
-    
+
     JTextField symbol_tf = new JTextField("");
-   // c.fill = GridBagConstraints.HORIZONTAL;
-    c.weightx = 1;
-    c.gridx = 4;
-    c.gridy = 0;
-    dpan.add(symbol_tf, c);
-    
+
+    JLabel desc_label = new JLabel("Desciption");
+
+     RSyntaxTextArea desc_Area = new RSyntaxTextArea("");
+
     JButton cancel_gls = new JButton("Cancel");
-    c.fill = GridBagConstraints.HORIZONTAL;
-   // c.ipady = 0;       //reset to default
-   c.weightx = 1.0;   
-   c.weighty = 1.0;   //request any extra vertical space
-    c.anchor = GridBagConstraints.PAGE_END; //bottom of space
-    //c.insets = new Insets(10,0,0,0);  //top padding
-    c.gridx = 0;       //aligned with button 2
-    c.gridwidth = 2;   //2 columns wide
-    c.gridy = 4;       //third row
-    dpan.add(cancel_gls, c);
-    
- 
+
      JButton save_gls = new JButton("Save");
-   // c.fill = GridBagConstraints.VERTICAL;
-   // c.ipady = 0;       //reset to default
-   c.weightx = 0;   
-    c.weighty = 1.0;   //request any extra vertical space
-   // c.anchor = GridBagConstraints.PAGE_END; //bottom of space
-  //  c.insets = new Insets(10,0,0,0);  //top padding
-    c.gridx = 5;       //aligned with button 2
-    c.gridwidth = 2;   //2 columns wide
-    c.gridy = 0;       //third row
-    dpan.add(save_gls, c);
-    
- 
+     JButton clear_gls = new JButton("Clear");
+
+     tag_label.setLabelFor(tag_tf);
+       name_label.setLabelFor(name_tf);
+         plural_label.setLabelFor(plural_tf);
+           symbol_label.setLabelFor(symbol_tf);
+             desc_label.setLabelFor(desc_Area);
+     
+     
+       dpan.add(tag_label);   
+     dpan.add(tag_tf);  
+     dpan.add(name_label);
+       dpan.add(name_tf);
+     dpan.add(plural_label);
+      dpan.add(plural_tf);
+     dpan.add(symbol_label);
+     dpan.add(symbol_tf);
+      dpan.add(desc_label);
+     dpan.add(desc_Area);
+     
+     dpan1.add(cancel_gls);
+      cancel_gls.setPreferredSize(new Dimension(120, 50));
+    dpan1.add(save_gls);
+     save_gls.setPreferredSize(new Dimension(120, 50));
+//     dpan1.add(clear_gls,BorderLayout.LINE_END);
+    dpan1.add(clear_gls); 
+      clear_gls.setPreferredSize(new Dimension(120, 50));
+         
+       //Lay out the buttons in one row and as many columns
+        //as necessary, with 6 pixels of padding all around.
         
-      
-       
-//        dpan.add(new JTextField(20));
-//        dpan.add(new JLabel("Name"));
-//        dpan.add(new JTextField(20));
-//        dpan.add(new JLabel("Plural"));
-//        dpan.add(new JTextField(20));
-//        dpan.add(new JLabel("Symbol"));
-//        dpan.add(new JTextField(20));
-        
-    
-       
-      
         
         cancel_gls.addActionListener(new ActionListener() {
 
@@ -926,11 +900,36 @@ public class GlossaryTool extends JFrame implements SearchListener{
                
             }
         });
+         
+          clear_gls.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+              
+                
+                saveGlossary_new_entry();
+      //            private void save(String filename) {
         
-         dpan.add(cancel_gls);
-         dpan.add(save_gls);
-        d1.add(dpan);
+ 
+                  d1.dispose();
+               
+            }
+        });
+         int count = dpan.getComponentCount()/2 ;
+         System.out.println(count);
         
+//     SpringUtilities.makeCompactGrid(dpan, 6,dpan.getComponentCount(),6, 6, 6, 6);
+     SpringUtilities.makeCompactGrid(dpan, count,2,10, 10, 10, 10);  
+     // SpringUtilities.makeCompactGrid(dpan1, 1,3,10, 10, 10, 10); 
+     dpanel_master.add(dpan,BorderLayout.CENTER);  
+      dpanel_master.add(dpan1, BorderLayout.SOUTH); 
+     //  SpringUtilities.makeCompactGrid(dpanel_master, dpanel_master.getComponentCount(),1,6, 6, 6, 6); 
+      
+      
+      d1.add(dpanel_master);
+      
+         d1.setSize(520,500);
+         d1.setMinimumSize(new Dimension(520,400));
        // setSize(80,20);
   d1.setLocationRelativeTo(null);
         
