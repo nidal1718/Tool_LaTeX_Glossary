@@ -765,6 +765,14 @@ public class GlossaryTool extends JFrame implements SearchListener{
 
     }
     
+    //to add \gls{text}
+    private void addglsprefix(){
+        String text_selected = textArea.getSelectedText();      
+         String text_replacement = "\\gls{" + text_selected + "}" ;
+        textArea.replaceSelection(text_replacement);
+    }
+    
+    
       private void createAndShowadd_glsDialog()
     {
        
@@ -898,12 +906,13 @@ public class GlossaryTool extends JFrame implements SearchListener{
                 String plural_gls = plural_tf.getText();
                 String desc_gls = desc_Area.getText();
                 
+                //sort use 
                 String all_gls ;
                 
                 
-                 all_gls = "\\newglossaryentry{" + tag_gls + "}\n" + "{\n" ;
+                 all_gls = "\n\\newglossaryentry{" + tag_gls + "}\n" + "{" ;
                   if (!"".equals(name_gls)) 
-                      all_gls=  all_gls + "\tname={" + name_gls + "}," ;
+                      all_gls=  all_gls + "\n\tname={" + name_gls + "}," ;
                  
                  if (!"".equals(symbol_gls)) 
                       all_gls=  all_gls + "\n\tsymbol={" + symbol_gls + "}," ;
@@ -917,16 +926,11 @@ public class GlossaryTool extends JFrame implements SearchListener{
                      all_gls= all_gls+ "\n}" ;
                       
                     
-                
-                
-                
-              //  all_gls = "\newglossaryentry{" + tag_gls + "}\n" + "{\n" + "name={" + name_gls + "}, description={" +desc_gls + "}}" ;
-                
-              
+                     
           try {
          FileWriter out_gls;
            // out = new FileWriter(fn);
-            out_gls = new FileWriter(filename_final);
+            out_gls = new FileWriter(filename_final,true);
             out_gls.write(all_gls);
             out_gls.close();
 
@@ -937,7 +941,7 @@ public class GlossaryTool extends JFrame implements SearchListener{
                 
          //       saveGlossary_new_entry();
  
-        
+        addglsprefix();
  
                   d1.dispose();
                
