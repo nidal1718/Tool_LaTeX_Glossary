@@ -890,10 +890,53 @@ public class GlossaryTool extends JFrame implements SearchListener{
 
             @Override
             public void actionPerformed(ActionEvent e) {
-              
                 
-                saveGlossary_new_entry();
-      //            private void save(String filename) {
+                   
+                String tag_gls = tag_tf.getText();
+                String name_gls = name_tf.getText();
+                String symbol_gls = symbol_tf.getText();
+                String plural_gls = plural_tf.getText();
+                String desc_gls = desc_Area.getText();
+                
+                String all_gls ;
+                
+                
+                 all_gls = "\\newglossaryentry{" + tag_gls + "}\n" + "{\n" ;
+                  if (!"".equals(name_gls)) 
+                      all_gls=  all_gls + "\tname={" + name_gls + "}," ;
+                 
+                 if (!"".equals(symbol_gls)) 
+                      all_gls=  all_gls + "\n\tsymbol={" + symbol_gls + "}," ;
+                 
+                   if (!"".equals(plural_gls)) 
+                      all_gls=  all_gls + "\n\tplural={" + plural_gls + "}," ;
+                   
+                     if (!"".equals(desc_gls)) 
+                      all_gls=  all_gls + "\n\tdescription={" + desc_gls + "}" ;
+                     
+                     all_gls= all_gls+ "\n}" ;
+                      
+                    
+                
+                
+                
+              //  all_gls = "\newglossaryentry{" + tag_gls + "}\n" + "{\n" + "name={" + name_gls + "}, description={" +desc_gls + "}}" ;
+                
+              
+          try {
+         FileWriter out_gls;
+           // out = new FileWriter(fn);
+            out_gls = new FileWriter(filename_final);
+            out_gls.write(all_gls);
+            out_gls.close();
+
+        } catch (Exception err) {
+            System.out.println("Error: " + err);
+        } 
+                
+                
+         //       saveGlossary_new_entry();
+ 
         
  
                   d1.dispose();
@@ -905,13 +948,16 @@ public class GlossaryTool extends JFrame implements SearchListener{
 
             @Override
             public void actionPerformed(ActionEvent e) {
-              
-                
-                saveGlossary_new_entry();
-      //            private void save(String filename) {
-        
+   
+   //  dpan.add(tag_tf);  
+     // dpan.add(name_tf);
  
-                  d1.dispose();
+    //  dpan.add(plural_tf);
+      plural_tf.setText("");
+       symbol_tf.setText("");
+       desc_Area.setText("");
+
+             //     d1.dispose();
                
             }
         });

@@ -1,0 +1,59 @@
+\documentclass{article}
+\usepackage[colorlinks]{hyperref}
+\usepackage{glossaries}
+ 
+\makeglossaries
+ 
+\newglossaryentry{latex}
+{
+    name=latex,
+    description={Is a mark up language specially suited 
+    for scientific documents}
+}
+ 
+\newglossaryentry{maths}
+{
+    name=mathematics,
+    description={Mathematics is what mathematicians do}
+}
+\newglossaryentry{VM}{
+ symbol={VM},
+ symbolplural={VMs},
+ name={virtual machine},
+ description={a \gls{run-time system} that abstracts away details of the
+   underlying hardware or operating system}}
+\newglossaryentry{JVM}{
+ name={JVM},
+ text={Java virtual machine},
+ description={a \gls{VM} for the Java language}}
+ %modified text
+\newglossaryentry{locality}{
+ name={locality},
+ plural={localities},
+ description={the degree to which to items (\glspl{field}, \glspl{object})
+   are accessed together in space or time; see also \gls{spatial locality}
+   and \gls{temporal locality}}}
+\newglossaryentry{spatial locality}{
+ name={spatial locality},
+ plural={spatial localities},
+ description={the degree to which two items (\glspl{field}, \glspl{object})
+   are likely to be allocated close to each other (for example, on the same
+   \gls{page} or \gls{cache line})}}
+ 
+\title{How to create a glossary}
+\author{ }
+\date{ }
+ 
+\begin{document}
+\maketitle
+ 
+The \Gls{latex} typesetting markup language is specially suitable 
+for documents that include \gls{maths}. 
+
+the \Gls{VM} example \gls{JVM}
+ 
+\clearpage
+ 
+\printglossaries
+ 
+\end{document}
