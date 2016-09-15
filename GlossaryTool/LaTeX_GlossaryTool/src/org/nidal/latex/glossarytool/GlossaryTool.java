@@ -9,7 +9,6 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FileDialog;
 import java.awt.FlowLayout;
-import java.awt.GridLayout;
 import java.awt.datatransfer.Clipboard;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -46,6 +45,8 @@ import javax.swing.KeyStroke;
 import javax.swing.SpringLayout;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
 import javax.swing.text.TextAction;
 import org.fife.rsta.ui.CollapsibleSectionPanel;
 import org.fife.rsta.ui.SizeGripIcon;
@@ -76,6 +77,7 @@ public class GlossaryTool extends JFrame implements SearchListener{
      
 
     String filename = "";
+        String filename_s = "";
     String filename_final ;
     private KeyListener k1 ;
     String applicationName = "LaTeX_GlossaryTool";
@@ -344,11 +346,27 @@ public class GlossaryTool extends JFrame implements SearchListener{
                 }
 	});
     
+  textArea.addCaretListener(new CaretListener() {
+
+      public void caretUpdate(CaretEvent e) {
+      	 // TODO add your handling code here:
+        if (RTextEvent.TEXT_VALUE_CHANGED != 0) {
+            if (!textChanged)
+                setTitle("* " + getTitle());
+            
+            textChanged = true;
+            saveFile.setEnabled(true);
+		}
+
+      }
+    });
+    
         pack();
         setLocationRelativeTo(null);
 
     }
-            
+     
+    
     
     private void addItem(Action a, ButtonGroup bg, JMenu menu) {
 		JRadioButtonMenuItem item = new JRadioButtonMenuItem(a);
@@ -385,8 +403,8 @@ public class GlossaryTool extends JFrame implements SearchListener{
             FileDialog fd = new FileDialog(this, "Choose File", FileDialog.LOAD);
             fd.show();
             if (fd.getFile() != null) {
-                fileName = fd.getDirectory() + fd.getFile();
-                this.filename_final = fd.getDirectory() + fd.getFile().replaceFirst(".tex", ".gls");
+                this.fileName = fd.getDirectory() + fd.getFile();
+                   this.filename_final = fd.getDirectory() + "glossary.tex" ;
                 setTitle(fileName);
                 checkFile();
             }
@@ -398,8 +416,8 @@ public class GlossaryTool extends JFrame implements SearchListener{
             FileDialog fd = new FileDialog(this, "Choose File", FileDialog.LOAD);
             fd.show();
             if (fd.getFile() != null) {
-                fileName = fd.getDirectory() + fd.getFile();
-                 this.filename_final = fd.getDirectory() + fd.getFile().replaceFirst(".tex", ".gls");
+                this.fileName = fd.getDirectory() + fd.getFile();
+                     this.filename_final = fd.getDirectory() + "glossary.tex" ;
                 setTitle(fileName);
                 checkFile();
 
@@ -422,8 +440,9 @@ public class GlossaryTool extends JFrame implements SearchListener{
                 fd.show();
 
                 if (fd.getFile() != null) {
-                    fileName = fd.getDirectory() + fd.getFile();
-                     this.filename_final = fd.getDirectory() + fd.getFile().replaceFirst(".tex", ".gls");
+                    this.fileName = fd.getDirectory() + fd.getFile();
+                    // this.filename_final = fd.getDirectory() + fd.getFile().replaceFirst(".tex", ".gls");
+                     this.filename_final = fd.getDirectory() + "glossary.tex" ;
                     setTitle(fileName);
                     checkFile();
 
@@ -438,8 +457,8 @@ public class GlossaryTool extends JFrame implements SearchListener{
                 fd.show();
 
                 if (fd.getFile() != null) {
-                    fileName = fd.getDirectory() + fd.getFile();
-                     this.filename_final = fd.getDirectory() + fd.getFile().replaceFirst(".tex", ".gls");
+                    this.fileName = fd.getDirectory() + fd.getFile();
+                        this.filename_final = fd.getDirectory() + "glossary.tex" ;
                     setTitle(fileName);
                     checkFile();
                 }
@@ -459,11 +478,11 @@ public class GlossaryTool extends JFrame implements SearchListener{
 
     private void saveMenuActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
-        if (filename.equals("")) {
-            saveAs();
-        } else {
+//        if (filename.equals("")) {
+//            saveAs();
+//        } else {
             save(filename);
-        }
+       // }
     }
 
     
@@ -545,13 +564,14 @@ public class GlossaryTool extends JFrame implements SearchListener{
 
     private void saveAs() {
         // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        FileDialog fd = new FileDialog(GlossaryTool.this, "Save", FileDialog.SAVE);
+        FileDialog fd = new FileDialog(GlossaryTool.this, "Save As", FileDialog.SAVE);
         fd.show();
         if (fd.getFile() != null) {
             fn = fd.getFile();
             dir = fd.getDirectory();
-            filename = dir + fn + ".tex";
-             this.filename_final = fd.getDirectory() + fd.getFile().replaceFirst(".tex", ".gls");
+            this.filename = dir + fn + ".tex";
+            // this.filename_s = dir + fn ;
+               this.filename_final = fd.getDirectory() + "glossary.tex" ;
 
             setTitle(filename);
 
@@ -628,9 +648,12 @@ public class GlossaryTool extends JFrame implements SearchListener{
     private void save(String filename) {
         // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         setTitle(applicationName + " " + filename);
+        
+        System.out.println(filename);
         try {
             FileWriter out;
-            out = new FileWriter(fn);
+          //  out = new FileWriter(fn);
+           out = new FileWriter(fn);
             //  out.write(textArea1.getText());
             out.write(textArea.getText());
             out.close();
@@ -638,6 +661,9 @@ public class GlossaryTool extends JFrame implements SearchListener{
         } catch (Exception err) {
             System.out.println("Error: " + err);
         }
+        
+        
+         
         textChanged = false;
         saveFile.setEnabled(false);
 
@@ -659,7 +685,7 @@ public class GlossaryTool extends JFrame implements SearchListener{
             textChanged = false;
 
         } else {
-            int confirm = JOptionPane.showConfirmDialog(null, "Do you want to save before exiting this application?");
+            int confirm = JOptionPane.showConfirmDialog(null, "Do you want to save the existing file opening a new one?");
 
             if (confirm == JOptionPane.YES_OPTION) {
                 if ("".equals(filename)) {
@@ -770,6 +796,7 @@ public class GlossaryTool extends JFrame implements SearchListener{
         String text_selected = textArea.getSelectedText();      
          String text_replacement = "\\gls{" + text_selected + "}" ;
         textArea.replaceSelection(text_replacement);
+        textChanged = true;
     }
     
     
@@ -829,8 +856,11 @@ public class GlossaryTool extends JFrame implements SearchListener{
 //    current_y += 30;
     JLabel tag_label = new JLabel("Tag");
 
-    JTextField tag_tf = new JTextField("");
+    
+     
+   JTextField tag_tf = new JTextField(textArea.getSelectedText());
    tag_label.setLabelFor(tag_tf);
+   tag_tf.setEditable(false);
 
      JLabel name_label = new JLabel("Name");
 
@@ -957,6 +987,7 @@ public class GlossaryTool extends JFrame implements SearchListener{
      // dpan.add(name_tf);
  
     //  dpan.add(plural_tf);
+      name_tf.setText("");
       plural_tf.setText("");
        symbol_tf.setText("");
        desc_Area.setText("");
