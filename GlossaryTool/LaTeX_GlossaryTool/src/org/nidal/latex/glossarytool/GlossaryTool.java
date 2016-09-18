@@ -24,6 +24,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import static javax.swing.Action.ACCELERATOR_KEY;
@@ -94,11 +96,17 @@ public class GlossaryTool extends JFrame implements SearchListener{
     private FindToolBar findToolBar;
     private ReplaceToolBar replaceToolBar;
     private StatusBar statusBar;
+    
+    String glossaryFileName ;
     Clipboard clip = getToolkit().getSystemClipboard();
+    
+     ReadGlossaryFile readGFileObject = new ReadGlossaryFile() ;
     
     final static boolean shouldFill = true;
     final static boolean shouldWeightX = true;
     final static boolean RIGHT_TO_LEFT = false;
+    
+    Boolean checktagExists;
 
     private JMenuBar menubar = new JMenuBar(); //menubar item
     private JPopupMenu popup = textArea.getPopupMenu();
@@ -147,6 +155,7 @@ public class GlossaryTool extends JFrame implements SearchListener{
         textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_LATEX);
         textArea.setCodeFoldingEnabled(false);
         textArea.setMarkOccurrences(true);
+        
         RTextScrollPane sp = new RTextScrollPane(textArea);
 
         //this.getContentPane().setLayout(new BorderLayout()); // the BorderLayout bit makes it fill it automatically
@@ -191,7 +200,11 @@ public class GlossaryTool extends JFrame implements SearchListener{
         //  this.openFile.addActionListener(this); // add an action listener (so we know when it's been clicked
         openFile.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                openMenuActionPerformed(evt);
+                try {
+                    openMenuActionPerformed(evt);
+                } catch (IOException ex) {
+                    Logger.getLogger(GlossaryTool.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
       openFile.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, c)); 
@@ -320,8 +333,23 @@ public class GlossaryTool extends JFrame implements SearchListener{
         
          */
         
-           popup.addSeparator();
-        popup.add(new JMenuItem(new add_gls()));
+        
+         
+//          checktagExists =readGFileObject.checkifSavedinGlossaryFile(textArea.getSelectedText());
+//            
+//            if(!checktagExists)
+//             { 
+                 popup.addSeparator();
+            popup.add(new JMenuItem(new addtoGlossaryPopup())); 
+            
+            
+        //    popup.addSeparator();
+         //   popup.add(new JMenuItem(new GlossariesPopup())); 
+                 
+                
+             
+           //  }
+          
         
         
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -396,7 +424,7 @@ public class GlossaryTool extends JFrame implements SearchListener{
 
     }
 
-    private void openMenuActionPerformed(java.awt.event.ActionEvent evt) {
+    private void openMenuActionPerformed(java.awt.event.ActionEvent evt) throws IOException {
         // TODO add your handling code here:
         // if (textArea1.getText().length() < 1) {
         if (textArea.getText().length() < 1) {
@@ -464,7 +492,26 @@ public class GlossaryTool extends JFrame implements SearchListener{
                 }
             }
         }
+        
+        //FileDialog option to select the default file opener
+   selectGlossaryFile();
     }
+    
+    private void selectGlossaryFile() throws IOException {
+        // TODO add your handling code here:
+        
+       
+            FileDialog fd = new FileDialog(this, "Select the Glossary File", FileDialog.LOAD);
+            fd.show();
+            if (fd.getFile() != null) {
+                glossaryFileName = fd.getDirectory() + fd.getFile();
+             //   checkFile();
+             readGFileObject.addtoArrayList(glossaryFileName);
+             
+             
+            }
+      
+   }
 
     private void saveasMenuActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
@@ -479,10 +526,10 @@ public class GlossaryTool extends JFrame implements SearchListener{
     private void saveMenuActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
 //        if (filename.equals("")) {
-//            saveAs();
+            saveAs();
 //        } else {
-            save(filename);
-       // }
+//            save(filename);
+//        }
     }
 
     
@@ -569,7 +616,8 @@ public class GlossaryTool extends JFrame implements SearchListener{
         if (fd.getFile() != null) {
             fn = fd.getFile();
             dir = fd.getDirectory();
-            this.filename = dir + fn + ".tex";
+          //  this.filename = dir + fn + ".tex";
+             this.filename = dir + fn;
             // this.filename_s = dir + fn ;
                this.filename_final = fd.getDirectory() + "glossary.tex" ;
 
@@ -723,6 +771,7 @@ public class GlossaryTool extends JFrame implements SearchListener{
     } 
  
     public String getSelectedText() {
+         checktagExists = false ;
         return textArea.getSelectedText();
     }
 
@@ -912,6 +961,14 @@ public class GlossaryTool extends JFrame implements SearchListener{
        //Lay out the buttons in one row and as many columns
         //as necessary, with 6 pixels of padding all around.
         
+        //if the word already exists then it disables the save button
+        checktagExists =readGFileObject.checkifSavedinGlossaryFile(textArea.getSelectedText());
+            
+            if(checktagExists)
+             { 
+               save_gls.setVisible(false);
+             }
+
         
         cancel_gls.addActionListener(new ActionListener() {
 
@@ -925,16 +982,19 @@ public class GlossaryTool extends JFrame implements SearchListener{
         });
         
          save_gls.addActionListener(new ActionListener() {
+           
+              String tag_gls = tag_tf.getText();
+                String name_gls = name_tf.getText();
+                String symbol_gls = symbol_tf.getText();
+                String plural_gls = plural_tf.getText();
+                String desc_gls = desc_Area.getText();
+                
 
             @Override
             public void actionPerformed(ActionEvent e) {
                 
                    
-                String tag_gls = tag_tf.getText();
-                String name_gls = name_tf.getText();
-                String symbol_gls = symbol_tf.getText();
-                String plural_gls = plural_tf.getText();
-                String desc_gls = desc_Area.getText();
+               
                 
                 //sort use 
                 String all_gls ;
@@ -956,11 +1016,13 @@ public class GlossaryTool extends JFrame implements SearchListener{
                      all_gls= all_gls+ "\n}" ;
                       
                     
-                     
+               //  String glossaryFileName =     
           try {
          FileWriter out_gls;
            // out = new FileWriter(fn);
-            out_gls = new FileWriter(filename_final,true);
+//            out_gls = new FileWriter(filename_final,true);
+           
+ out_gls = new FileWriter(glossaryFileName,true);
             out_gls.write(all_gls);
             out_gls.close();
 
@@ -972,7 +1034,7 @@ public class GlossaryTool extends JFrame implements SearchListener{
          //       saveGlossary_new_entry();
  
         addglsprefix();
- 
+        readGFileObject.addtoArrayListFromDialogSave(tag_gls);
                   d1.dispose();
                
             }
@@ -1038,10 +1100,26 @@ public class GlossaryTool extends JFrame implements SearchListener{
     
 
     // private class add_gls extends  TextAction {
-    private class add_gls extends TextAction {
+   
+    private class addtoGlossaryPopup extends TextAction {
 
-        public add_gls() {
-            super("Add to Glossary");
+       
+            
+            
+        public addtoGlossaryPopup() {
+           
+
+        
+            
+         
+//         Boolean checktagExists =readGFileObject.checkifSavedinGlossaryFile(textArea.getSelectedText());
+//            
+//            if(!checktagExists)
+//             { 
+//               
+//             }
+       
+           super("Add to Glossary");
         }
 
         public void actionPerformed(ActionEvent e) {
@@ -1067,10 +1145,13 @@ public class GlossaryTool extends JFrame implements SearchListener{
 //                findDialog.setVisible(false);
 //            }
 //            replaceDialog.setVisible(true);
-                    
+               
+
+           
                 createAndShowadd_glsDialog();
 
         }
+        
         
       
 
