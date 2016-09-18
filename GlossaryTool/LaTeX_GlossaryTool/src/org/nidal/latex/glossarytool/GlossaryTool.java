@@ -24,6 +24,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.AbstractAction;
@@ -64,8 +65,11 @@ import static org.fife.rsta.ui.search.SearchEvent.Type.REPLACE_ALL;
 import org.fife.rsta.ui.search.SearchListener;
 import org.fife.ui.rsyntaxtextarea.ErrorStrip;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
+import org.fife.ui.rsyntaxtextarea.RSyntaxTextAreaEditorKit;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
+import org.fife.ui.rsyntaxtextarea.folding.FoldManager;
 import org.fife.ui.rtextarea.RTextScrollPane;
+import org.fife.ui.rtextarea.RecordableTextAction;
 import org.fife.ui.rtextarea.SearchContext;
 import org.fife.ui.rtextarea.SearchEngine;
 import org.fife.ui.rtextarea.SearchResult;
@@ -77,6 +81,15 @@ import org.fife.ui.rtextarea.SearchResult;
 public class GlossaryTool extends JFrame implements SearchListener{
     RSyntaxTextArea textArea = new RSyntaxTextArea(25,80);
      
+    private static RecordableTextAction cutAction;
+	private static RecordableTextAction copyAction;
+	private static RecordableTextAction pasteAction;
+	private static RecordableTextAction deleteAction;
+	private static RecordableTextAction undoAction;
+	private static RecordableTextAction redoAction;
+	private static RecordableTextAction selectAllAction;
+        
+        
 
     String filename = "";
         String filename_s = "";
@@ -101,6 +114,7 @@ public class GlossaryTool extends JFrame implements SearchListener{
     Clipboard clip = getToolkit().getSystemClipboard();
     
      ReadGlossaryFile readGFileObject = new ReadGlossaryFile() ;
+     PopupSubclass popupsbcls = new PopupSubclass();
     
     final static boolean shouldFill = true;
     final static boolean shouldWeightX = true;
@@ -110,6 +124,17 @@ public class GlossaryTool extends JFrame implements SearchListener{
 
     private JMenuBar menubar = new JMenuBar(); //menubar item
     private JPopupMenu popup = textArea.getPopupMenu();
+    
+    private JMenu glossaryMenu;
+    private JMenuItem glsToolItem;
+	private JMenuItem glsplToolItem;
+	private JMenuItem GlsToolItem;
+	private JMenuItem GlsplToolItem;
+	private JMenuItem glssymbolToolItem;
+//    private static RecordableTextAction toggleCurrentFoldAction;
+//    private static RecordableTextAction collapseAllCommentFoldsAction;
+//    private static RecordableTextAction collapseAllFoldsAction;
+//    private static RecordableTextAction expandAllFoldsAction;
 
     private JMenu file = new JMenu(); //  File menu
     private JMenu edit = new JMenu(); // edit menu
@@ -135,6 +160,8 @@ public class GlossaryTool extends JFrame implements SearchListener{
     private JMenuItem add_gls = new JMenuItem(); // a tools option
 
     private JMenuItem about = new JMenuItem(); // about option!
+    
+    
 
     public GlossaryTool() {
 //Reference : https://github.com/bobbylight/RSyntaxTextArea
@@ -153,7 +180,7 @@ public class GlossaryTool extends JFrame implements SearchListener{
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
         textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_LATEX);
-        textArea.setCodeFoldingEnabled(false);
+        textArea.setCodeFoldingEnabled(true);
         textArea.setMarkOccurrences(true);
         
         RTextScrollPane sp = new RTextScrollPane(textArea);
@@ -176,6 +203,8 @@ public class GlossaryTool extends JFrame implements SearchListener{
         this.menubar.add(this.file);
         this.menubar.add(this.edit);
         this.menubar.add(this.tools);
+        
+        
 
         //   this.menubar.add(this.help);
         this.file.setLabel("File");
@@ -339,8 +368,62 @@ public class GlossaryTool extends JFrame implements SearchListener{
 //            
 //            if(!checktagExists)
 //             { 
-                 popup.addSeparator();
+
+
+     //   popupsbcls.createToolsPopupMenuActions();
+		
+            
+            
+            
+            
+        
+            popup.addSeparator();
+            popup.add(new JMenuItem(new addglsGlossariecePopup())); //#1
+              popup.add(new JMenuItem(new addglsplGlossariecePopup())); //#2
+                popup.add(new JMenuItem(new addGlosGlossariecePopup())); //#3
+                  popup.add(new JMenuItem(new addGlosplGlossariecePopup())); //#4
+                    popup.add(new JMenuItem(new addglssymbolGlossariecePopup())); //#5
+                    
+            
+            popup.addSeparator();
             popup.add(new JMenuItem(new addtoGlossaryPopup())); 
+           
+
+          //  PopupSubclass.setPopupMenu();
+          
+         // appendGlossariecePopupMenu();
+               
+         
+         
+         // popupsbcls.createPopupMenu();
+          
+//         popup.addSeparator();
+         
+         
+//glossaryMenu.add(new JMenuItem(new glsToolItemPopup()));
+                //glossaryMenu.add("glsToolItem");
+                
+//		glossaryMenu.add("GlsToolItem");
+//		glossaryMenu.add("GlsToolItem");
+//		glossaryMenu.add("GlsplToolItem");
+//                glossaryMenu.add("glssymbolToolItem");
+        
+        //glossaryMenu.setLabel("Tools");
+       // popup.add(new JMenuItem(new glsToolItemPopup())); 
+       // popup.add(glossaryMenu); 
+       
+       
+      //  PopupSubclass.creatPopupMenu();
+                
+               
+             
+              
+                
+//        glossaryMenu.addActionListener(new java.awt.event.ActionListener() {
+//            public void actionPerformed(java.awt.event.ActionEvent evt) {
+//                pasteEditActionPerformed(evt);
+//            }
+//        });
             
             
         //    popup.addSeparator();
@@ -563,25 +646,29 @@ public class GlossaryTool extends JFrame implements SearchListener{
 
     private void undoEditActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
-       
+       //PopupSubclass.undoAction.isEnabled();
     }
     
     private void redoEditActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
-        
+        redoAction.isEnabled();
     }
     private void cutEditActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
+       // RTextAreaEditorKit.CutAction();
+      //  cutAction.isEnabled();
+       // RSyntaxTextArea.CUT_ACTION
+        
        
     }
     
     private void copyEditActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
-        
+        copyAction.isEnabled();
     }
     private void pasteEditActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
-       
+       pasteAction.isEnabled();
     }
   
     
@@ -1090,27 +1177,177 @@ public class GlossaryTool extends JFrame implements SearchListener{
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 new GlossaryTool().setVisible(true);
+//             PopupSubclass popupsbcls51 = new PopupSubclass();
+//             popupsbcls51.createPopupMenu();
+                
             }
         });
         // TODO code application logic here
     }
 
    
+    // private class add_gls extends  TextAction {
+    // for glossaries popup. #1 glossaries
+    private class addGlossariecePopup extends TextAction {
+  
+        public addGlossariecePopup() {
+     
+       
+           super("\\gls{ }");
+        }
 
+        public void actionPerformed(ActionEvent e) {
+        String text_selected = textArea.getSelectedText();      
+         String text_replacement = "\\gls{" + text_selected + "}" ;
+        textArea.replaceSelection(text_replacement);
+        textChanged = true;
     
 
+        }
+
+    }
+    
+      // for glossaries popup. #1 glossaries
+    private class addglsGlossariecePopup extends TextAction {
+  
+        public addglsGlossariecePopup() {
+     
+       
+           super("\\gls{ }");
+        }
+
+        public void actionPerformed(ActionEvent e) {
+        String text_selected = textArea.getSelectedText();      
+         String text_replacement = "\\gls{" + text_selected + "}" ;
+        textArea.replaceSelection(text_replacement);
+        textChanged = true;
+    
+
+        }
+
+    }
+    
+      // for glossaries popup. #2 glossaries
+    private class addglsplGlossariecePopup extends TextAction {
+  
+        public addglsplGlossariecePopup() {
+     
+       
+           super("\\glspl{ }");
+        }
+
+        public void actionPerformed(ActionEvent e) {
+        String text_selected = textArea.getSelectedText();      
+         String text_replacement = "\\glspl{" + text_selected + "}" ;
+        textArea.replaceSelection(text_replacement);
+        textChanged = true;
+    
+
+        }
+
+    }
+    
+      // for glossaries popup. #3 glossaries
+    private class addGlosGlossariecePopup extends TextAction {
+  
+        public addGlosGlossariecePopup() {
+     
+       
+           super("\\Gls{ }");
+        }
+
+        public void actionPerformed(ActionEvent e) {
+        String text_selected = textArea.getSelectedText();      
+         String text_replacement = "\\Gls{" + text_selected + "}" ;
+        textArea.replaceSelection(text_replacement);
+        textChanged = true;
+    
+
+        }
+
+    }
+    
+      // for glossaries popup. #4 glossaries
+    private class addGlosplGlossariecePopup extends TextAction {
+  
+        public addGlosplGlossariecePopup() {
+     
+       
+           super("\\Glspl{ }");
+        }
+
+        public void actionPerformed(ActionEvent e) {
+        String text_selected = textArea.getSelectedText();      
+         String text_replacement = "\\Glspl{" + text_selected + "}" ;
+        textArea.replaceSelection(text_replacement);
+        textChanged = true;
+    
+
+        }
+
+    }
+    
+      // for glossaries popup. #5 glossaries
+    private class addglssymbolGlossariecePopup extends TextAction {
+  
+        public addglssymbolGlossariecePopup() {
+     
+       
+           super("\\glssymbol{ }");
+        }
+
+        public void actionPerformed(ActionEvent e) {
+        String text_selected = textArea.getSelectedText();      
+         String text_replacement = "\\glssymbol{" + text_selected + "}" ;
+        textArea.replaceSelection(text_replacement);
+        textChanged = true;
+    
+
+        }
+
+    }
+
+//    protected void appendGlossariecePopupMenu(JPopupMenu popup) {
+//		popup.addSeparator();
+//
+//		//ResourceBundle bundle = ResourceBundle.getBundle(MSG);
+//		//glossaryMenu = new JMenu(bundle.getString("ContextMenu.Folding"));
+//		//glossaryMenu.add(createPopupMenuItem(toggleCurrentFoldAction));
+//                glossaryMenu.add(glsToolItem);
+//		glossaryMenu.add(GlsToolItem);
+//		glossaryMenu.add(GlsToolItem);
+//		glossaryMenu.add(GlsplToolItem);
+//                glossaryMenu.add(glssymbolToolItem);
+//		popup.add(glossaryMenu);
+//
+//	}
+
+     private class glsToolItemPopup extends TextAction {
+
+      public glsToolItemPopup() {                     
+           super("glsToolItem");
+           
+        }
+
+        public void actionPerformed(ActionEvent e) {
+
+            	glossaryMenu.add("GlsToolItem");
+		glossaryMenu.add("GlsToolItem");
+		glossaryMenu.add("GlsplToolItem");
+                glossaryMenu.add("glssymbolToolItem");
+                createAndShowadd_glsDialog();
+
+        }
+
+    }
+    
+    
+    
     // private class add_gls extends  TextAction {
    
     private class addtoGlossaryPopup extends TextAction {
-
-       
-            
-            
-        public addtoGlossaryPopup() {
-           
-
-        
-            
+  
+        public addtoGlossaryPopup() {                     
          
 //         Boolean checktagExists =readGFileObject.checkifSavedinGlossaryFile(textArea.getSelectedText());
 //            
@@ -1197,10 +1434,7 @@ public class GlossaryTool extends JFrame implements SearchListener{
 
     }
     
-//   private static class RTTextEvents extends java.awt.TextArea {
-//
-//  
-//    }
+
 
     private static class StatusBar extends JPanel {
 
@@ -1218,5 +1452,7 @@ public class GlossaryTool extends JFrame implements SearchListener{
         }
 
     }
-
+    
+    
+      
 }
