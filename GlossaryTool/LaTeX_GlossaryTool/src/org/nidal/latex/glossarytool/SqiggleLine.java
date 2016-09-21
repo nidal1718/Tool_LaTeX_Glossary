@@ -5,10 +5,17 @@
  */
 package org.nidal.latex.glossarytool;
 
+import java.util.List;
+
 /**
  *
  * @author nidal
  */
-public class testaddress1 {
+public class SqiggleLine {
+    
+    
+    
+    
+   
     
 }

@@ -9,6 +9,7 @@ package org.nidal.latex.glossarytool;
 import java.util.regex.*;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Print all the strings that match a given pattern from a file.
@@ -76,5 +77,7 @@ public class ReaderIter {
   private void printarrayList(){
      
   }
+  
+   
   
 }
