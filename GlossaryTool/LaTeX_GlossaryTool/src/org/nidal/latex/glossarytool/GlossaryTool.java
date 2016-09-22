@@ -6,7 +6,6 @@
 package org.nidal.latex.glossarytool;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FileDialog;
 import java.awt.FlowLayout;
@@ -56,9 +55,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
-import javax.swing.text.DefaultHighlighter;
-import javax.swing.text.Document;
-import javax.swing.text.Highlighter;
 import javax.swing.text.TextAction;
 import org.fife.rsta.ui.CollapsibleSectionPanel;
 import org.fife.rsta.ui.SizeGripIcon;
@@ -81,6 +77,7 @@ import org.fife.ui.rtextarea.RecordableTextAction;
 import org.fife.ui.rtextarea.SearchContext;
 import org.fife.ui.rtextarea.SearchEngine;
 import org.fife.ui.rtextarea.SearchResult;
+
 /**
  *
  * @author nidal
@@ -136,10 +133,12 @@ public class GlossaryTool extends JFrame implements SearchListener{
 
     Boolean checktagExists;
     
-    private Map<String, GlossaryEntryClass > gmap ;
+     private Map<String,GlossaryEntryClass> fieldsMap; 
+    private Map<String, Map> gMap ;
     
-    private Map<String,String> fields;
+    //GlossaryEntryClass gec3 ;
     
+   
    
     
     
@@ -215,8 +214,11 @@ public class GlossaryTool extends JFrame implements SearchListener{
         JPanel cp = new JPanel(new BorderLayout());
         int c = getToolkit().getMenuShortcutKeyMask();
    
-        //gmap = new HashMap<String, GlossaryEntryClass>();
-      //  fields = new HashMap<String, String>() ;
+      
+//        fields = new HashMap<String, GlossaryEntryClass>() ;
+    fieldsMap = new HashMap<>() ;
+//         gmap = new HashMap<String, Map>();
+    gMap = new HashMap<>();
 
         csp = new CollapsibleSectionPanel();
         cp.add(csp);
@@ -1144,22 +1146,36 @@ textArea.addParser(parser);
                 String symbol_gls = symbol_tf.getText();
                 String plural_gls = plural_tf.getText();
                 String desc_gls = desc_Area.getText();
-                GlossaryEntryClass gec = new GlossaryEntryClass(name_gls,symbol_gls,plural_gls,desc_gls);
+                GlossaryEntryClass gec  ; //= new GlossaryEntryClass(name_gls,symbol_gls,plural_gls,desc_gls);
 
 
             @Override
             public void actionPerformed(ActionEvent e) {
 
                 //sort use
-                String all_gls ;
+                String all_gls ; 
+               // createglossaryentryData(tag_gls,gec);
+                //gec = new GlossaryEntryClass(name_gls,symbol_gls,plural_gls,desc_gls);
 
-              //  fields.put(tag_gls, name_gls);
+                
               System.out.println(tag_gls+""+name_gls+""+symbol_gls+""+plural_gls+""+desc_gls);
-           //   gmap.put(tag_gls, gec);
+            
+              //fields.put(tag_gls, new GlossaryEntryClass());
+                 // fields.put(tag_gls, gec);
+                //  createglossaryentryData(tag_gls,gec);
+             //  gmap.put(tag_gls, fields);
+               
+              // createglossaryentryData(fields);
+              // gmap.put(tag_gls, fields);
+               //Map<String, GlossaryEntryClass>
            
-    //           gmap.put(tag_gls, new GlossaryEntryClass(name_gls,symbol_gls,plural_gls,desc_gls));
+              gMap.put(tag_gls, new GlossaryEntryClass1(tag_gls,name_gls,symbol_gls,plural_gls,desc_gls));
          //   gmap.put(tag_gls, GlossaryEntryClass);
           //      ? what is the point of fields class find out ?
+          
+          // System.out.println(GlossaryEntryClass1.this.get("Some Key"));
+                 System.out.println(gMap);
+                // System.out.println("Tag" + );
                 
 
                  all_gls = "\n\\newglossaryentry{" + tag_gls + "}\n" + "{" ;
@@ -1177,7 +1193,7 @@ textArea.addParser(parser);
 
                      all_gls= all_gls+ "\n}" ;
 
-
+    
                //  String glossaryFileName =
           try {
          FileWriter out_gls;
@@ -1242,108 +1258,100 @@ textArea.addParser(parser);
         d1.setVisible(true);
     }
       
+  
+     
+//  GlossaryEntryClass gec10 = new GlossaryEntryClass();  
+//Hashtable hashTables = new Hashtable();  
+//  HashMap<Integer, GlossaryEntryClass> hashMap = hashTables.buildHash(gec10);
+//
+//public static HashMap<Integer, GlossaryEntryClass> buildHash(GlossaryEntryClass[] students) {
+//            HashMap<Integer, GlossaryEntryClass> hashMap = new HashMap<Integer, GlossaryEntryClass>();
+//            for (GlossaryEntryClass s : students) hashMap.put(s.getId(), s);
+//            return hashMap;
+//       }    
+      
+//  public void createglossaryentryData(String tag, GlossaryEntryClass gec5) {
+// 
+// 
+//      String tag_gls = tag_tf.getText();
+//      String name_gls = name_tf.getText();
+//      String symbol_gls = symbol_tf.getText();
+//      String plural_gls = plural_tf.getText();
+//      String desc_gls = desc_Area.getText();
+//
+//      fieldsMap.put(tag_gls, new GlossaryEntryClass(tag_gls, name_gls, symbol_gls, plural_gls, desc_gls));   //innerMap
+//      gMap.put(tag_gls, fieldsMap); //OuterMap
+//
+//      //todo : (delete) : check output of the OuterMap
+//      System.out.println(gMap);
+//    
+//}
       
       
-  class GlossaryEntryClass implements Map<String,String>  {
-  //class GlossaryEntryClass {     
-    
+      
+  //class GlossaryEntryClass implements Map<String,String>  {
+  // class GlossaryEntryClass implements Map<String,String>  {
+  @SuppressWarnings("serial")
+     public class GlossaryEntryClass1 extends HashMap<String,String> {
+      
+      private String tag ;
+      private Map<String,String> fields = new HashMap<String, String>() ;
+      String tag_gls;
+      String name_gls;
+      String symbol_gls;
+      String plural_gls;
+      String desc_gls;
+      
+     
+      
+     public GlossaryEntryClass1(String tag_gls2,String name_gls2, String symbol_gls2, String plural_gls2, String desc_gls2){
         
-         //map of glossary entry class
-       // private Map<String,String> map;
-                 
-        String tag_gls = tag_tf.getText();
-        String name_gls = name_tf.getText();
-        String symbol_gls = symbol_tf.getText();
-        String plural_gls = plural_tf.getText();
-        String desc_gls = desc_Area.getText();
+         tag_gls = tag_gls2;
+         name_gls = name_gls2;
+         symbol_gls = symbol_gls2;
+         plural_gls = plural_gls2;
+         desc_gls = desc_gls2;
          
-     //  GlossaryEntryClass gec = new GlossaryEntryClass(name_gls,symbol_gls,plural_gls,desc_gls);
-      //  gmap = new Map<String, GlossaryEntryClass>();  
-      
-        private GlossaryEntryClass(String name_gls2, String symbol_gls2, String plural_gls2, String desc_gls2) {
- 
-            //this(name_gls2,symbol_gls2,plural_gls2,desc_gls2);
+        //  fields.put(symbol_gls2, plural_gls2);
+         this.put("Tag", tag_gls2);
+         this.put("Name", name_gls2);
+         this.put("Symbol", symbol_gls2);
+         this.put("Plural", plural_gls2);
+         this.put("Desciption", desc_gls2);
         
-          // GlossaryEntryClass gec = null ;
-           name_gls2 = name_gls ;
-            symbol_gls2 = symbol_gls ;
-            plural_gls2 = plural_gls ;
-           desc_gls2 = desc_gls ;
-        }
-                        
-        
-      //  private Map<String, String> glossaryfields = new Map<String, String>();
-
-       // @Override
-        public int size() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-       // @Override
-        public boolean isEmpty() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-       // @Override
-        public boolean containsKey(Object key) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-  
-       // @Override
-        public boolean containsValue(Object value) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-       // @Override
-        public String get(Object key) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
+    }
+     
+     String getTag(){
+        return tag_gls;
+     }
+     
+     String getName(){
+        return name_gls;
+     }
+     
+     String getSymbol(){
+        return symbol_gls;
+     }
+     
+     String getPlural(){
+        return plural_gls;
+     }
+     
+     String getDesc(){
+        return desc_gls;
+     }
+     
     
-       // @Override
-        public String put(String key, String value) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
+     
+     
+     
+     }
   
-       // @Override
-        public String remove(Object key) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
+  
+  
+  
+  
 
-   
-       // @Override
-        public void putAll(Map<? extends String, ? extends String> m) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-
-      //  @Override
-        public void clear() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-       
-      //  @Override
-        public Set<String> keySet() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-       
-      //  @Override
-        public Collection<String> values() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
- 
-      //  @Override
-        public Set<Entry<String, String>> entrySet() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-        
-    
-}  
       //part of the gls dialog
 
     /**
@@ -1613,7 +1621,7 @@ textArea.addParser(parser);
     }
 
 
-
+  
     private static class StatusBar extends JPanel {
 
         private JLabel label;
