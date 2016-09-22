@@ -142,11 +142,11 @@ public class GlossaryTool extends JFrame implements SearchListener{
    
     
     
-     JTextField name_tf = new JTextField("1");
-        JTextField plural_tf = new JTextField("2");
-        JTextField tag_tf = new JTextField("3");
-        JTextField symbol_tf = new JTextField("4");
-        RSyntaxTextArea desc_Area = new RSyntaxTextArea("5");
+     JTextField name_tf = new JTextField("");
+        JTextField plural_tf = new JTextField("");
+        JTextField tag_tf = new JTextField("");
+        JTextField symbol_tf = new JTextField("");
+        RSyntaxTextArea desc_Area = new RSyntaxTextArea("");
         
                          
 //        String tag_gls = tag_tf.getText();
@@ -1071,19 +1071,19 @@ textArea.addParser(parser);
 
      JLabel name_label = new JLabel("Name");
 //
-//    JTextField name_tf = new JTextField("1");
+    JTextField name_tf = new JTextField("");
 //
     JLabel plural_label = new JLabel("Plural");
 //
-//    JTextField plural_tf = new JTextField("2");
+    JTextField plural_tf = new JTextField("");
 //
     JLabel symbol_label = new JLabel("Symbol");
 //
-//    JTextField symbol_tf = new JTextField("3");
+    JTextField symbol_tf = new JTextField("");
 //
     JLabel desc_label = new JLabel("Desciption");
 //
-//     RSyntaxTextArea desc_Area = new RSyntaxTextArea("4");
+     RSyntaxTextArea desc_Area = new RSyntaxTextArea("");
 
     JButton cancel_gls = new JButton("Cancel");
 
@@ -1091,10 +1091,10 @@ textArea.addParser(parser);
      JButton clear_gls = new JButton("Clear");
 
      tag_label.setLabelFor(tag_tf);
-       name_label.setLabelFor(name_tf);
-         plural_label.setLabelFor(plural_tf);
-           symbol_label.setLabelFor(symbol_tf);
-             desc_label.setLabelFor(desc_Area);
+      // name_label.setLabelFor(name_tf);
+         //plural_label.setLabelFor(plural_tf);
+        //   symbol_label.setLabelFor(symbol_tf);
+          //   desc_label.setLabelFor(desc_Area);
 
 
        dpan.add(tag_label);
@@ -1127,6 +1127,11 @@ textArea.addParser(parser);
                save_gls.setVisible(false);
              }
 
+            
+//      name_tf.setText("");
+//      plural_tf.setText("");
+//      symbol_tf.setText("");
+//       desc_Area.setText("");
 
         cancel_gls.addActionListener(new ActionListener() {
 
@@ -1140,17 +1145,21 @@ textArea.addParser(parser);
         });
 
          save_gls.addActionListener(new ActionListener() {
-              String tag_gls = tag_tf.getText();
+              
+
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                
+                String tag_gls = tag_tf.getText();
+              
+              
                 String name_gls = name_tf.getText();
              //   JTextField name_tf = new JTextField("");
                 String symbol_gls = symbol_tf.getText();
                 String plural_gls = plural_tf.getText();
                 String desc_gls = desc_Area.getText();
                 GlossaryEntryClass gec  ; //= new GlossaryEntryClass(name_gls,symbol_gls,plural_gls,desc_gls);
-
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
 
                 //sort use
                 String all_gls ; 
