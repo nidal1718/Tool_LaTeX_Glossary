@@ -21,7 +21,11 @@ public class ReaderIter {
     
   public static void main(String[] args) throws IOException {
     // The RE pattern
-    Pattern pattern = Pattern.compile("(?<=newglossaryentry[{]).*?(?=})");
+    Pattern pattern_tag = Pattern.compile("(?<=newglossaryentry[{]).*?(?=})");
+    Pattern pattern_name = Pattern.compile("(?<=name=[{]).*?(?=},)");
+    Pattern pattern_symbol = Pattern.compile("(?<=symbol=[{]).*?(?=},)");
+    Pattern pattern_plural = Pattern.compile("(?<=plural=[{]).*?(?=},)");
+    Pattern pattern_desc = Pattern.compile("(?<=description=[{]).*?(?=})");
    // Pattern pattern2 = Pattern.compile("(?<=newglossaryentry[{]).*?(?=})");
      //HashMap<Object,String> glossary_saved = new HashMap<Object,String>();
      
@@ -35,7 +39,8 @@ public class ReaderIter {
     int i=0;
     while ((line = r.readLine()) != null) {
       // For each match in the line, extract and print it.
-      Matcher m = pattern.matcher(line);
+     // Matcher m = pattern_tag.matcher(line);
+        Matcher m = pattern_desc.matcher(line);
       while (m.find()) {
         // Simplest method:
         // System.out.println(m.group(0));
