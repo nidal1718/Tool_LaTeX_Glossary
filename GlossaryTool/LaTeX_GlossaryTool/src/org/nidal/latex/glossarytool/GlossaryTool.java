@@ -6,9 +6,14 @@
 package org.nidal.latex.glossarytool;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FileDialog;
 import java.awt.FlowLayout;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Rectangle;
+import java.awt.Shape;
 import java.awt.datatransfer.Clipboard;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -25,11 +30,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.AbstractAction;
@@ -55,7 +57,18 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultHighlighter;
+import javax.swing.text.DefaultHighlighter.DefaultHighlightPainter;
+import javax.swing.text.Document;
+import javax.swing.text.Highlighter;
+import javax.swing.text.JTextComponent;
+import javax.swing.text.LayeredHighlighter;
+import javax.swing.text.Position;
 import javax.swing.text.TextAction;
+import javax.swing.text.View;
 import org.fife.rsta.ui.CollapsibleSectionPanel;
 import org.fife.rsta.ui.SizeGripIcon;
 import org.fife.rsta.ui.search.FindDialog;
@@ -86,6 +99,7 @@ import org.fife.ui.rtextarea.SearchResult;
 public class GlossaryTool extends JFrame implements SearchListener{
 //    RSyntaxTextArea textArea = new RSyntaxTextArea(25,80);
  RSyntaxTextArea textArea = new RSyntaxTextArea(25,80);
+ //TextArea textArea = new TextArea(25,80);
  
     private static RecordableTextAction cutAction;
 	private static RecordableTextAction copyAction;
@@ -94,6 +108,9 @@ public class GlossaryTool extends JFrame implements SearchListener{
 	private static RecordableTextAction undoAction;
 	private static RecordableTextAction redoAction;
 	private static RecordableTextAction selectAllAction;
+        
+        
+     
 
 
 
@@ -124,7 +141,11 @@ public class GlossaryTool extends JFrame implements SearchListener{
     // TagHighlighter taghighlighter = new TagHighlighter();
     // GlossaryTool glossaryTool ;
      
-      
+    Highlighter highlighter = new DefaultHighlighter();
+    final DefaultHighlightPainter painter = new DefaultHighlightPainter(Color.green);
+    final JTextField highlight = new JTextField("for");
+   // final String highlight = "for" ;
+//     textArea.setHighlighter(highlighter);
        
 
     final static boolean shouldFill = true;
@@ -192,6 +213,11 @@ public class GlossaryTool extends JFrame implements SearchListener{
     private JMenuItem paste = new JMenuItem(); // a paste option
     private JMenuItem undo = new JMenuItem(); // a undo as option
     private JMenuItem redo = new JMenuItem(); // a redo option!
+    
+    public static String word ;
+    
+    
+      private JMenuItem search_and_highlight_Tool = new JMenuItem(); // a searchandhighlighttool menu option
     int ctrl = getToolkit().getMenuShortcutKeyMask();
     int shift = InputEvent.SHIFT_MASK;
     KeyStroke ks = KeyStroke.getKeyStroke(KeyEvent.VK_F, ctrl | shift);
@@ -203,7 +229,7 @@ public class GlossaryTool extends JFrame implements SearchListener{
     boolean usEnglish = true; // "false" will use British English
 
 
-    public GlossaryTool() {
+    public GlossaryTool()  {
        
 //Reference : https://github.com/bobbylight/RSyntaxTextArea
 //reference : http://www.dreamincode.net/forums/topic/66176-creating-a-basic-notepad-application/
@@ -389,33 +415,88 @@ public class GlossaryTool extends JFrame implements SearchListener{
         edit.addSeparator();
         edit.add(new JMenuItem(new ShowFindDialogAction()));
         edit.add(new JMenuItem(new ShowReplaceDialogAction()));
+        
+       
+        
+        
+        final WordSearcher searcher = new WordSearcher(textArea);
+        // and searchTool 
+        this.search_and_highlight_Tool.setLabel("Search & Highlight Word");
+        this.search_and_highlight_Tool.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                glossarysearchToolMenuActionPerformed(evt);
+            }
+        });
+        search_and_highlight_Tool.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, c));
+        this.tools.add(this.search_and_highlight_Tool); // add it to the "File" menu
+        
+        
+        
+        
+        //from website highlight 22
+        textArea.getDocument().addDocumentListener(new DocumentListener() {
+      public void insertUpdate(DocumentEvent evt) {
+        searcher.search(word);
+      }
+
+      public void removeUpdate(DocumentEvent evt) {
+        searcher.search(word);
+      }
+
+      public void changedUpdate(DocumentEvent evt) {
+      }
+    });
+         
+////highlighter stuff
+//        textArea.setHighlighter(highlighter);
+//        highlight.getDocument().addDocumentListener(new DocumentListener() {
+//
+//      private void updateHighlights() {
+//        highlight(textArea, highlight.getText(), painter);
+//      }
+//
+//      @Override
+//      public void removeUpdate(DocumentEvent e) {
+//        updateHighlights();
+//      }
+//
+//      @Override
+//      public void insertUpdate(DocumentEvent e) {
+//        updateHighlights();
+//      }
+//
+//      @Override
+//      public void changedUpdate(DocumentEvent e) {
+//        updateHighlights();
+//      }
+//    });
 
 //        Action a = csp.addBottomComponent(ks, findToolBar);
 //        a.putValue(Action.NAME, "Show Find Search Bar");
 //        edit.add(new JMenuItem(a));
 
-        //ks = KeyStroke.getKeyStroke(KeyEvent.VK_H, ctrl|shift);
+//ks = KeyStroke.getKeyStroke(KeyEvent.VK_H, ctrl|shift);
 //        a = csp.addBottomComponent(ks, replaceToolBar);
 //        a.putValue(Action.NAME, "Show Replace Search Bar");
 //        edit.add(new JMenuItem(a));
-        /*
+/*
 
-        //Tools menu
-        // Add to Gls
-        this.add_gls.setLabel("Add to Glossary");
-        this.add_gls.addActionListener(this);
-        //this.add_gls.setShortcut(new MenuShortcut(KeyEvent.VK_S, false));
-        this.tools.add(this.add_gls);
+//Tools menu
+// Add to Gls
+this.add_gls.setLabel("Add to Glossary");
+this.add_gls.addActionListener(this);
+//this.add_gls.setShortcut(new MenuShortcut(KeyEvent.VK_S, false));
+this.tools.add(this.add_gls);
 
 
-           //help menu
-        // about us
-   //     this.about.setLabel("About Us");
-    //    this.about.addActionListener(this);
-  //      //this.add_gls.setShortcut(new MenuShortcut(KeyEvent.VK_S, false));
+//help menu
+// about us
+//     this.about.setLabel("About Us");
+//    this.about.addActionListener(this);
+//      //this.add_gls.setShortcut(new MenuShortcut(KeyEvent.VK_S, false));
 //        this.help.add(this.about);
 
-         */
+*/
 
 
 
@@ -425,7 +506,8 @@ public class GlossaryTool extends JFrame implements SearchListener{
 //             {
 
 
-     //   popupsbcls.createToolsPopupMenuActions();
+//   popupsbcls.createToolsPopupMenuActions();
+     
 
 
 
@@ -596,7 +678,10 @@ public class GlossaryTool extends JFrame implements SearchListener{
               
             //dictionarycheck();
             textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_LATEX);
-            textArea.requestFocus();
+                  textArea.requestFocus();
+            
+        
+            
 
         } else {
             int confirm = JOptionPane.showConfirmDialog(null, "Do you want to save before exiting this application? ");
@@ -720,14 +805,14 @@ textArea.addParser(parser);
         // TODO add your handling code here:
         redoAction.isEnabled();
     }
+    
+    
     private void cutEditActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
        // RTextAreaEditorKit.CutAction();
       //  cutAction.isEnabled();
        // RSyntaxTextArea.CUT_ACTION
        //readGFileObject.highlightwords(textArea);
-
-
     }
 
     private void copyEditActionPerformed(java.awt.event.ActionEvent evt) {
@@ -742,7 +827,40 @@ textArea.addParser(parser);
        pasteAction.isEnabled();
     }
 
+    final org.nidal.latex.glossarytool.WordSearcher searcher = new org.nidal.latex.glossarytool.WordSearcher(textArea);
+   // final WordSearcher searcher = new WordSearcher(textArea);
+    private void glossarysearchToolMenuActionPerformed(java.awt.event.ActionEvent evt) {
+       // word = tf.getText().trim();
+         word = "sui" ;
+        int offset = searcher.search(word);
+        if (offset != -1) {
+          try {
+            textArea.scrollRectToVisible(textArea.modelToView(offset));
+          } catch (BadLocationException e) {
+          }
+        }
+      
 
+
+
+
+
+
+//          //highlight stuff working.
+//              String text = "hello what How are you?";
+//         Highlighter highlighter = textArea.getHighlighter();
+//      HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.green);
+//      int p0 = text.indexOf("what");
+//      int p1 = p0 + "what".length();
+//     try {
+//         highlighter.addHighlight(p0, p1, painter );
+//         } catch (BadLocationException ex) {
+//         Logger.getLogger(GlossaryTool.class.getName()).log(Level.SEVERE, null, ex);
+//     }
+    }
+    
+    
+    
     private void formWindowClosing(java.awt.event.WindowEvent evt) {
         // TODO add your handling code here:
         //  if ("".equals(textArea1.getText())) {
@@ -1707,5 +1825,329 @@ textArea.addParser(parser);
 //
 //} 
 
+    
+    
+    
+    
+    //to search across the map and highlight
+// public class TestPane extends JPanel {
+//
+//        private JTextField findText;
+//        private JButton search;
+//        private DefaultListModel<String> model;
+//        private JList list;
+//
+//        private String searchPhrase;
+//
+//        public TestPane() {
+////            setLayout(new BorderLayout());
+////            JPanel searchPane = new JPanel(new GridBagLayout());
+////            GridBagConstraints gbc = new GridBagConstraints();
+////            gbc.gridx = 0;
+////            gbc.gridy = 0;
+////            gbc.insets = new Insets(2, 2, 2, 2);
+////            searchPane.add(new JLabel("Find: "), gbc);
+////            gbc.gridx++;
+////            gbc.fill = GridBagConstraints.HORIZONTAL;
+////            gbc.weightx = 1;
+////            findText = new JTextField(20);
+////            searchPane.add(findText, gbc);
+////
+////            gbc.gridx++;
+////            gbc.fill = GridBagConstraints.NONE;
+////            gbc.weightx = 0;
+////            search = new JButton("Search");
+////            searchPane.add(search, gbc);
+////
+////            add(searchPane, BorderLayout.NORTH);
+//
+//            model = new DefaultListModel<>();
+//            list = new JList(model);
+//            list.setCellRenderer(new HighlightListCellRenderer());
+//            add(new JScrollPane(list));
+//
+//            ActionHandler handler = new ActionHandler();
+//
+//            search.addActionListener(handler);
+//            findText.addActionListener(handler);
+//
+//            try (BufferedReader reader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("sampletextfile.txt")))) {
+//                
+//
+//                String text = null;
+//                while ((text = reader.readLine()) != null) {
+//                    model.addElement(text);
+//                }
+//
+//            } catch (IOException exp) {
+//
+//                exp.printStackTrace();
+//
+//            }
+//        }
+//
+//        public class ActionHandler implements ActionListener {
+//
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                searchPhrase = findText.getText();
+//                if (searchPhrase != null && searchPhrase.trim().length() == 0) {
+//                    searchPhrase = null;
+//                }
+//               // list.repaint();
+//               textArea.repaint();
+////              model.removeAllElements();
+//////                    BufferedReader reader = null;
+////
+////              String searchText = findText.getText();
+////              try (BufferedReader reader = new BufferedReader(new FileReader(new File("bible.txt")))) {
+////
+////                  String text = null;
+////                  while ((text = reader.readLine()) != null) {
+////
+////                      if (text.contains(searchText)) {
+////
+////                          model.addElement(text);
+////
+////                      }
+////
+////                  }
+////
+////              } catch (IOException exp) {
+////
+////                  exp.printStackTrace();
+////                  JOptionPane.showMessageDialog(TestPane.this, "Something Went Wrong", "Error", JOptionPane.ERROR_MESSAGE);
+////
+////              }
+//            }
+//        }
+//
+//        public class HighlightListCellRenderer extends DefaultListCellRenderer {
+//
+//            public final String WITH_DELIMITER = "((?<=%1$s)|(?=%1$s))";
+//
+//            @Override
+//            public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+//                if (value instanceof String && searchPhrase != null) {
+//                    String text = (String) value;
+//                    if (text.contains(searchPhrase)) {
+//                        text = text.replace(" ", "&nbsp;");
+//                        value = "<html>" + text.replace(searchPhrase, "<font color=#ffff00>" + searchPhrase + "</font>") + "</html>";
+//                    }
+//                }
+//                return super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus); //To change body of generated methods, choose Tools | Templates.
+//            }
+//
+//        }
+//    }
+    
+   
+    //another function. 
+    
+//    public static void highlight(RSyntaxTextArea textArea, String textToHighlight,HighlightPainter painter) {
+//    String text = textArea.getText();
+//    Highlighter highlighter = textArea.getHighlighter();
+//    highlighter.removeAllHighlights();
+//
+//    if (!textToHighlight.isEmpty()) {
+//      Matcher m = compileWildcard(textToHighlight).matcher(text);
+//    //  String m = "for" ;
+//      while (m.find()) {
+//        try {
+//          highlighter.addHighlight(m.start(), m.end(), painter);
+//        } catch (BadLocationException e) {
+//          throw new IllegalStateException(e); /* cannot happen */
+//        }
+//        textArea.setCaretPosition(m.end());
+//      }
+//    }
+//  }
+//
+//  public static Pattern compileWildcard(String wildcard) {
+//    StringBuilder sb = new StringBuilder("\\b"); /* word boundary */
+//    /* the following replaceAll is just for performance */
+//    for (char c : wildcard.replaceAll("\\*+", "*").toCharArray()) {
+//      if (c == '*') {
+//        sb.append("\\S*"); /*- arbitrary non-space characters */
+//      } else {
+//        sb.append(Pattern.quote(String.valueOf(c)));
+//      }
+//    }
+//    sb.append("\\b"); /* word boundary */
+//    return Pattern.compile(sb.toString());
+//  }
+  
+  
+    
+    
+    
 
+    
+    
+//another 
+   // http://www.java2s.com/Code/Java/Swing-JFC/JTextPaneHighlightExample.htm
+    
+   
+
+// A simple class that searches for a word in
+// a document and highlights occurrences of that word
+
+ class WordSearcher {
+    
+       //highlight 22
+  public String word;
+  
+ // WordSearcher wordsearcher = new WordSearcher(null);
+  public Highlighter highlighterh = new UnderlineHighlighter(null);
+  
+  protected JTextComponent comp;
+ // protected String comp;
+
+  protected Highlighter.HighlightPainter painter;
+ // WordSearcher wordsearcher ; //= new WordSearcher();
+  
+    
+  public WordSearcher(JTextComponent comp) {
+   // public WordSearcher(String comp) {
+   //wordsearcher = new WordSearcher();
+    this.comp = comp;
+  //  this.painter = new UnderlineHighlighter.UnderlineHighlightPainter(Color.red);
+  }
+
+  // Search for a word and return the offset of the
+  // first occurrence. Highlights are added for all
+  // occurrences found.
+  public int search(String word) {
+    int firstOffset = -1;
+    Highlighter highlighterh = comp.getHighlighter();
+
+    // Remove any existing highlights for last word
+    Highlighter.Highlight[] highlights = highlighterh.getHighlights();
+    for (int i = 0; i < highlights.length; i++) {
+      Highlighter.Highlight h = highlights[i];
+      if (h.getPainter() instanceof UnderlineHighlighter.UnderlineHighlightPainter) {
+        highlighterh.removeHighlight(h);
+      }
+    }
+
+    if (word == null || word.equals("")) {
+      return -1;
+    }
+
+    // Look for the word we are given - insensitive search
+    String content = null;
+    try {
+      Document d = comp.getDocument();
+      content = d.getText(0, d.getLength()).toLowerCase();
+    } catch (BadLocationException e) {
+      // Cannot happen
+      return -1;
+    }
+
+    word = word.toLowerCase();
+    int lastIndex = 0;
+    int wordSize = word.length();
+
+    while ((lastIndex = content.indexOf(word, lastIndex)) != -1) {
+      int endIndex = lastIndex + wordSize;
+      try {
+        highlighterh.addHighlight(lastIndex, endIndex, painter);
+      } catch (BadLocationException e) {
+        // Nothing to do
+      }
+      if (firstOffset == -1) {
+        firstOffset = lastIndex;
+      }
+      lastIndex = endIndex;
+    }
+
+    return firstOffset;
+  }
+
+  
+
+}
+
+  class UnderlineHighlighter extends DefaultHighlighter {
+      // Shared painter used for default highlighting
+  protected final Highlighter.HighlightPainter sharedPainter = new UnderlineHighlightPainter(null);
+
+  // Painter used for this highlighter
+  protected Highlighter.HighlightPainter painter;
+    protected Color color; // The color for the underline
+    
+  public UnderlineHighlighter(Color c) {
+    painter = (c == null ? sharedPainter : new UnderlineHighlightPainter(c));
+  }
+
+  // Convenience method to add a highlight with
+  // the default painter.
+  public Object addHighlight(int p0, int p1) throws BadLocationException {
+    return addHighlight(p0, p1, painter);
+  }
+
+  public void setDrawsLayeredHighlights(boolean newValue) {
+    // Illegal if false - we only support layered highlights
+    if (newValue == false) {
+      throw new IllegalArgumentException(
+          "UnderlineHighlighter only draws layered highlights");
+    }
+    super.setDrawsLayeredHighlights(true);
+  }
+
+  // Painter for underlined highlights
+  public class UnderlineHighlightPainter extends LayeredHighlighter.LayerPainter {
+    public UnderlineHighlightPainter(Color c) {
+      color = c;
+    }
+
+    public void paint(Graphics g, int offs0, int offs1, Shape bounds,
+        JTextComponent c) {
+      // Do nothing: this method will never be called
+    }
+
+    public Shape paintLayer(Graphics g, int offs0, int offs1, Shape bounds,
+        JTextComponent c, View view) {
+      g.setColor(color == null ? c.getSelectionColor() : color);
+
+      Rectangle alloc = null;
+      if (offs0 == view.getStartOffset() && offs1 == view.getEndOffset()) {
+        if (bounds instanceof Rectangle) {
+          alloc = (Rectangle) bounds;
+        } else {
+          alloc = bounds.getBounds();
+        }
+      } else {
+        try {
+          Shape shape = view.modelToView(offs0,
+              Position.Bias.Forward, offs1,
+              Position.Bias.Backward, bounds);
+          alloc = (shape instanceof Rectangle) ? (Rectangle) shape
+              : shape.getBounds();
+        } catch (BadLocationException e) {
+          return null;
+        }
+      }
+
+      FontMetrics fm = c.getFontMetrics(c.getFont());
+      int baseline = alloc.y + alloc.height - fm.getDescent() + 1;
+      g.drawLine(alloc.x, baseline, alloc.x + alloc.width, baseline);
+      g.drawLine(alloc.x, baseline + 1, alloc.x + alloc.width,
+          baseline + 1);
+
+      return alloc;
+    }
+
+  
+  }
+
+
+}    
+  
+  
+  
+  
+  
+  
+  
 }
