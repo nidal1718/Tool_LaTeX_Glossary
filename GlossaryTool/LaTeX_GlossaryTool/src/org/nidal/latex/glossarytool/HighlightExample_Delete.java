@@ -50,7 +50,9 @@ public class HighlightExample_Delete {
   
     JFrame f = new JFrame("Highlight example");
     final JTextPane textPane = new JTextPane();
+//final RSyntaxTextArea textPane = new RSyntaxTextArea();
     textPane.setHighlighter(highlighter);
+ 
     JPanel pane = new JPanel();
     pane.setLayout(new BorderLayout());
     pane.add(new JLabel("Enter word: "), "West");

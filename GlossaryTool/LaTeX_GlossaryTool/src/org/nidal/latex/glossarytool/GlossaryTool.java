@@ -31,9 +31,12 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import static javax.swing.Action.ACCELERATOR_KEY;
@@ -61,7 +64,6 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultHighlighter;
-import javax.swing.text.DefaultHighlighter.DefaultHighlightPainter;
 import javax.swing.text.Document;
 import javax.swing.text.Highlighter;
 import javax.swing.text.JTextComponent;
@@ -139,13 +141,16 @@ public class GlossaryTool extends JFrame implements SearchListener{
      ReadGlossaryFile readGlossaryFile = new ReadGlossaryFile() ;
      //PopupSubclass popupsbcls = new PopupSubclass();
     // TagHighlighter taghighlighter = new TagHighlighter();
-    // GlossaryTool glossaryTool ;
+  //   GlossaryTool glossaryTool ;
      
-    Highlighter highlighter = new DefaultHighlighter();
-    final DefaultHighlightPainter painter = new DefaultHighlightPainter(Color.green);
-    final JTextField highlight = new JTextField("for");
+   // Highlighter highlighter = new DefaultHighlighter();
+   // final DefaultHighlightPainter painter = new DefaultHighlightPainter(Color.green);
+   // final JTextField highlight = new JTextField("for");
    // final String highlight = "for" ;
-//     textArea.setHighlighter(highlighter);
+     
+     
+     
+       
        
 
     final static boolean shouldFill = true;
@@ -217,6 +222,11 @@ public class GlossaryTool extends JFrame implements SearchListener{
     public static String word ;
     
     
+    //JTextcomponent from java
+   
+     JTextComponent jtc ; //= new JTextComponent();
+    
+    
       private JMenuItem search_and_highlight_Tool = new JMenuItem(); // a searchandhighlighttool menu option
     int ctrl = getToolkit().getMenuShortcutKeyMask();
     int shift = InputEvent.SHIFT_MASK;
@@ -227,6 +237,9 @@ public class GlossaryTool extends JFrame implements SearchListener{
     private JMenuItem about = new JMenuItem(); // about option!
     File zip = new File("english_dic.zip");
     boolean usEnglish = true; // "false" will use British English
+    
+      public Highlighter highlighterh = new org.nidal.latex.glossarytool.UnderlineHighlighter(null);
+    
 
 
     public GlossaryTool()  {
@@ -254,7 +267,9 @@ public class GlossaryTool extends JFrame implements SearchListener{
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
         textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_LATEX);
-
+        
+            
+ 
 
         
         
@@ -417,12 +432,13 @@ public class GlossaryTool extends JFrame implements SearchListener{
         edit.add(new JMenuItem(new ShowReplaceDialogAction()));
         
        
-        
-        
+       
+       
         final WordSearcher searcher = new WordSearcher(textArea);
+      
         // and searchTool 
         this.search_and_highlight_Tool.setLabel("Search & Highlight Word");
-        this.search_and_highlight_Tool.addActionListener(new java.awt.event.ActionListener() {
+        search_and_highlight_Tool.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 glossarysearchToolMenuActionPerformed(evt);
             }
@@ -433,8 +449,11 @@ public class GlossaryTool extends JFrame implements SearchListener{
         
         
         
+   
+        
         //from website highlight 22
         textArea.getDocument().addDocumentListener(new DocumentListener() {
+            
       public void insertUpdate(DocumentEvent evt) {
         searcher.search(word);
       }
@@ -828,17 +847,31 @@ textArea.addParser(parser);
     }
 
     final org.nidal.latex.glossarytool.WordSearcher searcher = new org.nidal.latex.glossarytool.WordSearcher(textArea);
-   // final WordSearcher searcher = new WordSearcher(textArea);
+    //final WordSearcher wds = new WordSearcher(textArea);
     private void glossarysearchToolMenuActionPerformed(java.awt.event.ActionEvent evt) {
-       // word = tf.getText().trim();
-         word = "sui" ;
+      //  word = tf.getText().trim();
+      
+   // FlatMap fm = new FlatMap(gMap);
+     GlossaryTool glossaryTool = new GlossaryTool(gMap);
+    
+   // FlatMap.flatten(fm)
+  // fm.
+      //fm.FlatMap(gMap);
+      
+        word = "sui" ;
+     //  WordSearcher wds ;
+          
         int offset = searcher.search(word);
+        //   textArea.setHighlighter1(highlighterh);
+//        textArea.setHighlighter1(highlighterh);
         if (offset != -1) {
           try {
             textArea.scrollRectToVisible(textArea.modelToView(offset));
           } catch (BadLocationException e) {
           }
         }
+        
+       // System.out.println(gMap);
       
 
 
@@ -857,7 +890,14 @@ textArea.addParser(parser);
 //         } catch (BadLocationException ex) {
 //         Logger.getLogger(GlossaryTool.class.getName()).log(Level.SEVERE, null, ex);
 //     }
-    }
+    } 
+  
+    
+   
+       
+    
+       // wordSearcher.setHighlighter(highlighterh);
+    
     
     
     
@@ -1977,9 +2017,79 @@ textArea.addParser(parser);
 //    return Pattern.compile(sb.toString());
 //  }
   
-  
+
     
     
+//    /**
+//	 * Sets the highlighter used by this text area.
+//	 *
+//	 * @param h The highlighter.
+//	 * @throws IllegalArgumentException If <code>h</code> is not an instance
+//	 *         of {@link RSyntaxTextAreaHighlighter}.
+//	 */
+//	public void setHighlighter1(Highlighter h) {
+//            
+//           
+//
+//		// Ugh, many RSTA methods assume a non-null highlighter.  This is kind
+//		// of icky, but most applications never *don't* want a highlighter.
+//		// See #189 - BasicTextUI clears highlighter by setting it to null there
+//		if (h == null) {
+//			h = new RSyntaxTextAreaHighlighter();
+//		}
+//
+//		if (!(h instanceof RSyntaxTextAreaHighlighter)) {
+//			throw new IllegalArgumentException("RSyntaxTextArea requires " +
+//				"an RSyntaxTextAreaHighlighter for its Highlighter");
+//		}
+//		jtc.setHighlighter(h);
+//                
+//                
+//	}
+        
+        
+// public abstract class JTextComponent1 extends JComponent implements Scrollable, Accessible
+  //public abstract class JTextComponent1 extends JTextComponent   
+//{
+        
+          /**
+     * Sets the highlighter to be used.  By default this will be set
+     * by the UI that gets installed.  This can be changed to
+     * a custom highlighter if desired.  The highlighter can be set to
+     * <code>null</code> to disable it.
+     * A PropertyChange event ("highlighter") is fired
+     * when a new highlighter is installed.
+     *
+     * @param h the highlighter
+     * @see #getHighlighter
+     * @beaninfo
+     *  description: object responsible for background highlights
+     *        bound: true
+     *       expert: true
+     */
+      
+      
+      
+      
+      
+      
+//         @Override
+//    public void setHighlighter(Highlighter h) {
+//        if (highlighter != null) {
+//            highlighter.deinstall(this);
+//        }
+//        Highlighter old = highlighter;
+//        highlighter = h;
+//        if (highlighter != null) {
+//            highlighter.install(this);
+//        }
+//        firePropertyChange("highlighter", old, h);
+//    }
+//    
+//        } 
+    
+    
+  //}
     
 
     
@@ -1995,10 +2105,14 @@ textArea.addParser(parser);
  class WordSearcher {
     
        //highlight 22
-  public String word;
+  //public String word;
+  
   
  // WordSearcher wordsearcher = new WordSearcher(null);
-  public Highlighter highlighterh = new UnderlineHighlighter(null);
+//  public Highlighter highlighterh = new org.nidal.latex.glossarytool.UnderlineHighlighter(null);
+//  textArea.setHighlighter(highlighterh);
+ 
+  
   
   protected JTextComponent comp;
  // protected String comp;
@@ -2016,7 +2130,10 @@ textArea.addParser(parser);
     
 //    this.painter = new UnderlineHighlighter.UnderlineHighlightPainter(Color.red);
      this.painter = new org.nidal.latex.glossarytool.UnderlineHighlighter.UnderlineHighlightPainter(Color.red);
+     //highlighterh = new org.nidal.latex.glossarytool.UnderlineHighlighter(null);
   }
+  
+  
 
   // Search for a word and return the offset of the
   // first occurrence. Highlights are added for all
@@ -2068,13 +2185,15 @@ textArea.addParser(parser);
     return firstOffset;
   }
 
+ 
+  
   
 
 }
 
   class UnderlineHighlighter extends DefaultHighlighter {
       // Shared painter used for default highlighting
-  protected final Highlighter.HighlightPainter sharedPainter = new UnderlineHighlightPainter(null);
+  protected final HighlightPainter sharedPainter = new UnderlineHighlightPainter(null);
 
   // Painter used for this highlighter
   protected Highlighter.HighlightPainter painter;
@@ -2144,8 +2263,33 @@ textArea.addParser(parser);
 
   
   }
+  }
 
+  
+  
+  public static Stream<Object> flatten(Object o) {
+        if (o instanceof Map<?, ?>) {
+            return ((Map<?, ?>) o).values().stream().flatMap(GlossaryTool::flatten);
+        }
+        return Stream.of(o);
+    }
+  
+    public GlossaryTool(Map<String, Map> gMap1) {
+        List<Object> collect = gMap1.values().stream().flatMap(GlossaryTool::flatten).collect(Collectors.toList());
+        
+        storemap(collect);
+        // or
+//        List<Object> collect2 = flatten(map0).collect(Collectors.toList());
+//        System.out.println(collect);
+
+    }
+    
+     public static void storemap(List<Object> collect1) 
+     {
+             System.out.println(collect1);
+     }
+  
 
 }     
   
-}
+  
