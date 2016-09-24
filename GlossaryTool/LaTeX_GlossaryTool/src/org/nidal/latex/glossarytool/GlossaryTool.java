@@ -2004,6 +2004,8 @@ textArea.addParser(parser);
  // protected String comp;
 
   protected Highlighter.HighlightPainter painter;
+  
+
  // WordSearcher wordsearcher ; //= new WordSearcher();
   
     
@@ -2011,7 +2013,9 @@ textArea.addParser(parser);
    // public WordSearcher(String comp) {
    //wordsearcher = new WordSearcher();
     this.comp = comp;
-  //  this.painter = new UnderlineHighlighter.UnderlineHighlightPainter(Color.red);
+    
+//    this.painter = new UnderlineHighlighter.UnderlineHighlightPainter(Color.red);
+     this.painter = new org.nidal.latex.glossarytool.UnderlineHighlighter.UnderlineHighlightPainter(Color.red);
   }
 
   // Search for a word and return the offset of the
@@ -2142,12 +2146,6 @@ textArea.addParser(parser);
   }
 
 
-}    
-  
-  
-  
-  
-  
-  
+}     
   
 }
