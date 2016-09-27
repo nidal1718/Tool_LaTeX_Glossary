@@ -114,6 +114,7 @@ public class GlossaryTool extends JFrame implements SearchListener{
 	private static RecordableTextAction redoAction;
 	private static RecordableTextAction selectAllAction;
 
+         Intelligence intelligence  = new Intelligence() ;
 
 
 
@@ -1224,13 +1225,15 @@ textArea.addParser(parser);
       //  d1.setLayout(new FlowLayout());
 
 //    current_y += 30;
-    JLabel tag_label = new JLabel("Tag");
+ JLabel selectedword_label = new JLabel("Selected Word");  
+JTextField selectedword_tf = new JTextField(textArea.getSelectedText()); 
+selectedword_tf.setEditable(false);
 
+JLabel tag_label = new JLabel("Tag");
 
-
-   JTextField tag_tf = new JTextField(textArea.getSelectedText());
+   JTextField tag_tf = new JTextField("");
    tag_label.setLabelFor(tag_tf);
-   tag_tf.setEditable(false);
+   
 
      JLabel name_label = new JLabel("Name");
 //
@@ -1260,6 +1263,8 @@ textArea.addParser(parser);
           //   desc_label.setLabelFor(desc_Area);
 
 
+           dpan.add(selectedword_label);
+     dpan.add(selectedword_tf);
        dpan.add(tag_label);
      dpan.add(tag_tf);
      dpan.add(name_label);
@@ -1394,7 +1399,8 @@ textArea.addParser(parser);
 
          //       saveGlossary_new_entry();
 
-        addglsprefix();
+      //  addglsprefix(); 
+                intelligence.checkavailabilityin_Map(textArea.getSelectedText());
         readGlossaryFile.addtoArrayListFromDialogSave(tag_gls);
                   d1.dispose();
 
