@@ -31,9 +31,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import static java.util.Spliterators.iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -72,7 +74,6 @@ import javax.swing.text.LayeredHighlighter;
 import javax.swing.text.Position;
 import javax.swing.text.TextAction;
 import javax.swing.text.View;
-import static jdk.nashorn.internal.objects.NativeArray.map;
 import org.fife.rsta.ui.CollapsibleSectionPanel;
 import org.fife.rsta.ui.SizeGripIcon;
 import org.fife.rsta.ui.search.FindDialog;
@@ -164,6 +165,7 @@ public class GlossaryTool extends JFrame implements SearchListener{
     // private Map<String,GlossaryEntryClass> fieldsMap;
     private Map<String,GlossaryEntryClass1> fieldsMap;
     private Map<String, Map> gMap ;
+     private Map<String, String> fields ;
     private Map<String, String> repeatTags ;
     
 
@@ -264,6 +266,7 @@ public class GlossaryTool extends JFrame implements SearchListener{
 //         gmap = new HashMap<String, Map>();
     gMap = new HashMap<>();
         repeatTags = new HashMap<>();
+       // fields = new HashMap<>();
 
         csp = new CollapsibleSectionPanel();
         cp.add(csp);
@@ -534,19 +537,7 @@ this.tools.add(this.add_gls);
 
 //   popupsbcls.createToolsPopupMenuActions();
 
-
-
-
-
-
-
-            popup.addSeparator();
-            popup.add(new JMenuItem(new addglsGlossariecePopup())); //#1
-              popup.add(new JMenuItem(new addglsplGlossariecePopup())); //#2
-                popup.add(new JMenuItem(new addGlosGlossariecePopup())); //#3
-                  popup.add(new JMenuItem(new addGlosplGlossariecePopup())); //#4
-             popup.add(new JMenuItem(new addglssymbolGlossariecePopup())); //#5
-               popup.addSeparator();
+             popup.addSeparator();
               popup.add(new JMenuItem(new glossariseTheWordPopup())); //#6 
 
 
@@ -1350,7 +1341,11 @@ textArea.addParser(parser);
               // gmap.put(tag_gls, fields);
                //Map<String, GlossaryEntryClass>
 
-               fieldsMap.put(tag_gls, new GlossaryEntryClass1(tag_gls,name_gls,symbol_gls,plural_gls,desc_gls));
+//               fieldsMap.put(tag_gls, new GlossaryEntryClass1(tag_gls,name_gls,symbol_gls,plural_gls,desc_gls));
+
+
+                        
+              GlossaryEntryClass1  glossaryentryclass1 = new GlossaryEntryClass1(tag_gls.toLowerCase(),name_gls,symbol_gls,plural_gls,desc_gls);
           //    gMap.put(tag_gls, new GlossaryEntryClass1(tag_gls,name_gls,symbol_gls,plural_gls,desc_gls));
           
          //   gmap.put(tag_gls, GlossaryEntryClass);
@@ -1359,7 +1354,7 @@ textArea.addParser(parser);
           // System.out.println(GlossaryEntryClass1.this.get("Some Key"));
                  
                 //System.out.println(gMap);
-                         System.out.println(fieldsMap);
+                         System.out.println(gMap);
                        //  hjh
                  
                  
@@ -1483,7 +1478,7 @@ textArea.addParser(parser);
      public class GlossaryEntryClass1 extends HashMap<String,String> {
 
       private String tag ;
-      private Map<String,String> fields = new HashMap<String, String>() ;
+      //private Map<String,String> fields = new HashMap<String, String>() ;
       String tag_gls;
       String name_gls;
       String symbol_gls;
@@ -1493,7 +1488,7 @@ textArea.addParser(parser);
 
 
      public GlossaryEntryClass1(String tag_gls2,String name_gls2, String symbol_gls2, String plural_gls2, String desc_gls2){
-
+         fields = new HashMap<String, String>() ;
          tag_gls = tag_gls2;
          name_gls = name_gls2;
          symbol_gls = symbol_gls2;
@@ -1501,11 +1496,19 @@ textArea.addParser(parser);
          desc_gls = desc_gls2;
 
         //  fields.put(symbol_gls2, plural_gls2);
-         this.put("Tag", tag_gls2);
-         this.put("Name", name_gls2);
-         this.put("Symbol", symbol_gls2);
-         this.put("Plural", plural_gls2);
-         this.put("Desciption", desc_gls2);
+         fields.put("Tag", tag_gls2); 
+         fields.put("Name", name_gls2);
+         fields.put("Symbol", symbol_gls2);
+         fields.put("Plural", plural_gls2);
+         fields.put("Desciption", desc_gls2);
+         
+         gMap.put(tag_gls2, fields) ; 
+         
+//        this.put("Tag", tag_gls2);
+//         this.put("Name", name_gls2);
+//         this.put("Symbol", symbol_gls2);
+//         this.put("Plural", plural_gls2);
+//         this.put("Desciption", desc_gls2);
 
     }
 
@@ -1583,125 +1586,47 @@ textArea.addParser(parser);
     
 
 
-      // for glossaries popup. #1 glossaries
-    private class addglsGlossariecePopup extends TextAction {
-
-        public addglsGlossariecePopup() {
-
-
-           super("\\gls{ }");
-        }
-
-        public void actionPerformed(ActionEvent e) {
-       
-        addglsGlossariecePopup_Method();
-        }
-
-    }
-    
-    public String addglsGlossariecePopup_Method(){
- String text_selected = textArea.getSelectedText();
-         String text_replacement = "\\gls{" + text_selected + "}" ;
+  // for glossaries popup. #1 glossary
+    public String addglsGlossariecePopup_Method(String tag){
+ //String text_selected = textArea.getSelectedText();
+         String text_replacement = "\\gls{" + tag + "}" ;
         textArea.replaceSelection(text_replacement);
         textChanged = true;
         return text_replacement ;
 }
 
-      // for glossaries popup. #2 glossaries
-    private class addglsplGlossariecePopup extends TextAction {
 
-        public addglsplGlossariecePopup() {
-
-
-           super("\\glspl{ }");
-        }
-
-        public void actionPerformed(ActionEvent e) {
-       addglsplGlossariecePopup_Method();
-
-
-        }
-
-    }
-    
-      public String addglsplGlossariecePopup_Method(){
-   String text_selected = textArea.getSelectedText();
-          String text_replacement = "\\glspl{" + text_selected + "}" ;
+     // for glossaries popup. #2 glossaries plural glspl
+      public String addglsplGlossariecePopup_Method(String tag){
+   //String text_selected = textArea.getSelectedText();
+          String text_replacement = "\\glspl{" + tag + "}" ;
         textArea.replaceSelection(text_replacement);
         textChanged = true;
          return text_replacement ;
 }
 
-      // for glossaries popup. #3 glossaries
-    private class addGlosGlossariecePopup extends TextAction {
-
-        public addGlosGlossariecePopup() {
-
-
-           super("\\Gls{ }");
-        }
-
-        public void actionPerformed(ActionEvent e) {
-       addGlosGlossariecePopup_Method();
-
-
-        }
-
-    }
-    
-     public String addGlosGlossariecePopup_Method(){
-        String text_selected = textArea.getSelectedText();
-      String text_replacement = "\\Gls{" + text_selected + "}" ;
+      // for glossaries popup. #3 Glossaries Gls
+         public String addGlosGlossariecePopup_Method(String tag){
+       // String text_selected = textArea.getSelectedText();
+      String text_replacement = "\\Gls{" + tag + "}" ;
         textArea.replaceSelection(text_replacement);
         textChanged = true;
          return text_replacement ;
 }
 
-      // for glossaries popup. #4 glossaries
-    private class addGlosplGlossariecePopup extends TextAction {
-
-        public addGlosplGlossariecePopup() {
-
-
-           super("\\Glspl{ }");
-        }
-
-        public void actionPerformed(ActionEvent e) {
-      addGlosplGlossariecePopup_Method();
-
-
-        }
-
-    }
-    
-       public String addGlosplGlossariecePopup_Method(){
-        String text_selected = textArea.getSelectedText();
-              String text_replacement = "\\Glspl{" + text_selected + "}" ;
+      // for glossaries popup. #4 Glossary plural
+           public String addGlosplGlossariecePopup_Method(String tag){
+        //String text_selected = textArea.getSelectedText();
+              String text_replacement = "\\Glspl{" + tag + "}" ;
         textArea.replaceSelection(text_replacement);
         textChanged = true;
          return text_replacement ;
 }
 
-      // for glossaries popup. #5 glossaries
-    private class addglssymbolGlossariecePopup extends TextAction {
-
-        public addglssymbolGlossariecePopup() {
-
-
-           super("\\glssymbol{ }");
-        }
-
-        public void actionPerformed(ActionEvent e) {
-        addglssymbolGlossariecePopup_Method ();
-
-
-        }
-
-    }
-    
-      public String addglssymbolGlossariecePopup_Method(){
-        String text_selected = textArea.getSelectedText();
-       String text_replacement = "\\glssymbol{" + text_selected + "}" ;
+      // for glossaries popup. #5 glossaries symbol   
+      public String addglssymbolGlossariecePopup_Method(String tag){
+     //   String text_selected = textArea.getSelectedText();
+       String text_replacement = "\\glssymbol{" + tag + "}" ;
         textArea.replaceSelection(text_replacement);
         textChanged = true;
          return text_replacement ;
@@ -2336,77 +2261,108 @@ textArea.addParser(parser);
     
       private void glossariseTheWord(){
         String text_replacement ;  
+        String tag = null ;
+        
+        //Iterator<Map.Entry<String, Map>> iterator = gMap.entrySet().iterator();
         String text_selected = textArea.getSelectedText();
         
         boolean blnExists = repeatTags.containsKey(text_selected);
+         //tag = checkifPlural(text_selected) ;
+         
+         checkavailabilityin_Map(text_selected);
        
-        if(blnExists)
-        { // System.out.println("exists") ;
-            String repeatTags_value = repeatTags.get(text_selected);
-       textArea.replaceSelection(repeatTags_value);
-       System.out.println("found in tags"+repeatTags);
-        
-        }
-        else         
-        { if(Character.isUpperCase(text_selected.charAt(0))==true)
-        {    text_replacement=addglsGlossariecePopup_Method();
-            
-                  //  flag = 1 ;
-                    repeattags_add(text_selected,text_replacement);
-                    System.out.println("found not GLS");
-        }
-        
-        else 
-        {  text_replacement=addglsGlossariecePopup_Method();
-                repeattags_add(text_selected,text_replacement);
-                System.out.println("found not gls");
-        //  flag = 2 ;
-        }
-      }
+//        if(blnExists)
+//        { // System.out.println("exists") ;
+//            String repeatTags_value = repeatTags.get(text_selected);
+//       textArea.replaceSelection(repeatTags_value);
+//       System.out.println("found in tags"+repeatTags);
+//        
+//        }
+//        
+//        else if(tag!=null) { 
+//          if(Character.isUpperCase(text_selected.charAt(0))==true)
+//          {text_replacement=addGlosplGlossariecePopup_Method(tag); 
+//            
+//                    repeattags_add(text_selected,text_replacement);
+//                    System.out.println("GLS plural");}
+//          else 
+//                {text_replacement=addglsplGlossariecePopup_Method(tag);
+//           
+//                    repeattags_add(text_selected,text_replacement);
+//                    System.out.println("gls plural");}
+//        }
+//        else         
+//        { if(Character.isUpperCase(text_selected.charAt(0))==true)
+//        {    text_replacement=addglsGlossariecePopup_Method();
+//            
+//                  //  flag = 1 ;
+//                    repeattags_add(text_selected,text_replacement);
+//                    System.out.println("found not GLS");
+//        }
+//        
+//        else 
+//        {  text_replacement=addglsGlossariecePopup_Method();
+//                repeattags_add(text_selected,text_replacement);
+//                System.out.println("found not gls");
+//        //  flag = 2 ;
+//        }
+//      }
         //textArea.replaceSelection(text_replacement);
         textChanged = true;
         
         
-      //to looop through the map.
-      Set keys = gMap.keySet();
-      String val = (String) ((HashMap)gMap.get(0).get("sett")).get("Plural");
-System.out.println("New All keys are: " + val);
-//// To get all key: value
-//for(Object key: keys){
-//    System.out.println(key + ": " + repeatTags.get(key));
-//}
-        
-    }
+ 
       
+      }
+      
+      public Boolean capitalornot (String text_selected)
+      { Boolean capitalcheck ;
+          if(Character.isUpperCase(text_selected.charAt(0))==true)
+                capitalcheck = true ;
+          else 
+            capitalcheck = false ;
+          
+          return capitalcheck ;
+      }
+      
+      
+      public String checkavailabilityin_Map(String text_selected){
+          String tag = null ;
+          String text_replacement ;
+          Boolean capitalcheck= capitalornot(text_selected);
+          Iterator<Map.Entry<String, Map>> iterator = gMap.entrySet().iterator();
+           while(iterator.hasNext()){
+            Map.Entry<String, Map> entry = iterator.next();
+            
+            if(text_selected.toLowerCase().equals(entry.getValue().get("Tag")))
+            { tag = (String) entry.getValue().get("Tag");
+                if(capitalcheck)
+                text_replacement=addGlosGlossariecePopup_Method(tag);    
+            else   
+                text_replacement=addglsGlossariecePopup_Method(tag);
+                
+                break ; }
+            
+            else if(text_selected.toLowerCase().equals(entry.getValue().get("Plural")))
+            { tag = (String) entry.getValue().get("Tag");
+                if(capitalcheck)
+                    text_replacement=addGlosplGlossariecePopup_Method(tag); 
+                else 
+                    text_replacement=addglsplGlossariecePopup_Method(tag);  
+                break ;}
+            
+            else if(text_selected.equals(entry.getValue().get("Symbol"))) 
+            { tag = (String) entry.getValue().get("Tag");
+                text_replacement=addglssymbolGlossariecePopup_Method(tag);
+                break ; }
+         
+                //  iterator.remove(); // right way to remove entries from Map, // avoids ConcurrentModificationException
+        } 
+           
+           return tag ;
+      }
+     
 
-
-
-//Read more: http://www.java67.com/2013/08/best-way-to-iterate-over-each-entry-in.html#ixzz4LMbUEbPY
-      
-//      for(Map.Entry<String, GlossaryEntryClass1<String,String> t:gMap.entrySet()) {
-//   System.out.println(t.getKey());
-//   for (Map.Entry<String,String> e : t.getValue().entrySet())
-//     System.out.println("KEY: " + e.getKey()+ " VALUE:" +e.getValue());
-//}
-      
-      
-//      //http://stackoverflow.com/questions/9337536/iterate-recursively-through-deep-hashmap
-//      public void Intelligence(HashMap map) {
-//          for (Iterator it = map.entrySet().iterator(); it.hasNext();) {
-//              Object entry = it.next();
-//              Intelligence(entry.getValue());
-//          }
-//      }
-//
-//      public void Intelligence(String value) {
-//          System.out.println("value = " + value);
-//      }
-//
-//      public void Intelligence(HashMap[] value) {
-//          for (int i = 0; i < array.length(); i++) {
-//              Intelligence(array[i]);
-//          }
-//      }
       
   }
   
