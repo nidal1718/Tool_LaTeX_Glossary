@@ -34,10 +34,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import static java.util.Spliterators.iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.swing.AbstractAction;
@@ -540,6 +539,9 @@ this.tools.add(this.add_gls);
 
              popup.addSeparator();
               popup.add(new JMenuItem(new glossariseTheWordPopup())); //#6 
+              
+            popup.addSeparator();
+            popup.add(new JMenuItem(new glossariseAllTheWordPopup()));
 
 
             popup.addSeparator();
@@ -1349,7 +1351,7 @@ JLabel tag_label = new JLabel("Tag");
 //               fieldsMap.put(tag_gls, new GlossaryEntryClass1(tag_gls,name_gls,symbol_gls,plural_gls,desc_gls));
 
 
-                        
+                     
               GlossaryEntryClass1  glossaryentryclass1 = new GlossaryEntryClass1(tag_gls.toLowerCase(),name_gls,symbol_gls,plural_gls,desc_gls);
           //    gMap.put(tag_gls, new GlossaryEntryClass1(tag_gls,name_gls,symbol_gls,plural_gls,desc_gls));
           
@@ -1400,7 +1402,8 @@ JLabel tag_label = new JLabel("Tag");
          //       saveGlossary_new_entry();
 
       //  addglsprefix(); 
-                intelligence.checkavailabilityin_Map(textArea.getSelectedText());
+             String replacement =   intelligence.checkavailabilityin_Map(textArea.getSelectedText());
+             intelligence.repeattags_add(textArea.getSelectedText(),replacement) ;
         readGlossaryFile.addtoArrayListFromDialogSave(tag_gls);
                   d1.dispose();
 
@@ -1650,6 +1653,23 @@ JLabel tag_label = new JLabel("Tag");
 
         public void actionPerformed(ActionEvent e) {
             intelligence.glossariseTheWord();
+
+
+        }
+
+    }
+    
+       // for glossaries popup. #6 glossaries
+    private class glossariseAllTheWordPopup extends TextAction {
+ Intelligence intelligence = new Intelligence();
+        public glossariseAllTheWordPopup() {
+
+
+           super("Glossarise all the instances of this word");
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            intelligence.glossariseAllTheWord();
 
 
         }
@@ -2260,6 +2280,39 @@ JLabel tag_label = new JLabel("Tag");
 
   }
   }
+  
+  //glossary replace all 
+  public final class ReplaceSubstring {
+  
+  /**
+  *  Simplest in Java 1.5, using the replace method, which 
+  *  takes CharSequence objects.
+  */
+  public String replace15(String aInput, String  aOldPattern, String aNewPattern){
+    return aInput.replace(aOldPattern, aNewPattern);
+  }
+
+ 
+  /** Example: update an ip address appearing in a link.  */
+  public  void main (String[] aArguments) {
+    String OLD_IP = "45.23.102.12";
+    //escape the  '.', a special character in regular expressions
+    String OLD_IP_REGEX = "45\\.23\\.102\\.12";
+    String NEW_IP = "99.104.106.95";
+    String LINK = "http://45.23.102.12:8080/index.html";
+    
+    //log("Old link : " + LINK);
+    
+    String newLink = replace15(LINK, OLD_IP, NEW_IP);
+  //  log("New link with Java 1.5 replace: " + newLink);
+
+  }
+  
+//  private void log(String aMessage){
+//    System.out.println(aMessage);
+//  }
+} 
+
 
 
   //Intelligence *starts here*
@@ -2284,35 +2337,131 @@ JLabel tag_label = new JLabel("Tag");
 //       System.out.println("found in tags"+repeatTags);
 //        
 //        }
+
+        //textArea.replaceSelection(text_replacement);
+        textChanged = true;
+        
+        
+ 
+      
+      }
+      
+   public String replaceOld(String aInput,String text_selected,final String aNewPattern)
+   {  //text_selected = textArea.getSelectedText();
+      //aInput = textArea.getText();
+     if ( text_selected.equals("") ) {
+        throw new IllegalArgumentException("Old pattern must have content.");
+     }
+
+     final StringBuffer result = new StringBuffer();
+     //startIdx and idxOld delimit various chunks of aInput; these
+     //chunks always end where aOldPattern begins
+     int startIdx = 0;
+     int idxOld = 0;
+     while ((idxOld = aInput.indexOf(text_selected, startIdx)) >= 0) {
+       //grab a part of aInput which does not include aOldPattern
+       result.append( aInput.substring(startIdx, idxOld) );
+       //add aNewPattern to take place of aOldPattern
+       result.append( aNewPattern );
+
+       //reset the startIdx to just after the current match, to see
+       //if there are any further matches
+       startIdx = idxOld + text_selected.length();
+     }
+     //the final chunk will go to the end of aInput
+     result.append( aInput.substring(startIdx) );
+     return result.toString();
+  }
+   
+   
+   
+   public String replaceAllglossary(String aInput, String  aOldPattern, String aNewPattern){
+    return aInput.replace(aOldPattern, aNewPattern);
+      }
+       
+   
+   private void glossariseAllTheWord(){
+        String text_replacement ;  
+        String tag = null ;
+        
+        //Iterator<Map.Entry<String, Map>> iterator = gMap.entrySet().iterator();
+        String text_selected = textArea.getSelectedText();
+        
+        
+        
+        //boolean blnExists = repeatTags.containsKey(text_selected);
+         //tag = checkifPlural(text_selected) ;
+         
+        // checkavailabilityin_Map(text_selected);
+       
+//        if(blnExists)
+//        { // System.out.println("exists") ;
+//            String repeatTags_value = repeatTags.get(text_selected);
+//       textArea.replaceSelection(repeatTags_value);
+//       System.out.println("found in tags"+repeatTags);
 //        
-//        else if(tag!=null) { 
-//          if(Character.isUpperCase(text_selected.charAt(0))==true)
-//          {text_replacement=addGlosplGlossariecePopup_Method(tag); 
-//            
-//                    repeattags_add(text_selected,text_replacement);
-//                    System.out.println("GLS plural");}
-//          else 
-//                {text_replacement=addglsplGlossariecePopup_Method(tag);
-//           
-//                    repeattags_add(text_selected,text_replacement);
-//                    System.out.println("gls plural");}
 //        }
-//        else         
-//        { if(Character.isUpperCase(text_selected.charAt(0))==true)
-//        {    text_replacement=addglsGlossariecePopup_Method();
-//            
-//                  //  flag = 1 ;
-//                    repeattags_add(text_selected,text_replacement);
-//                    System.out.println("found not GLS");
+
+// String OLD_IP = "45.23.102.12";
+//    //escape the  '.', a special character in regular expressions
+//    String OLD_IP_REGEX = "45\\.23\\.102\\.12";
+//    String NEW_IP = "99.104.106.95";
+//    String LINK = "http://45.23.102.12:8080/index.html";
+//    
+//    //log("Old link : " + LINK);
+//    
+//    String newLink = replaceAllglossary(textArea.getText(), text_selected, NEW_IP);
+ 
+
+    //replaceOld(textArea.getText(), text_selected, "test");   
+    
+//    String to = "coco";
+//        int start = textArea.getText().indexOf(text_selected);
+//        if (start >= 0 && text_selected.length() > 0)
+//          textArea.replaceRange(checkavailabilityin_Map(text_selected), start, start + text_selected.length());
+         //String replace = text_selected;
+      
+      //   Pattern pattern10 = Pattern.compile("\\"+text_selected+"\\b");
+     
+	if(repeatTags.containsKey(text_selected)==true)
+//        textArea.setText(textArea.getText().replaceAll("(\\b"+text_selected+"\\b)", repeatTags.get(text_selected)));
+               textArea.setText(textArea.getText().replaceAll( "(?<!\\S)"+text_selected+"(?!\\S)", repeatTags.get(text_selected)));
+     
+ 
+    
+
+//
+//        Document doc1 = textArea.getDocument();
+//      //  Document doc2 = area.getDocument();
+//
+//        int length = doc1.getLength();
+//        int startPos = 0;
+//        try {
+//            for (int pos = 0; pos < length; pos++) {
+//System.out.print(doc1.getText(pos, 1)) ;
+//                //checkavailabilityin_Map(doc1.getText(pos, 1));
+//                
+////                if (doc1.getText(pos, 1).equals(" ")) {
+////
+//                 //  int endPos = pos;
+////                    String parent = doc1.getText(startPos, endPos - startPos);
+////                    String child = doc2.getText(startPos, endPos - startPos);
+////                    if (!parent.equals(child)) {
+////
+////                        highlight(field, startPos, endPos);
+////                        highlight(area, startPos, endPos);
+////
+////                    }
+////
+//                //   startPos = endPos + 1;
+////
+////                }
+//
+//            }
+//        } catch (BadLocationException exp) {
+//            exp.printStackTrace();
 //        }
-//        
-//        else 
-//        {  text_replacement=addglsGlossariecePopup_Method();
-//                repeattags_add(text_selected,text_replacement);
-//                System.out.println("found not gls");
-//        //  flag = 2 ;
-//        }
-//      }
+
         //textArea.replaceSelection(text_replacement);
         textChanged = true;
         
@@ -2334,7 +2483,7 @@ JLabel tag_label = new JLabel("Tag");
       
       public String checkavailabilityin_Map(String text_selected){
           String tag = null ;
-          String text_replacement ;
+          String text_replacement = null ;
           Boolean capitalcheck= capitalornot(text_selected);
           Iterator<Map.Entry<String, Map>> iterator = gMap.entrySet().iterator();
            while(iterator.hasNext()){
@@ -2343,33 +2492,46 @@ JLabel tag_label = new JLabel("Tag");
             if(text_selected.toLowerCase().equals(entry.getValue().get("Tag")))
             { tag = (String) entry.getValue().get("Tag");
                 if(capitalcheck)
-                text_replacement=addGlosGlossariecePopup_Method(tag);    
-            else   
-                text_replacement=addglsGlossariecePopup_Method(tag);
+                {text_replacement=addGlosGlossariecePopup_Method(tag); 
+                repeattags_add(text_selected,text_replacement);
+                 }
+                 else   
+                { text_replacement=addglsGlossariecePopup_Method(tag);
+                repeattags_add(text_selected,text_replacement);
+                }
                 
                 break ; }
             
             else if(text_selected.toLowerCase().equals(entry.getValue().get("Plural")))
             { tag = (String) entry.getValue().get("Tag");
                 if(capitalcheck)
-                    text_replacement=addGlosplGlossariecePopup_Method(tag); 
+                { text_replacement=addGlosplGlossariecePopup_Method(tag); 
+                repeattags_add(text_selected,text_replacement); }
+                
                 else 
-                    text_replacement=addglsplGlossariecePopup_Method(tag);  
+            { text_replacement=addglsplGlossariecePopup_Method(tag); 
+             repeattags_add(text_selected,text_replacement); }
                 break ;}
             
             else if(text_selected.equals(entry.getValue().get("Symbol"))) 
             { tag = (String) entry.getValue().get("Tag");
                 text_replacement=addglssymbolGlossariecePopup_Method(tag);
+                    repeattags_add(text_selected,text_replacement); 
                 break ; }
          
                 //  iterator.remove(); // right way to remove entries from Map, // avoids ConcurrentModificationException
         } 
            
-           return tag ;
+           return text_replacement ; 
       }
      
-
+ public void repeattags_add(String selected_word2, String replacement_word)
+  {     
+      repeatTags.put(selected_word2,replacement_word);
+  
+  }
       
+  
   }
   
 // Intelligence *ends here*
@@ -2377,11 +2539,7 @@ JLabel tag_label = new JLabel("Tag");
 
   
   //adds to the repeattags map
-  public void repeattags_add(String selected_word2, String replacement_word)
-  {     
-      repeatTags.put(selected_word2,replacement_word);
-  
-  }
+ 
   
   
   //flatten the gMap map  * starts here*
