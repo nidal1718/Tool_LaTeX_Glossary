@@ -94,6 +94,7 @@ import org.fife.ui.rtextarea.RecordableTextAction;
 import org.fife.ui.rtextarea.SearchContext;
 import org.fife.ui.rtextarea.SearchEngine;
 import org.fife.ui.rtextarea.SearchResult;
+import org.nidal.latex.glossarytool.GlossaryTool.UnderlineHighlighter.UnderlineHighlightPainter;
 
 /**
  *
@@ -849,7 +850,8 @@ textArea.addParser(parser);
        pasteAction.isEnabled();
     }
 
-    final org.nidal.latex.glossarytool.WordSearcher searcher = new org.nidal.latex.glossarytool.WordSearcher(textArea);
+//    final org.nidal.latex.glossarytool.WordSearcher searcher = new org.nidal.latex.glossarytool.WordSearcher(textArea);
+     final WordSearcher searcher = new WordSearcher(textArea); 
     //final WordSearcher wds = new WordSearcher(textArea);
     private void glossarysearchToolMenuActionPerformed(java.awt.event.ActionEvent evt) {
       //  word = tf.getText().trim();
@@ -857,26 +859,35 @@ textArea.addParser(parser);
    // FlatMap fm = new FlatMap(gMap);
      GlossaryTool glossaryTool = new GlossaryTool(gMap);
      int offset ;
-    // word = "sui" ;
+     word = "sui" ;
+    
+//    if(repeatTags.containsKey(text_selected)==true)
+//        textArea.setText(textArea.getText().replaceAll( "(?<!\\S)"+text_selected+"(?!\\S)", repeatTags.get(text_selected)));
 
          List<Object> mapCollectionValues = retrievelist()  ;
+         
+          offset = searcher.search("(?<!\\S)"+word+"(?!\\S)");
 
-     for (Object mapCollectionValue : mapCollectionValues) {
-         //System.out.println(mapCollectionValues.get(i));
-         word = (String) mapCollectionValues.get(1) ;
-         
-         offset = searcher.search(word);
-         //   textArea.setHighlighter1(highlighterh);
-         
-         if (offset != -1) {
-             try {
-                 textArea.scrollRectToVisible(textArea.modelToView(offset));
-             } catch (BadLocationException e) {
-             }
-         }
-         
-         //System.out.println(iterator3.next());
-     }
+        // highlightspecial
+//     for (Object mapCollectionValue : mapCollectionValues) {
+//         //System.out.println(mapCollectionValues.get(i));
+//         word = (String) mapCollectionValues.get(1) ;
+//         
+//         offset = searcher.search(word);
+//         //   textArea.setHighlighter1(highlighterh);
+//         
+//         if (offset != -1) {
+//             try {
+//                 textArea.scrollRectToVisible(textArea.modelToView(offset));
+//             } catch (BadLocationException e) {
+//             }
+//         }
+//         
+//         //System.out.println(iterator3.next());
+//     }
+
+
+
 //working
 //  int offset = searcher.search(word);
 //        //   textArea.setHighlighter1(highlighterh);
@@ -2134,6 +2145,7 @@ JLabel tag_label = new JLabel("Tag");
  // protected String comp;
 
   protected Highlighter.HighlightPainter painter;
+ // protected UnderlineHighlighter painter ;
 
 
  // WordSearcher wordsearcher ; //= new WordSearcher();
@@ -2144,9 +2156,9 @@ JLabel tag_label = new JLabel("Tag");
    //wordsearcher = new WordSearcher();
     this.comp = comp;
 
-//    this.painter = new UnderlineHighlighter.UnderlineHighlightPainter(Color.red);
+  //  this.painter = new UnderlineHighlighter.UnderlineHighlightPainter(Color.red);
      this.painter = new org.nidal.latex.glossarytool.UnderlineHighlighter.UnderlineHighlightPainter(Color.red);
-     //highlighterh = new org.nidal.latex.glossarytool.UnderlineHighlighter(null);
+     highlighterh = new org.nidal.latex.glossarytool.UnderlineHighlighter(null);
   }
 
 
@@ -2282,36 +2294,36 @@ JLabel tag_label = new JLabel("Tag");
   }
   
   //glossary replace all 
-  public final class ReplaceSubstring {
-  
-  /**
-  *  Simplest in Java 1.5, using the replace method, which 
-  *  takes CharSequence objects.
-  */
-  public String replace15(String aInput, String  aOldPattern, String aNewPattern){
-    return aInput.replace(aOldPattern, aNewPattern);
-  }
-
- 
-  /** Example: update an ip address appearing in a link.  */
-  public  void main (String[] aArguments) {
-    String OLD_IP = "45.23.102.12";
-    //escape the  '.', a special character in regular expressions
-    String OLD_IP_REGEX = "45\\.23\\.102\\.12";
-    String NEW_IP = "99.104.106.95";
-    String LINK = "http://45.23.102.12:8080/index.html";
-    
-    //log("Old link : " + LINK);
-    
-    String newLink = replace15(LINK, OLD_IP, NEW_IP);
-  //  log("New link with Java 1.5 replace: " + newLink);
-
-  }
-  
-//  private void log(String aMessage){
-//    System.out.println(aMessage);
+//  public final class ReplaceSubstring {
+//  
+//  /**
+//  *  Simplest in Java 1.5, using the replace method, which 
+//  *  takes CharSequence objects.
+//  */
+//  public String replace15(String aInput, String  aOldPattern, String aNewPattern){
+//    return aInput.replace(aOldPattern, aNewPattern);
 //  }
-} 
+//
+// 
+//  /** Example: update an ip address appearing in a link.  */
+//  public  void main (String[] aArguments) {
+//    String OLD_IP = "45.23.102.12";
+//    //escape the  '.', a special character in regular expressions
+//    String OLD_IP_REGEX = "45\\.23\\.102\\.12";
+//    String NEW_IP = "99.104.106.95";
+//    String LINK = "http://45.23.102.12:8080/index.html";
+//    
+//    //log("Old link : " + LINK);
+//    
+//    String newLink = replace15(LINK, OLD_IP, NEW_IP);
+//  //  log("New link with Java 1.5 replace: " + newLink);
+//
+//  }
+//  
+////  private void log(String aMessage){
+////    System.out.println(aMessage);
+////  }
+//} 
 
 
 
