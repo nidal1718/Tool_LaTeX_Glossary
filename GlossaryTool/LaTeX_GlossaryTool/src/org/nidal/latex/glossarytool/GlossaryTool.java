@@ -32,7 +32,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -57,11 +56,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultHighlighter;
-import javax.swing.text.Document;
 import javax.swing.text.Highlighter;
 import javax.swing.text.JTextComponent;
 import javax.swing.text.TextAction;
@@ -129,7 +125,7 @@ public class GlossaryTool extends JFrame implements SearchListener{
     private ReplaceDialog add_glsDialog;
     private FindToolBar findToolBar;
     private ReplaceToolBar replaceToolBar;
-    private StatusBar statusBar;
+    private final StatusBar statusBar;
 
     String glossaryFileName ;
     Clipboard clip = getToolkit().getSystemClipboard();
@@ -139,10 +135,7 @@ public class GlossaryTool extends JFrame implements SearchListener{
     // TagHighlighter taghighlighter = new TagHighlighter();
   //   GlossaryTool glossaryTool ;
 
-   // Highlighter highlighter = new DefaultHighlighter();
-   // final DefaultHighlightPainter painter = new DefaultHighlightPainter(Color.green);
-   // final JTextField highlight = new JTextField("for");
-   // final String highlight = "for" ;
+   
 
 
 
@@ -157,10 +150,10 @@ public class GlossaryTool extends JFrame implements SearchListener{
 
     // private Map<String,GlossaryEntryClass> fieldsMap;
     private Map<String,GlossaryEntryClass1> fieldsMap;
-    private Map<String, Map> gMap ;
-     private Map<String, String> fields ;
+    public Map<String, Map> gMap ;
+  //   private Map<String, String> fields ;
     private Map<String, String> repeatTags ;
-    
+
 
     //GlossaryEntryClass gec3 ;
 
@@ -175,14 +168,9 @@ public class GlossaryTool extends JFrame implements SearchListener{
         RSyntaxTextArea desc_Area = new RSyntaxTextArea("");
 
 
-//        String tag_gls = tag_tf.getText();
-//        String name_gls = name_tf.getText();
-//        String symbol_gls = symbol_tf.getText();
-//        String plural_gls = plural_tf.getText();
-//        String desc_gls = desc_Area.getText();
-
-
 final org.nidal.latex.glossarytool.WordSearcher searcher ;
+//final org.nidal.latex.glossarytool.WordSearcher5 searcher5 ;
+
 
 
     private JMenuBar menubar = new JMenuBar(); //menubar item
@@ -219,7 +207,7 @@ final org.nidal.latex.glossarytool.WordSearcher searcher ;
     private JMenuItem undo = new JMenuItem(); // a undo as option
     private JMenuItem redo = new JMenuItem(); // a redo option!
 
-    public static String word ;
+
 
 
     //JTextcomponent from java
@@ -273,6 +261,7 @@ final org.nidal.latex.glossarytool.WordSearcher searcher ;
 
 
  searcher = new org.nidal.latex.glossarytool.WordSearcher(textArea);
+// searcher5 = new org.nidal.latex.glossarytool.WordSearcher5(textArea);
 
 
 
@@ -304,7 +293,7 @@ final org.nidal.latex.glossarytool.WordSearcher searcher ;
         this.menubar.add(this.tools);
 
 
- 
+
         //   this.menubar.add(this.help);
         this.file.setLabel("File");
 
@@ -437,7 +426,7 @@ final org.nidal.latex.glossarytool.WordSearcher searcher ;
 
 
 
-        
+
 
         // and searchTool
         this.search_and_highlight_Tool.setLabel("Search & Highlight Word");
@@ -455,20 +444,20 @@ final org.nidal.latex.glossarytool.WordSearcher searcher ;
 
 
         //from website highlight 22
-    textArea.getDocument().addDocumentListener(new DocumentListener() {
-
-      public void insertUpdate(DocumentEvent evt) {
-
-                 searcher.search(word);
-      }
-
-      public void removeUpdate(DocumentEvent evt) {
-        searcher.search(word);
-      }
-
-      public void changedUpdate(DocumentEvent evt) {
-      }
-    });
+//    textArea.getDocument().addDocumentListener(new DocumentListener() {
+//
+//      public void insertUpdate(DocumentEvent evt) {
+//
+//                 searcher.search(word);
+//      }
+//
+//      public void removeUpdate(DocumentEvent evt) {
+//        searcher.search(word);
+//      }
+//
+//      public void changedUpdate(DocumentEvent evt) {
+//      }
+//    });
 
 ////highlighter stuff
 //        textArea.setHighlighter(highlighter);
@@ -532,8 +521,8 @@ this.tools.add(this.add_gls);
 //   popupsbcls.createToolsPopupMenuActions();
 
              popup.addSeparator();
-              popup.add(new JMenuItem(new glossariseTheWordPopup())); //#6 
-              
+              popup.add(new JMenuItem(new glossariseTheWordPopup())); //#6
+
             popup.addSeparator();
             popup.add(new JMenuItem(new glossariseAllTheWordPopup()));
 
@@ -828,14 +817,14 @@ textArea.addParser(parser);
        // RTextAreaEditorKit.CutAction();
       //  cutAction.isEnabled();
        // RSyntaxTextArea.CUT_ACTION
-       //readGFileObject.highlightwords(textArea);
+
     }
 
     private void copyEditActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
-         //Taghighlighter taghighlighter = new Taghighlighter();
+
         copyAction.isEnabled();
-      //   highlightMethod();
+
 
     }
     private void pasteEditActionPerformed(java.awt.event.ActionEvent evt) {
@@ -843,85 +832,11 @@ textArea.addParser(parser);
        pasteAction.isEnabled();
     }
 
-//    final org.nidal.latex.glossarytool.WordSearcher searcher = new org.nidal.latex.glossarytool.WordSearcher(textArea);
-    // final WordSearcher searcheorg.r = new WordSearcher(textArea); 
-    //final WordSearcher wds = new WordSearcher(textArea);
+
     private void glossarysearchToolMenuActionPerformed(java.awt.event.ActionEvent evt) {
-      //  word = tf.getText().trim();
-
-   // FlatMap fm = new FlatMap(gMap);
-     //GlossaryTool glossaryTool = new GlossaryTool(gMap);
-    
-    
-     word = "sui" ;
-     
-     
-     String word1 = "(?<!\\S)"+word+"(?!\\S)" ;
-    
-//    if(repeatTags.containsKey(text_selected)==true)
-//        textArea.setText(textArea.getText().replaceAll( "(?<!\\S)"+text_selected+"(?!\\S)", repeatTags.get(text_selected)));
-
-         //List<Object> mapCollectionValues = retrievelist()  ;
-         intelligence.checkavailabilityin_Map1(); 
-       //  jkhkj
-         
-//          int offset = searcher.search(word);
-//            if (offset != -1) {
-//          try {
-//            textArea.scrollRectToVisible(textArea
-//                .modelToView(offset));
-//          } catch (BadLocationException e) {
-//          }
-//        }
-
-        // highlightspecial
-//     for (Object mapCollectionValue : mapCollectionValues) {
-//         //System.out.println(mapCollectionValues.get(i));
-//         word = (String) mapCollectionValues.get(1) ;
-//         
-//         offset = searcher.search(word);
-//         //   textArea.setHighlighter1(highlighterh);
-//         
-//         if (offset != -1) {
-//             try {
-//                 textArea.scrollRectToVisible(textArea.modelToView(offset));
-//             } catch (BadLocationException e) {
-//             }
-//         }
-//         
-//         //System.out.println(iterator3.next());
-//     }
-
-
-
-//working
-//  int offset = searcher.search(word);
-//        //   textArea.setHighlighter1(highlighterh);
-//
-//        if (offset != -1) {
-//          try {
-//            textArea.scrollRectToVisible(textArea.modelToView(offset));
-//          } catch (BadLocationException e) {
-//          }
-//        }
-//          //highlight stuff working.
-//              String text = "hello what How are you?";
-//         Highlighter highlighter = textArea.getHighlighter();
-//      HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.green);
-//      int p0 = text.indexOf("what");
-//      int p1 = p0 + "what".length();
-//     try {
-//         highlighter.addHighlight(p0, p1, painter );
-//         } catch (BadLocationException ex) {
-//         Logger.getLogger(GlossaryTool.class.getName()).log(Level.SEVERE, null, ex);
-//     }
+      //String word1 = "(?<!\\S)"+word+"(?!\\S)" ;
+         intelligence.checkavailabilityin_Map1();
     }
-
-
-
-
-
-       // wordSearcher.setHighlighter(highlighterh);
 
 
 
@@ -1244,15 +1159,15 @@ textArea.addParser(parser);
       //  d1.setLayout(new FlowLayout());
 
 //    current_y += 30;
- JLabel selectedword_label = new JLabel("Selected Word");  
-JTextField selectedword_tf = new JTextField(textArea.getSelectedText()); 
+ JLabel selectedword_label = new JLabel("Selected Word");
+JTextField selectedword_tf = new JTextField(textArea.getSelectedText());
 selectedword_tf.setEditable(false);
 
 JLabel tag_label = new JLabel("Tag");
 
    JTextField tag_tf = new JTextField("");
    tag_label.setLabelFor(tag_tf);
-   
+
 
      JLabel name_label = new JLabel("Name");
 //
@@ -1343,7 +1258,7 @@ JLabel tag_label = new JLabel("Tag");
 
                 String name_gls = name_tf.getText().trim();;
              //   JTextField name_tf = new JTextField("");
-                String symbol_gls = symbol_tf.getText().trim();
+                String symbol_gls = symbol_tf.getText().toLowerCase().trim();
                 String plural_gls = plural_tf.getText().trim();
                 String desc_gls = desc_Area.getText().trim();
                 GlossaryEntryClass gec  ; //= new GlossaryEntryClass(name_gls,symbol_gls,plural_gls,desc_gls);
@@ -1368,20 +1283,20 @@ JLabel tag_label = new JLabel("Tag");
 //               fieldsMap.put(tag_gls, new GlossaryEntryClass1(tag_gls,name_gls,symbol_gls,plural_gls,desc_gls));
 
 
-                     
+
               GlossaryEntryClass1  glossaryentryclass1 = new GlossaryEntryClass1(tag_gls.toLowerCase(),name_gls,symbol_gls,plural_gls,desc_gls);
           //    gMap.put(tag_gls, new GlossaryEntryClass1(tag_gls,name_gls,symbol_gls,plural_gls,desc_gls));
-          
+
          //   gmap.put(tag_gls, GlossaryEntryClass);
           //      ? what is the point of fields class find out ?
 
           // System.out.println(GlossaryEntryClass1.this.get("Some Key"));
-                 
+
                 //System.out.println(gMap);
                          System.out.println(gMap);
                        //  hjh
-                 
-                 
+
+
                 // System.out.println("Tag" + );
 
 
@@ -1418,7 +1333,7 @@ JLabel tag_label = new JLabel("Tag");
 
          //       saveGlossary_new_entry();
 
-      //  addglsprefix(); 
+      //  addglsprefix();
              String replacement =   intelligence.checkavailabilityin_Map(textArea.getSelectedText());
              intelligence.repeattags_add(textArea.getSelectedText(),replacement) ;
         readGlossaryFile.addtoArrayListFromDialogSave(tag_gls);
@@ -1500,28 +1415,28 @@ JLabel tag_label = new JLabel("Tag");
 
   //class GlossaryEntryClass implements Map<String,String>  {
   // class GlossaryEntryClass implements Map<String,String>  {
-  
+
     @SuppressWarnings("serial")
      public class GlossaryEntryClass1 {
 
-   
+
       //private Map<String,String> fields = new HashMap<String, String>() ;
-//   
+//
       private HashMap<String, String> fields;
 
 
      public GlossaryEntryClass1(String tag_gls2,String name_gls2, String symbol_gls2, String plural_gls2, String desc_gls2){
          fields = new HashMap<String, String>() ;
-    
+
 
         //  fields.put(symbol_gls2, plural_gls2);
-         fields.put("Tag", tag_gls2); 
+         fields.put("Tag", tag_gls2);
          fields.put("Name", name_gls2);
          fields.put("Symbol", symbol_gls2);
          fields.put("Plural", plural_gls2);
          fields.put("Desciption", desc_gls2);
-         
-         gMap.put(tag_gls2, fields) ; 
+
+         gMap.put(tag_gls2, fields) ;
 
     }
 
@@ -1596,7 +1511,7 @@ JLabel tag_label = new JLabel("Tag");
         }
 
     }
-    
+
 
 
   // for glossaries popup. #1 glossary
@@ -1636,7 +1551,7 @@ JLabel tag_label = new JLabel("Tag");
          return text_replacement ;
 }
 
-      // for glossaries popup. #5 glossaries symbol   
+      // for glossaries popup. #5 glossaries symbol
       public String addglssymbolGlossariecePopup_Method(String tag){
      //   String text_selected = textArea.getSelectedText();
        String text_replacement = "\\glssymbol{" + tag + "}" ;
@@ -1644,8 +1559,8 @@ JLabel tag_label = new JLabel("Tag");
         textChanged = true;
          return text_replacement ;
 }
-    
-    
+
+
       // for glossaries popup. #6 glossaries
     private class glossariseTheWordPopup extends TextAction {
  Intelligence intelligence = new Intelligence();
@@ -1662,7 +1577,7 @@ JLabel tag_label = new JLabel("Tag");
         }
 
     }
-    
+
        // for glossaries popup. #6 glossaries
     private class glossariseAllTheWordPopup extends TextAction {
  Intelligence intelligence = new Intelligence();
@@ -1826,392 +1741,11 @@ JLabel tag_label = new JLabel("Tag");
 
     }
 
-//public class Taghighlighter extends DefaultHighlighter.DefaultHighlightPainter {
-//      GlossaryTool glossaryTool = new GlossaryTool();
-//       ReadGlossaryFile readGlossaryFile = new ReadGlossaryFile();
-//        private Color color;
-//
-//
-//    public Taghighlighter(Color color) {
-//        super(color);
-//    }
-//
-////}
-//    Highlighter.HighlightPainter taghighlighter = new Taghighlighter(Color.green) ;
-//
-//
-//
-//
-//
-//
-//    void highlightMethod() {
-//      //  throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-//    Boolean check = readGlossaryFile.GlossaryFileCheck("suitable") ;
-//    if(check==true)
-//     // if(readGlossaryFile.glossary_saved.contains("suitable"))
-//        highlight(glossaryTool.textArea,"suitable" );
-//    }
-//
-//    private void removehighlight(RSyntaxTextArea textAreahighlight) {
-//        Highlighter hilite = textAreahighlight.getHighlighter();
-//        Highlighter.Highlight[] hilites = hilite.getHighlights();
-//
-//          for (Highlighter.Highlight hilite1 : hilites) {
-//              if (hilite1.getPainter() instanceof Taghighlighter) {
-//                  hilite.removeHighlight(hilite1);
-//              }
-//          }
-//
-//    }
-//
-//    public void highlight(RSyntaxTextArea textAreahighlight,String stringpattern ) {
-//        removehighlight(textAreahighlight);
-//        try{
-//        Highlighter hilite = textAreahighlight.getHighlighter();
-//        Document doc = textAreahighlight.getDocument();
-//        String text = doc.getText(0, doc.getLength());
-//        int pos = 0;
-//
-//        while((pos=text.toUpperCase().indexOf(stringpattern.toUpperCase(),pos))>=0){
-//            hilite.addHighlight(pos, pos+stringpattern.length(), taghighlighter) ;
-//            pos +=stringpattern.length();
-//
-//        }
-//         }
-//        catch(Exception e){
-//        }
-//    }
-//
-//
-//}
-
-
-
-
-
-    //to search across the map and highlight
-// public class TestPane extends JPanel {
-//
-//        private JTextField findText;
-//        private JButton search;
-//        private DefaultListModel<String> model;
-//        private JList list;
-//
-//        private String searchPhrase;
-//
-//        public TestPane() {
-////            setLayout(new BorderLayout());
-////            JPanel searchPane = new JPanel(new GridBagLayout());
-////            GridBagConstraints gbc = new GridBagConstraints();
-////            gbc.gridx = 0;
-////            gbc.gridy = 0;
-////            gbc.insets = new Insets(2, 2, 2, 2);
-////            searchPane.add(new JLabel("Find: "), gbc);
-////            gbc.gridx++;
-////            gbc.fill = GridBagConstraints.HORIZONTAL;
-////            gbc.weightx = 1;
-////            findText = new JTextField(20);
-////            searchPane.add(findText, gbc);
-////
-////            gbc.gridx++;
-////            gbc.fill = GridBagConstraints.NONE;
-////            gbc.weightx = 0;
-////            search = new JButton("Search");
-////            searchPane.add(search, gbc);
-////
-////            add(searchPane, BorderLayout.NORTH);
-//
-//            model = new DefaultListModel<>();
-//            list = new JList(model);
-//            list.setCellRenderer(new HighlightListCellRenderer());
-//            add(new JScrollPane(list));
-//
-//            ActionHandler handler = new ActionHandler();
-//
-//            search.addActionListener(handler);
-//            findText.addActionListener(handler);
-//
-//            try (BufferedReader reader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("sampletextfile.txt")))) {
-//
-//
-//                String text = null;
-//                while ((text = reader.readLine()) != null) {
-//                    model.addElement(text);
-//                }
-//
-//            } catch (IOException exp) {
-//
-//                exp.printStackTrace();
-//
-//            }
-//        }
-//
-//        public class ActionHandler implements ActionListener {
-//
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                searchPhrase = findText.getText();
-//                if (searchPhrase != null && searchPhrase.trim().length() == 0) {
-//                    searchPhrase = null;
-//                }
-//               // list.repaint();
-//               textArea.repaint();
-////              model.removeAllElements();
-//////                    BufferedReader reader = null;
-////
-////              String searchText = findText.getText();
-////              try (BufferedReader reader = new BufferedReader(new FileReader(new File("bible.txt")))) {
-////
-////                  String text = null;
-////                  while ((text = reader.readLine()) != null) {
-////
-////                      if (text.contains(searchText)) {
-////
-////                          model.addElement(text);
-////
-////                      }
-////
-////                  }
-////
-////              } catch (IOException exp) {
-////
-////                  exp.printStackTrace();
-////                  JOptionPane.showMessageDialog(TestPane.this, "Something Went Wrong", "Error", JOptionPane.ERROR_MESSAGE);
-////
-////              }
-//            }
-//        }
-//
-//        public class HighlightListCellRenderer extends DefaultListCellRenderer {
-//
-//            public final String WITH_DELIMITER = "((?<=%1$s)|(?=%1$s))";
-//
-//            @Override
-//            public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-//                if (value instanceof String && searchPhrase != null) {
-//                    String text = (String) value;
-//                    if (text.contains(searchPhrase)) {
-//                        text = text.replace(" ", "&nbsp;");
-//                        value = "<html>" + text.replace(searchPhrase, "<font color=#ffff00>" + searchPhrase + "</font>") + "</html>";
-//                    }
-//                }
-//                return super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus); //To change body of generated methods, choose Tools | Templates.
-//            }
-//
-//        }
-//    }
-
-
-    //another function.
-
-//    public static void highlight(RSyntaxTextArea textArea, String textToHighlight,HighlightPainter painter) {
-//    String text = textArea.getText();
-//    Highlighter highlighter = textArea.getHighlighter();
-//    highlighter.removeAllHighlights();
-//
-//    if (!textToHighlight.isEmpty()) {
-//      Matcher m = compileWildcard(textToHighlight).matcher(text);
-//    //  String m = "for" ;
-//      while (m.find()) {
-//        try {
-//          highlighter.addHighlight(m.start(), m.end(), painter);
-//        } catch (BadLocationException e) {
-//          throw new IllegalStateException(e); /* cannot happen */
-//        }
-//        textArea.setCaretPosition(m.end());
-//      }
-//    }
-//  }
-//
-//  public static Pattern compileWildcard(String wildcard) {
-//    StringBuilder sb = new StringBuilder("\\b"); /* word boundary */
-//    /* the following replaceAll is just for performance */
-//    for (char c : wildcard.replaceAll("\\*+", "*").toCharArray()) {
-//      if (c == '*') {
-//        sb.append("\\S*"); /*- arbitrary non-space characters */
-//      } else {
-//        sb.append(Pattern.quote(String.valueOf(c)));
-//      }
-//    }
-//    sb.append("\\b"); /* word boundary */
-//    return Pattern.compile(sb.toString());
-//  }
-
-
-
-
-//    /**
-//	 * Sets the highlighter used by this text area.
-//	 *
-//	 * @param h The highlighter.
-//	 * @throws IllegalArgumentException If <code>h</code> is not an instance
-//	 *         of {@link RSyntaxTextAreaHighlighter}.
-//	 */
-//	public void setHighlighter1(Highlighter h) {
-//
-//
-//
-//		// Ugh, many RSTA methods assume a non-null highlighter.  This is kind
-//		// of icky, but most applications never *don't* want a highlighter.
-//		// See #189 - BasicTextUI clears highlighter by setting it to null there
-//		if (h == null) {
-//			h = new RSyntaxTextAreaHighlighter();
-//		}
-//
-//		if (!(h instanceof RSyntaxTextAreaHighlighter)) {
-//			throw new IllegalArgumentException("RSyntaxTextArea requires " +
-//				"an RSyntaxTextAreaHighlighter for its Highlighter");
-//		}
-//		jtc.setHighlighter(h);
-//
-//
-//	}
-
-
-// public abstract class JTextComponent1 extends JComponent implements Scrollable, Accessible
-  //public abstract class JTextComponent1 extends JTextComponent
-//{
-
-          /**
-     * Sets the highlighter to be used.  By default this will be set
-     * by the UI that gets installed.  This can be changed to
-     * a custom highlighter if desired.  The highlighter can be set to
-     * <code>null</code> to disable it.
-     * A PropertyChange event ("highlighter") is fired
-     * when a new highlighter is installed.
-     *
-     * @param h the highlighter
-     * @see #getHighlighter
-     * @beaninfo
-     *  description: object responsible for background highlights
-     *        bound: true
-     *       expert: true
-     */
-
-
-
-
-
-
-//         @Override
-//    public void setHighlighter(Highlighter h) {
-//        if (highlighter != null) {
-//            highlighter.deinstall(this);
-//        }
-//        Highlighter old = highlighter;
-//        highlighter = h;
-//        if (highlighter != null) {
-//            highlighter.install(this);
-//        }
-//        firePropertyChange("highlighter", old, h);
-//    }
-//
-//        }
-
-
-  //}
-
-
-
 
 //another
    // http://www.java2s.com/Code/Java/Swing-JFC/JTextPaneHighlightExample.htm
 
 
-
-// A simple class that searches for a word in
-// a document and highlights occurrences of that word
-
- class WordSearcher {
-
-       //highlight 22
-  //public String word;
-
-
- // WordSearcher wordsearcher = new WordSearcher(null);
-//  public Highlighter highlighterh = new org.nidal.latex.glossarytool.UnderlineHighlighter(null);
-//  textArea.setHighlighter(highlighterh);
-
-
-
-  protected JTextComponent comp;
- // protected String comp;
-
-  protected Highlighter.HighlightPainter painter;
- // protected UnderlineHighlighter painter ;
-
-
- // WordSearcher wordsearcher ; //= new WordSearcher();
-
-
-  // class 5.2 begins
-//  public WordSearcher(JTextComponent comp) {
-//   // public WordSearcher(String comp) {
-//   //wordsearcher = new WordSearcher();
-//    this.comp = comp;
-//
-//  //  this.painter = new UnderlineHighlighter.UnderlineHighlightPainter(Color.red);
-//     this.painter = new org.nidal.latex.glossarytool.UnderlineHighlighter.UnderlineHighlightPainter(Color.red);
-//     highlighterh = new org.nidal.latex.glossarytool.UnderlineHighlighter(null);
-//  }
-
-
-
-//  // Search for a word and return the offset of the
-//  // first occurrence. Highlights are added for all
-//  // occurrences found.
-//  public int search(String word) {
-//    int firstOffset = -1;
-//    Highlighter highlighterh = comp.getHighlighter();
-//
-//    // Remove any existing highlights for last word
-//    Highlighter.Highlight[] highlights = highlighterh.getHighlights();
-//    for (int i = 0; i < highlights.length; i++) {
-//      Highlighter.Highlight h = highlights[i];
-//      if (h.getPainter() instanceof UnderlineHighlighter.UnderlineHighlightPainter) {
-//        highlighterh.removeHighlight(h);
-//      }
-//    }
-//
-//    if (word == null || word.equals("")) {
-//      return -1;
-//    }
-//
-//    // Look for the word we are given - insensitive search
-//    String content = null;
-//    try {
-//      Document d = comp.getDocument();
-//      content = d.getText(0, d.getLength()).toLowerCase();
-//    } catch (BadLocationException e) {
-//      // Cannot happen
-//      return -1;
-//    }
-//
-//    word = word.toLowerCase();
-//    int lastIndex = 0;
-//    int wordSize = word.length();
-//
-//    while ((lastIndex = content.indexOf(word, lastIndex)) != -1) {
-//      int endIndex = lastIndex + wordSize;
-//      try {
-//        highlighterh.addHighlight(lastIndex, endIndex, painter);
-//      } catch (BadLocationException e) {
-//        // Nothing to do
-//      }
-//      if (firstOffset == -1) {
-//        firstOffset = lastIndex;
-//      }
-//      lastIndex = endIndex;
-//    }
-//
-//    return firstOffset;
-//  }
-// class 5.2 ends
-
-
-
-
-}
 
   class UnderlineHighlighter extends DefaultHighlighter {
       // Shared painter used for default highlighting
@@ -2286,22 +1820,22 @@ JLabel tag_label = new JLabel("Tag");
 //
 //
 //  }
-  
+
   /// ends here 5
   }
-  
-  //glossary replace all 
+
+  //glossary replace all
 //  public final class ReplaceSubstring {
-//  
+//
 //  /**
-//  *  Simplest in Java 1.5, using the replace method, which 
+//  *  Simplest in Java 1.5, using the replace method, which
 //  *  takes CharSequence objects.
 //  */
 //  public String replace15(String aInput, String  aOldPattern, String aNewPattern){
 //    return aInput.replace(aOldPattern, aNewPattern);
 //  }
 //
-// 
+//
 //  /** Example: update an ip address appearing in a link.  */
 //  public  void main (String[] aArguments) {
 //    String OLD_IP = "45.23.102.12";
@@ -2309,30 +1843,30 @@ JLabel tag_label = new JLabel("Tag");
 //    String OLD_IP_REGEX = "45\\.23\\.102\\.12";
 //    String NEW_IP = "99.104.106.95";
 //    String LINK = "http://45.23.102.12:8080/index.html";
-//    
+//
 //    //log("Old link : " + LINK);
-//    
+//
 //    String newLink = replace15(LINK, OLD_IP, NEW_IP);
 //  //  log("New link with Java 1.5 replace: " + newLink);
 //
 //  }
-//  
+//
 ////  private void log(String aMessage){
 ////    System.out.println(aMessage);
 ////  }
-//} 
+//}
 
-// delete from 
+// delete from
 // public int search(String word) {
 //    int firstOffset = -1;
 //   JTextComponent comp = textArea ;
 //
-//    
+//
 ////    if(repeatTags.containsKey(text_selected)==true)
 //////        textArea.setText(textArea.getText().replaceAll("(\\b"+text_selected+"\\b)", repeatTags.get(text_selected)));
 ////               textArea.setText(textArea.getText().replaceAll( "(?<!\\S)"+text_selected+"(?!\\S)", repeatTags.get(text_selected)));
-//    
-//   
+//
+//
 //    if (word == null || word.equals("")) {
 //      return -1;
 //    }
@@ -2353,7 +1887,7 @@ JLabel tag_label = new JLabel("Tag");
 //    int wordSize = word.length();
 //
 //    while ((lastIndex = content.indexOf(word, lastIndex)) != -1) {
-//   
+//
 //int endIndex = lastIndex + wordSize;
 // Boolean available = checkavailabilityin_Map1();
 //                int offset = searcher.search(word);
@@ -2364,41 +1898,41 @@ JLabel tag_label = new JLabel("Tag");
 //    }
 //
 //    return firstOffset;
-//  } 
+//  }
   //delete here
-  
+
 
   //Intelligence *starts here*
   public class Intelligence {
-    
+
       private void glossariseTheWord(){
-        String text_replacement ;  
+        String text_replacement ;
         String tag = null ;
-        
+
         //Iterator<Map.Entry<String, Map>> iterator = gMap.entrySet().iterator();
         String text_selected = textArea.getSelectedText();
-        
+
         boolean blnExists = repeatTags.containsKey(text_selected);
          //tag = checkifPlural(text_selected) ;
-         
+
          checkavailabilityin_Map(text_selected);
-       
+
 //        if(blnExists)
 //        { // System.out.println("exists") ;
 //            String repeatTags_value = repeatTags.get(text_selected);
 //       textArea.replaceSelection(repeatTags_value);
 //       System.out.println("found in tags"+repeatTags);
-//        
+//
 //        }
 
         //textArea.replaceSelection(text_replacement);
         textChanged = true;
-        
-        
- 
-      
+
+
+
+
       }
-      
+
    public String replaceOld(String aInput,String text_selected,final String aNewPattern)
    {  //text_selected = textArea.getSelectedText();
       //aInput = textArea.getText();
@@ -2425,115 +1959,68 @@ JLabel tag_label = new JLabel("Tag");
      result.append( aInput.substring(startIdx) );
      return result.toString();
   }
-   
-   
-   
+
+
+
    public String replaceAllglossary(String aInput, String  aOldPattern, String aNewPattern){
     return aInput.replace(aOldPattern, aNewPattern);
       }
-       
-   
+
+
    private void glossariseAllTheWord(){
-        String text_replacement ;  
+       
         String tag = null ;
-        
+
         //Iterator<Map.Entry<String, Map>> iterator = gMap.entrySet().iterator();
         String text_selected = textArea.getSelectedText();
-        
-        
-        
+
+
+
         //boolean blnExists = repeatTags.containsKey(text_selected);
          //tag = checkifPlural(text_selected) ;
-         
+
         // checkavailabilityin_Map(text_selected);
-       
+
 //        if(blnExists)
 //        { // System.out.println("exists") ;
 //            String repeatTags_value = repeatTags.get(text_selected);
 //       textArea.replaceSelection(repeatTags_value);
 //       System.out.println("found in tags"+repeatTags);
-//        
+//
 //        }
 
-// String OLD_IP = "45.23.102.12";
-//    //escape the  '.', a special character in regular expressions
-//    String OLD_IP_REGEX = "45\\.23\\.102\\.12";
-//    String NEW_IP = "99.104.106.95";
-//    String LINK = "http://45.23.102.12:8080/index.html";
-//    
-//    //log("Old link : " + LINK);
-//    
-//    String newLink = replaceAllglossary(textArea.getText(), text_selected, NEW_IP);
- 
 
-    //replaceOld(textArea.getText(), text_selected, "test");   
-    
-//    String to = "coco";
-//        int start = textArea.getText().indexOf(text_selected);
-//        if (start >= 0 && text_selected.length() > 0)
-//          textArea.replaceRange(checkavailabilityin_Map(text_selected), start, start + text_selected.length());
-         //String replace = text_selected;
-      
       //   Pattern pattern10 = Pattern.compile("\\"+text_selected+"\\b");
-     
-	if(repeatTags.containsKey(text_selected)==true)
-//        textArea.setText(textArea.getText().replaceAll("(\\b"+text_selected+"\\b)", repeatTags.get(text_selected)));
-               textArea.setText(textArea.getText().replaceAll( "(?<!\\S)"+text_selected+"(?!\\S)", repeatTags.get(text_selected)));
-     
- 
-    
 
-//
-//        Document doc1 = textArea.getDocument();
-//      //  Document doc2 = area.getDocument();
-//
-//        int length = doc1.getLength();
-//        int startPos = 0;
-//        try {
-//            for (int pos = 0; pos < length; pos++) {
-//System.out.print(doc1.getText(pos, 1)) ;
-//                //checkavailabilityin_Map(doc1.getText(pos, 1));
-//                
-////                if (doc1.getText(pos, 1).equals(" ")) {
-////
-//                 //  int endPos = pos;
-////                    String parent = doc1.getText(startPos, endPos - startPos);
-////                    String child = doc2.getText(startPos, endPos - startPos);
-////                    if (!parent.equals(child)) {
-////
-////                        highlight(field, startPos, endPos);
-////                        highlight(area, startPos, endPos);
-////
-////                    }
-////
-//                //   startPos = endPos + 1;
-////
-////                }
-//
-//            }
-//        } catch (BadLocationException exp) {
-//            exp.printStackTrace();
-//        }
+        
+       // Boolean check = checkavailabilityin_Map1();
+       /// GlossariseSelectedWordAllOccurances.WordSearcher3(textArea); 
+          // (textArea); 
+          // searcher5.search(text_selected); 
+           checkavailabilityin_Map3(text_selected);
+//	if(repeatTags.containsKey(text_selected)==true)
+////        textArea.setText(textArea.getText().replaceAll("(\\b"+text_selected+"\\b)", repeatTags.get(text_selected)));
+//               textArea.setText(textArea.getText().replaceAll( "(?<!\\S)"+text_selected+"(?!\\S)", repeatTags.get(text_selected)));
 
-        //textArea.replaceSelection(text_replacement);
+
         textChanged = true;
-        
-        
- 
-      
+
+
+
+
       }
-      
+
       public Boolean capitalornot (String text_selected)
       { Boolean capitalcheck ;
           if(Character.isUpperCase(text_selected.charAt(0))==true)
                 capitalcheck = true ;
-          else 
+          else
             capitalcheck = false ;
-          
+
           return capitalcheck ;
       }
-      
-      
+
+
       public String checkavailabilityin_Map(String text_selected){
           String tag = null ;
           String text_replacement = null ;
@@ -2541,99 +2028,133 @@ JLabel tag_label = new JLabel("Tag");
           Iterator<Map.Entry<String, Map>> iterator = gMap.entrySet().iterator();
            while(iterator.hasNext()){
             Map.Entry<String, Map> entry = iterator.next();
-            
+
             if(text_selected.toLowerCase().equals(entry.getValue().get("Tag")))
             { tag = (String) entry.getValue().get("Tag");
                 if(capitalcheck)
-                {text_replacement=addGlosGlossariecePopup_Method(tag); 
+                {text_replacement=addGlosGlossariecePopup_Method(tag);
                 repeattags_add(text_selected,text_replacement);
                  }
-                 else   
+                 else
                 { text_replacement=addglsGlossariecePopup_Method(tag);
                 repeattags_add(text_selected,text_replacement);
                 }
-                
+
                 break ; }
-            
+
             else if(text_selected.toLowerCase().equals(entry.getValue().get("Plural")))
             { tag = (String) entry.getValue().get("Tag");
                 if(capitalcheck)
-                { text_replacement=addGlosplGlossariecePopup_Method(tag); 
+                { text_replacement=addGlosplGlossariecePopup_Method(tag);
                 repeattags_add(text_selected,text_replacement); }
-                
-                else 
-            { text_replacement=addglsplGlossariecePopup_Method(tag); 
+
+                else
+            { text_replacement=addglsplGlossariecePopup_Method(tag);
              repeattags_add(text_selected,text_replacement); }
                 break ;}
-            
-            else if(text_selected.equals(entry.getValue().get("Symbol"))) 
+
+            else if(text_selected.equals(entry.getValue().get("Symbol")))
             { tag = (String) entry.getValue().get("Tag");
                 text_replacement=addglssymbolGlossariecePopup_Method(tag);
-                    repeattags_add(text_selected,text_replacement); 
+                    repeattags_add(text_selected,text_replacement);
                 break ; }
-         
+
                 //  iterator.remove(); // right way to remove entries from Map, // avoids ConcurrentModificationException
-        } 
-           
-           return text_replacement ; 
+        }
+
+           return text_replacement ;
       }
-      
+
          public String checkavailabilityin_Map1(){
-          
-          
+
+
           String value=null ;
-         
+
           Iterator<Map.Entry<String, Map>> iterator = gMap.entrySet().iterator();
            while(iterator.hasNext()){
             Map.Entry<String, Map> entry = iterator.next();
-            
+
             value = (String) entry.getValue().get("Tag") ;
             searcher.search(value);
-            
+
             value = (String) entry.getValue().get("Plural") ;
             searcher.search(value);
           value = (String)  entry.getValue().get("Symbol") ;
             searcher.search(value);
-            
-            
-//            if(text_selected.toLowerCase().equals(entry.getValue().get("Tag")))
-//            {  
-//            value = (String) entry.getValue().get("Tag");
-//             searcher.search(value);
-//                }
-//            
-//            else if(text_selected.toLowerCase().equals(entry.getValue().get("Plural")))
-//            { value = (String) entry.getValue().get("Plural");
-//            searcher.search(value);
-//                }
-//            
-//            else if(text_selected.equals(entry.getValue().get("Symbol"))) 
-//            { value = (String) entry.getValue().get("Symbol");
-//            searcher.search(value);
-//              }
-         
-                //  iterator.remove(); // right way to remove entries from Map, // avoids ConcurrentModificationException
-        } 
-           
-           return value ; 
-      } 
+
+
+        }
+
+           return value ;
+      }
+       
      
+     public String checkavailabilityin_Map3(String word){
+          String tag = null ;
+          String text_replacement = null ;
+          String value ;
+                String capValue ;
+                  String lowerValue ;
+        
+          Iterator<Map.Entry<String, Map>> iterator = gMap.entrySet().iterator();
+           while(iterator.hasNext()){
+            Map.Entry<String, Map> entry = iterator.next();
+              
+            tag = (String) entry.getValue().get("Tag");
+          
+         
+
+             value = (String)  entry.getValue().get("Tag") ;
+             
+            capValue = value.substring(0, 1).toUpperCase() + value.substring(1);
+          //  text_replacement=addGlosGlossariecePopup_Method(tag);
+            textArea.setText(textArea.getText().replaceAll( "(?<!\\S)"+capValue+"(?!\\S)", "\\Gls{" + tag + "}")); 
+             
+            lowerValue = value.substring(0, 1).toLowerCase() + value.substring(1);
+           //  text_replacement=addglsGlossariecePopup_Method(tag);
+            textArea.setText(textArea.getText().replaceAll( "(?<!\\S)"+lowerValue+"(?!\\S)", "\\gls{" + tag + "}")); 
+            
+            
+            
+            
+            value = (String)  entry.getValue().get("Plural") ;
+            
+            capValue = value.substring(0, 1).toUpperCase() + value.substring(1);
+           // text_replacement=addGlosplGlossariecePopup_Method(tag);
+            textArea.setText(textArea.getText().replaceAll( "(?<!\\S)"+capValue+"(?!\\S)", "\\Glspl{" + tag + "}")); 
+             
+            lowerValue = value.substring(0, 1).toLowerCase() + value.substring(1);
+           // text_replacement=addglsplGlossariecePopup_Method(tag);
+            textArea.setText(textArea.getText().replaceAll( "(?<!\\S)"+lowerValue+"(?!\\S)", "\\glspl{" + tag + "}")); 
+            
+            
+            value = (String)  entry.getValue().get("Symbol") ;
+            //text_replacement=addglssymbolGlossariecePopup_Method(tag);
+            textArea.setText(textArea.getText().replaceAll( "(?<!\\S)"+value+"(?!\\S)", "\\glssymbol{" + tag + "}"));
+
+          
+        }
+
+           return text_replacement ;
+      }    
+       
+
  public void repeattags_add(String selected_word2, String replacement_word)
-  {     
+  {
       repeatTags.put(selected_word2,replacement_word);
-  
+
   }
-      
-  
+
+
   }
-  
+
 // Intelligence *ends here*
   //reference : http://stackoverflow.com/questions/37462264/recursively-flatten-values-of-nested-maps-in-java-8
 
 
- 
-  
-  
+
+
+
   //flatten the gMap map  * starts here*
   public static Stream<Object> flatten(Object o) {
         if (o instanceof Map<?, ?>) {
@@ -2658,7 +2179,6 @@ JLabel tag_label = new JLabel("Tag");
 
      public static List storemap(List<Object> collect1)
      {
-
 
              return collect1 ;
      }
