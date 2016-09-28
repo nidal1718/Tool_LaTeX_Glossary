@@ -10,10 +10,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FileDialog;
 import java.awt.FlowLayout;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Rectangle;
-import java.awt.Shape;
 import java.awt.datatransfer.Clipboard;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -36,7 +32,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.swing.AbstractAction;
@@ -69,10 +64,7 @@ import javax.swing.text.DefaultHighlighter;
 import javax.swing.text.Document;
 import javax.swing.text.Highlighter;
 import javax.swing.text.JTextComponent;
-import javax.swing.text.LayeredHighlighter;
-import javax.swing.text.Position;
 import javax.swing.text.TextAction;
-import javax.swing.text.View;
 import org.fife.rsta.ui.CollapsibleSectionPanel;
 import org.fife.rsta.ui.SizeGripIcon;
 import org.fife.rsta.ui.search.FindDialog;
@@ -94,7 +86,7 @@ import org.fife.ui.rtextarea.RecordableTextAction;
 import org.fife.ui.rtextarea.SearchContext;
 import org.fife.ui.rtextarea.SearchEngine;
 import org.fife.ui.rtextarea.SearchResult;
-import org.nidal.latex.glossarytool.GlossaryTool.UnderlineHighlighter.UnderlineHighlightPainter;
+import org.nidal.latex.glossarytool.UnderlineHighlighter.UnderlineHighlightPainter;
 
 /**
  *
@@ -190,7 +182,7 @@ public class GlossaryTool extends JFrame implements SearchListener{
 //        String desc_gls = desc_Area.getText();
 
 
-
+final org.nidal.latex.glossarytool.WordSearcher searcher ;
 
 
     private JMenuBar menubar = new JMenuBar(); //menubar item
@@ -280,6 +272,7 @@ public class GlossaryTool extends JFrame implements SearchListener{
 
 
 
+ searcher = new org.nidal.latex.glossarytool.WordSearcher(textArea);
 
 
 
@@ -311,7 +304,7 @@ public class GlossaryTool extends JFrame implements SearchListener{
         this.menubar.add(this.tools);
 
 
-
+ 
         //   this.menubar.add(this.help);
         this.file.setLabel("File");
 
@@ -444,7 +437,7 @@ public class GlossaryTool extends JFrame implements SearchListener{
 
 
 
-        final WordSearcher searcher = new WordSearcher(textArea);
+        
 
         // and searchTool
         this.search_and_highlight_Tool.setLabel("Search & Highlight Word");
@@ -851,22 +844,35 @@ textArea.addParser(parser);
     }
 
 //    final org.nidal.latex.glossarytool.WordSearcher searcher = new org.nidal.latex.glossarytool.WordSearcher(textArea);
-     final WordSearcher searcher = new WordSearcher(textArea); 
+    // final WordSearcher searcheorg.r = new WordSearcher(textArea); 
     //final WordSearcher wds = new WordSearcher(textArea);
     private void glossarysearchToolMenuActionPerformed(java.awt.event.ActionEvent evt) {
       //  word = tf.getText().trim();
 
    // FlatMap fm = new FlatMap(gMap);
-     GlossaryTool glossaryTool = new GlossaryTool(gMap);
-     int offset ;
+     //GlossaryTool glossaryTool = new GlossaryTool(gMap);
+    
+    
      word = "sui" ;
+     
+     
+     String word1 = "(?<!\\S)"+word+"(?!\\S)" ;
     
 //    if(repeatTags.containsKey(text_selected)==true)
 //        textArea.setText(textArea.getText().replaceAll( "(?<!\\S)"+text_selected+"(?!\\S)", repeatTags.get(text_selected)));
 
-         List<Object> mapCollectionValues = retrievelist()  ;
+         //List<Object> mapCollectionValues = retrievelist()  ;
+         intelligence.checkavailabilityin_Map1(); 
+       //  jkhkj
          
-          offset = searcher.search("(?<!\\S)"+word+"(?!\\S)");
+//          int offset = searcher.search(word);
+//            if (offset != -1) {
+//          try {
+//            textArea.scrollRectToVisible(textArea
+//                .modelToView(offset));
+//          } catch (BadLocationException e) {
+//          }
+//        }
 
         // highlightspecial
 //     for (Object mapCollectionValue : mapCollectionValues) {
@@ -1332,14 +1338,14 @@ JLabel tag_label = new JLabel("Tag");
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                String tag_gls = tag_tf.getText();
+                String tag_gls = tag_tf.getText().trim();
 
 
-                String name_gls = name_tf.getText();
+                String name_gls = name_tf.getText().trim();;
              //   JTextField name_tf = new JTextField("");
-                String symbol_gls = symbol_tf.getText();
-                String plural_gls = plural_tf.getText();
-                String desc_gls = desc_Area.getText();
+                String symbol_gls = symbol_tf.getText().trim();
+                String plural_gls = plural_tf.getText().trim();
+                String desc_gls = desc_Area.getText().trim();
                 GlossaryEntryClass gec  ; //= new GlossaryEntryClass(name_gls,symbol_gls,plural_gls,desc_gls);
 
                 //sort use
@@ -1494,26 +1500,19 @@ JLabel tag_label = new JLabel("Tag");
 
   //class GlossaryEntryClass implements Map<String,String>  {
   // class GlossaryEntryClass implements Map<String,String>  {
-  @SuppressWarnings("serial")
-     public class GlossaryEntryClass1 extends HashMap<String,String> {
+  
+    @SuppressWarnings("serial")
+     public class GlossaryEntryClass1 {
 
-      private String tag ;
+   
       //private Map<String,String> fields = new HashMap<String, String>() ;
-      String tag_gls;
-      String name_gls;
-      String symbol_gls;
-      String plural_gls;
-      String desc_gls;
-
+//   
+      private HashMap<String, String> fields;
 
 
      public GlossaryEntryClass1(String tag_gls2,String name_gls2, String symbol_gls2, String plural_gls2, String desc_gls2){
          fields = new HashMap<String, String>() ;
-         tag_gls = tag_gls2;
-         name_gls = name_gls2;
-         symbol_gls = symbol_gls2;
-         plural_gls = plural_gls2;
-         desc_gls = desc_gls2;
+    
 
         //  fields.put(symbol_gls2, plural_gls2);
          fields.put("Tag", tag_gls2); 
@@ -1523,33 +1522,27 @@ JLabel tag_label = new JLabel("Tag");
          fields.put("Desciption", desc_gls2);
          
          gMap.put(tag_gls2, fields) ; 
-         
-//        this.put("Tag", tag_gls2);
-//         this.put("Name", name_gls2);
-//         this.put("Symbol", symbol_gls2);
-//         this.put("Plural", plural_gls2);
-//         this.put("Desciption", desc_gls2);
 
     }
 
      String getTag(){
-        return tag_gls;
+        return fields.get("Tag");
      }
 
      String getName(){
-        return name_gls;
+         return fields.get("Name");
      }
 
      String getSymbol(){
-        return symbol_gls;
+         return fields.get("Symbol");
      }
 
      String getPlural(){
-        return plural_gls;
+         return fields.get("Plural");
      }
 
      String getDesc(){
-        return desc_gls;
+         return fields.get("Description");
      }
 
 
@@ -2151,68 +2144,69 @@ JLabel tag_label = new JLabel("Tag");
  // WordSearcher wordsearcher ; //= new WordSearcher();
 
 
-  public WordSearcher(JTextComponent comp) {
-   // public WordSearcher(String comp) {
-   //wordsearcher = new WordSearcher();
-    this.comp = comp;
+  // class 5.2 begins
+//  public WordSearcher(JTextComponent comp) {
+//   // public WordSearcher(String comp) {
+//   //wordsearcher = new WordSearcher();
+//    this.comp = comp;
+//
+//  //  this.painter = new UnderlineHighlighter.UnderlineHighlightPainter(Color.red);
+//     this.painter = new org.nidal.latex.glossarytool.UnderlineHighlighter.UnderlineHighlightPainter(Color.red);
+//     highlighterh = new org.nidal.latex.glossarytool.UnderlineHighlighter(null);
+//  }
 
-  //  this.painter = new UnderlineHighlighter.UnderlineHighlightPainter(Color.red);
-     this.painter = new org.nidal.latex.glossarytool.UnderlineHighlighter.UnderlineHighlightPainter(Color.red);
-     highlighterh = new org.nidal.latex.glossarytool.UnderlineHighlighter(null);
-  }
 
 
-
-  // Search for a word and return the offset of the
-  // first occurrence. Highlights are added for all
-  // occurrences found.
-  public int search(String word) {
-    int firstOffset = -1;
-    Highlighter highlighterh = comp.getHighlighter();
-
-    // Remove any existing highlights for last word
-    Highlighter.Highlight[] highlights = highlighterh.getHighlights();
-    for (int i = 0; i < highlights.length; i++) {
-      Highlighter.Highlight h = highlights[i];
-      if (h.getPainter() instanceof UnderlineHighlighter.UnderlineHighlightPainter) {
-        highlighterh.removeHighlight(h);
-      }
-    }
-
-    if (word == null || word.equals("")) {
-      return -1;
-    }
-
-    // Look for the word we are given - insensitive search
-    String content = null;
-    try {
-      Document d = comp.getDocument();
-      content = d.getText(0, d.getLength()).toLowerCase();
-    } catch (BadLocationException e) {
-      // Cannot happen
-      return -1;
-    }
-
-    word = word.toLowerCase();
-    int lastIndex = 0;
-    int wordSize = word.length();
-
-    while ((lastIndex = content.indexOf(word, lastIndex)) != -1) {
-      int endIndex = lastIndex + wordSize;
-      try {
-        highlighterh.addHighlight(lastIndex, endIndex, painter);
-      } catch (BadLocationException e) {
-        // Nothing to do
-      }
-      if (firstOffset == -1) {
-        firstOffset = lastIndex;
-      }
-      lastIndex = endIndex;
-    }
-
-    return firstOffset;
-  }
-
+//  // Search for a word and return the offset of the
+//  // first occurrence. Highlights are added for all
+//  // occurrences found.
+//  public int search(String word) {
+//    int firstOffset = -1;
+//    Highlighter highlighterh = comp.getHighlighter();
+//
+//    // Remove any existing highlights for last word
+//    Highlighter.Highlight[] highlights = highlighterh.getHighlights();
+//    for (int i = 0; i < highlights.length; i++) {
+//      Highlighter.Highlight h = highlights[i];
+//      if (h.getPainter() instanceof UnderlineHighlighter.UnderlineHighlightPainter) {
+//        highlighterh.removeHighlight(h);
+//      }
+//    }
+//
+//    if (word == null || word.equals("")) {
+//      return -1;
+//    }
+//
+//    // Look for the word we are given - insensitive search
+//    String content = null;
+//    try {
+//      Document d = comp.getDocument();
+//      content = d.getText(0, d.getLength()).toLowerCase();
+//    } catch (BadLocationException e) {
+//      // Cannot happen
+//      return -1;
+//    }
+//
+//    word = word.toLowerCase();
+//    int lastIndex = 0;
+//    int wordSize = word.length();
+//
+//    while ((lastIndex = content.indexOf(word, lastIndex)) != -1) {
+//      int endIndex = lastIndex + wordSize;
+//      try {
+//        highlighterh.addHighlight(lastIndex, endIndex, painter);
+//      } catch (BadLocationException e) {
+//        // Nothing to do
+//      }
+//      if (firstOffset == -1) {
+//        firstOffset = lastIndex;
+//      }
+//      lastIndex = endIndex;
+//    }
+//
+//    return firstOffset;
+//  }
+// class 5.2 ends
 
 
 
@@ -2246,51 +2240,54 @@ JLabel tag_label = new JLabel("Tag");
     super.setDrawsLayeredHighlights(true);
   }
 
-  // Painter for underlined highlights
-  public class UnderlineHighlightPainter extends LayeredHighlighter.LayerPainter {
-    public UnderlineHighlightPainter(Color c) {
-      color = c;
-    }
-
-    public void paint(Graphics g, int offs0, int offs1, Shape bounds,
-        JTextComponent c) {
-      // Do nothing: this method will never be called
-    }
-
-    public Shape paintLayer(Graphics g, int offs0, int offs1, Shape bounds,
-        JTextComponent c, View view) {
-      g.setColor(color == null ? c.getSelectionColor() : color);
-
-      Rectangle alloc = null;
-      if (offs0 == view.getStartOffset() && offs1 == view.getEndOffset()) {
-        if (bounds instanceof Rectangle) {
-          alloc = (Rectangle) bounds;
-        } else {
-          alloc = bounds.getBounds();
-        }
-      } else {
-        try {
-          Shape shape = view.modelToView(offs0,
-              Position.Bias.Forward, offs1,
-              Position.Bias.Backward, bounds);
-          alloc = (shape instanceof Rectangle) ? (Rectangle) shape
-              : shape.getBounds();
-        } catch (BadLocationException e) {
-          return null;
-        }
-      }
-
-      FontMetrics fm = c.getFontMetrics(c.getFont());
-      int baseline = alloc.y + alloc.height - fm.getDescent() + 1;
-      g.drawLine(alloc.x, baseline, alloc.x + alloc.width, baseline);
-      g.drawLine(alloc.x, baseline + 1, alloc.x + alloc.width,
-          baseline + 1);
-
-      return alloc;
-    }
-
-
-  }
+  //starts here class 5
+//  // Painter for underlined highlights
+//  public class UnderlineHighlightPainter extends LayeredHighlighter.LayerPainter {
+//    public UnderlineHighlightPainter(Color c) {
+//      color = c;
+//    }
+//
+//    public void paint(Graphics g, int offs0, int offs1, Shape bounds,
+//        JTextComponent c) {
+//      // Do nothing: this method will never be called
+//    }
+//
+//    public Shape paintLayer(Graphics g, int offs0, int offs1, Shape bounds,
+//        JTextComponent c, View view) {
+//      g.setColor(color == null ? c.getSelectionColor() : color);
+//
+//      Rectangle alloc = null;
+//      if (offs0 == view.getStartOffset() && offs1 == view.getEndOffset()) {
+//        if (bounds instanceof Rectangle) {
+//          alloc = (Rectangle) bounds;
+//        } else {
+//          alloc = bounds.getBounds();
+//        }
+//      } else {
+//        try {
+//          Shape shape = view.modelToView(offs0,
+//              Position.Bias.Forward, offs1,
+//              Position.Bias.Backward, bounds);
+//          alloc = (shape instanceof Rectangle) ? (Rectangle) shape
+//              : shape.getBounds();
+//        } catch (BadLocationException e) {
+//          return null;
+//        }
+//      }
+//
+//      FontMetrics fm = c.getFontMetrics(c.getFont());
+//      int baseline = alloc.y + alloc.height - fm.getDescent() + 1;
+//      g.drawLine(alloc.x, baseline, alloc.x + alloc.width, baseline);
+//      g.drawLine(alloc.x, baseline + 1, alloc.x + alloc.width,
+//          baseline + 1);
+//
+//      return alloc;
+//    }
+//
+//
+//  }
+  
+  /// ends here 5
   }
   
   //glossary replace all 
@@ -2325,7 +2322,51 @@ JLabel tag_label = new JLabel("Tag");
 ////  }
 //} 
 
-
+// delete from 
+// public int search(String word) {
+//    int firstOffset = -1;
+//   JTextComponent comp = textArea ;
+//
+//    
+////    if(repeatTags.containsKey(text_selected)==true)
+//////        textArea.setText(textArea.getText().replaceAll("(\\b"+text_selected+"\\b)", repeatTags.get(text_selected)));
+////               textArea.setText(textArea.getText().replaceAll( "(?<!\\S)"+text_selected+"(?!\\S)", repeatTags.get(text_selected)));
+//    
+//   
+//    if (word == null || word.equals("")) {
+//      return -1;
+//    }
+//
+//    // Look for the word we are given - insensitive search
+//    String content = null;
+//    try {
+//      Document d = comp.getDocument();
+//      content = d.getText(0, d.getLength()).toLowerCase();
+//    } catch (BadLocationException e) {
+//      // Cannot happen
+//      return -1;
+//    }
+//
+//    word = word.toLowerCase();
+//   String word1 = "(?<!\\S)"+word+"(?!\\S)" ;
+//    int lastIndex = 0;
+//    int wordSize = word.length();
+//
+//    while ((lastIndex = content.indexOf(word, lastIndex)) != -1) {
+//   
+//int endIndex = lastIndex + wordSize;
+// Boolean available = checkavailabilityin_Map1();
+//                int offset = searcher.search(word);
+//      if (firstOffset == -1) {
+//        firstOffset = lastIndex;
+//      }
+//      lastIndex = endIndex;
+//    }
+//
+//    return firstOffset;
+//  } 
+  //delete here
+  
 
   //Intelligence *starts here*
   public class Intelligence {
@@ -2536,6 +2577,46 @@ JLabel tag_label = new JLabel("Tag");
            
            return text_replacement ; 
       }
+      
+         public String checkavailabilityin_Map1(){
+          
+          
+          String value=null ;
+         
+          Iterator<Map.Entry<String, Map>> iterator = gMap.entrySet().iterator();
+           while(iterator.hasNext()){
+            Map.Entry<String, Map> entry = iterator.next();
+            
+            value = (String) entry.getValue().get("Tag") ;
+            searcher.search(value);
+            
+            value = (String) entry.getValue().get("Plural") ;
+            searcher.search(value);
+          value = (String)  entry.getValue().get("Symbol") ;
+            searcher.search(value);
+            
+            
+//            if(text_selected.toLowerCase().equals(entry.getValue().get("Tag")))
+//            {  
+//            value = (String) entry.getValue().get("Tag");
+//             searcher.search(value);
+//                }
+//            
+//            else if(text_selected.toLowerCase().equals(entry.getValue().get("Plural")))
+//            { value = (String) entry.getValue().get("Plural");
+//            searcher.search(value);
+//                }
+//            
+//            else if(text_selected.equals(entry.getValue().get("Symbol"))) 
+//            { value = (String) entry.getValue().get("Symbol");
+//            searcher.search(value);
+//              }
+         
+                //  iterator.remove(); // right way to remove entries from Map, // avoids ConcurrentModificationException
+        } 
+           
+           return value ; 
+      } 
      
  public void repeattags_add(String selected_word2, String replacement_word)
   {     
@@ -2549,8 +2630,7 @@ JLabel tag_label = new JLabel("Tag");
 // Intelligence *ends here*
   //reference : http://stackoverflow.com/questions/37462264/recursively-flatten-values-of-nested-maps-in-java-8
 
-  
-  //adds to the repeattags map
+
  
   
   
@@ -2562,19 +2642,19 @@ JLabel tag_label = new JLabel("Tag");
         return Stream.of(o);
     }
 
-    public GlossaryTool(Map<String, Map> gMap1) {
-        collect = gMap1.values().stream().flatMap(GlossaryTool::flatten)
-                .collect(Collectors.toList());
-//           List<Object> collect = gMap1.values().stream().flatMap(GlossaryTool::flatten).collect(Collectors.toList());
-
-
-        storemap(collect);
-        System.out.println(collect);
-        // or
-//        List<Object> collect2 = flatten(map0).collect(Collectors.toList());
+//    public GlossaryTool(Map<String, Map> gMap1) {
+//        collect = gMap1.values().stream().flatMap(GlossaryTool::flatten)
+//                .collect(Collectors.toList());
+////           List<Object> collect = gMap1.values().stream().flatMap(GlossaryTool::flatten).collect(Collectors.toList());
+//
+//
+//        storemap(collect);
 //        System.out.println(collect);
-
-    }
+//        // or
+////        List<Object> collect2 = flatten(map0).collect(Collectors.toList());
+////        System.out.println(collect);
+//
+//    }
 
      public static List storemap(List<Object> collect1)
      {

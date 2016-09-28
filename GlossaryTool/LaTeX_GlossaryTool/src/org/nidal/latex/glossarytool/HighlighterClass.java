@@ -6,6 +6,18 @@
 package org.nidal.latex.glossarytool;
 
 
+/**
+ *
+ * @author nidal
+ */
+
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+
 
 /*
 Core SWING Advanced Programming 
@@ -42,7 +54,7 @@ import javax.swing.text.LayeredHighlighter;
 import javax.swing.text.Position;
 import javax.swing.text.View;
 
-public class HighlightExample_Delete {
+public class HighlighterClass {
   public static void main(String[] args) {
     try {
         UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
@@ -67,7 +79,7 @@ public class HighlightExample_Delete {
       System.out.println("Failed to load file " + args[0]);
       System.out.println(e);
     }
-    final WordSearcher1 searcher = new WordSearcher1(textPane);
+    final WordSearcher searcher = new WordSearcher(textPane);
 
     tf.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
@@ -102,16 +114,16 @@ public class HighlightExample_Delete {
 
   public static String word;
 
-  public static Highlighter highlighter = new UnderlineHighlighter1(null);
+  public static Highlighter highlighter = new UnderlineHighlighter(null);
 }
 
 // A simple class that searches for a word in
 // a document and highlights occurrences of that word
 
-class WordSearcher1 {
-  public WordSearcher1(JTextComponent comp) {
+class WordSearcher {
+  public WordSearcher(JTextComponent comp) {
     this.comp = comp;
-    this.painter = new UnderlineHighlighter1.UnderlineHighlightPainter(
+    this.painter = new UnderlineHighlighter.UnderlineHighlightPainter(
         Color.red);
   }
 
@@ -121,15 +133,23 @@ class WordSearcher1 {
   public int search(String word) {
     int firstOffset = -1;
     Highlighter highlighter = comp.getHighlighter();
+    word = " "+word+" ";
 
+    
+//    if(repeatTags.containsKey(text_selected)==true)
+////        textArea.setText(textArea.getText().replaceAll("(\\b"+text_selected+"\\b)", repeatTags.get(text_selected)));
+//               textArea.setText(textArea.getText().replaceAll( "(?<!\\S)"+text_selected+"(?!\\S)", repeatTags.get(text_selected)));
+    
+    
     // Remove any existing highlights for last word
-    Highlighter.Highlight[] highlights = highlighter.getHighlights();
-    for (int i = 0; i < highlights.length; i++) {
-      Highlighter.Highlight h = highlights[i];
-      if (h.getPainter() instanceof UnderlineHighlighter1.UnderlineHighlightPainter) {
-        highlighter.removeHighlight(h);
-      }
-    }
+//    Highlighter.Highlight[] highlights = highlighter.getHighlights();
+//    for (int i = 0; i < highlights.length; i++) {
+//      Highlighter.Highlight h = highlights[i];
+//      if (h.getPainter() instanceof UnderlineHighlighter.UnderlineHighlightPainter) {
+//        highlighter.removeHighlight(h);
+//      
+//      }
+//    }
 
     if (word == null || word.equals("")) {
       return -1;
@@ -137,20 +157,24 @@ class WordSearcher1 {
 
     // Look for the word we are given - insensitive search
     String content = null;
+     String content1 = null;
     try {
       Document d = comp.getDocument();
       content = d.getText(0, d.getLength()).toLowerCase();
+      content1 = "(?<!\\S)"+content+"(?!\\S)" ;
     } catch (BadLocationException e) {
       // Cannot happen
       return -1;
     }
 
     word = word.toLowerCase();
+   String word1 = "(?<!\\S)"+word+"(?!\\S)" ;
     int lastIndex = 0;
     int wordSize = word.length();
 
     while ((lastIndex = content.indexOf(word, lastIndex)) != -1) {
-      int endIndex = lastIndex + wordSize;
+   
+int endIndex = lastIndex + wordSize;
       try {
         highlighter.addHighlight(lastIndex, endIndex, painter);
       } catch (BadLocationException e) {
@@ -171,8 +195,8 @@ class WordSearcher1 {
 
 }
 
-class UnderlineHighlighter1 extends DefaultHighlighter {
-  public UnderlineHighlighter1(Color c) {
+class UnderlineHighlighter extends DefaultHighlighter {
+  public UnderlineHighlighter(Color c) {
     painter = (c == null ? sharedPainter : new UnderlineHighlightPainter(c));
   }
 
@@ -244,3 +268,4 @@ class UnderlineHighlighter1 extends DefaultHighlighter {
   // Painter used for this highlighter
   protected Highlighter.HighlightPainter painter;
 }
+
