@@ -662,7 +662,7 @@ this.tools.add(this.add_gls);
             }
             // textArea1.requestFocus();
            // dictionarycheck();
-
+           gMap.clear();
             textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_LATEX);
             textArea.requestFocus();
 
@@ -679,6 +679,7 @@ this.tools.add(this.add_gls);
             // textArea1.requestFocus();
 
             //dictionarycheck();
+            gMap.clear();
             textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_LATEX);
                   textArea.requestFocus();
 
@@ -707,6 +708,7 @@ this.tools.add(this.add_gls);
 
                 }
                 //   textArea1.requestFocus();
+                gMap.clear();
                 textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_LATEX);
                 textArea.requestFocus();
 
@@ -720,7 +722,8 @@ this.tools.add(this.add_gls);
                         this.filename_final = fd.getDirectory() + "glossary.tex" ;
                     setTitle(fileName);
                     checkFile();
-                }
+                    gMap.clear();
+                }   
             }
         }
 
@@ -969,7 +972,7 @@ textArea.addParser(parser);
         textChanged = false;
         saveFile.setEnabled(false);
         writeto_GlossaryFile();
-        //gMap.clear();
+        gMap.clear();
     }
 
     
