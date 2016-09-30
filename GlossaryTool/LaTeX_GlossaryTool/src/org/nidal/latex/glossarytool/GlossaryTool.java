@@ -1914,10 +1914,27 @@ JLabel tag_label = new JLabel("Tag");
         //Iterator<Map.Entry<String, Map>> iterator = gMap.entrySet().iterator();
         String text_selected = textArea.getSelectedText();
 
-        boolean blnExists = repeatTags.containsKey(text_selected);
-         //tag = checkifPlural(text_selected) ;
+     
 
-         checkavailabilityin_Map(text_selected);
+         
+          try {
+            int selStart = textArea.getSelectionStart();
+            int selEnd = textArea.getSelectionEnd();
+            if (selStart != selEnd) {
+               text_selected = textArea.getText(selStart, selEnd - selStart);
+               
+               if(!text_selected.equals(""))
+               checkavailabilityin_Map(text_selected);
+            } 
+          }catch (BadLocationException ble) {
+            ble.printStackTrace();
+            UIManager.getLookAndFeel().provideErrorFeedback(textArea);
+            return;
+         }
+          
+             boolean blnExists = repeatTags.containsKey(text_selected);
+         //tag = checkifPlural(text_selected) ;
+         
 
 //        if(blnExists)
 //        { // System.out.println("exists") ;
@@ -1999,7 +2016,22 @@ JLabel tag_label = new JLabel("Tag");
        /// GlossariseSelectedWordAllOccurances.WordSearcher3(textArea); 
           // (textArea); 
           // searcher5.search(text_selected); 
-           checkavailabilityin_Map4(text_selected);
+          
+             try {
+            int selStart = textArea.getSelectionStart();
+            int selEnd = textArea.getSelectionEnd();
+            if (selStart != selEnd) {
+               text_selected = textArea.getText(selStart, selEnd - selStart);
+               
+               if(!text_selected.equals(""))
+              checkavailabilityin_Map4(text_selected);
+            } 
+          }catch (BadLocationException ble) {
+            ble.printStackTrace();
+            UIManager.getLookAndFeel().provideErrorFeedback(textArea);
+            return;
+         }
+          
 //	if(repeatTags.containsKey(text_selected)==true)
 ////        textArea.setText(textArea.getText().replaceAll("(\\b"+text_selected+"\\b)", repeatTags.get(text_selected)));
 //               textArea.setText(textArea.getText().replaceAll( "(?<!\\S)"+text_selected+"(?!\\S)", repeatTags.get(text_selected)));

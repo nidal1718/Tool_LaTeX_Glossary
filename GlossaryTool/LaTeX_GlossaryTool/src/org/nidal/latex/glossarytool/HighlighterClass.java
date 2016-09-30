@@ -133,7 +133,8 @@ class WordSearcher {
   public int search(String word) {
     int firstOffset = -1;
     Highlighter highlighter = comp.getHighlighter();
-    word = " "+word+" ";
+    //word = " "+word+" ";
+   // String word1 = "(?<!\\S)"+word+"(?!\\S)" ;
 
     
 //    if(repeatTags.containsKey(text_selected)==true)
@@ -168,7 +169,7 @@ class WordSearcher {
     }
 
     word = word.toLowerCase();
-   String word1 = "(?<!\\S)"+word+"(?!\\S)" ;
+  // String word1 = "(?<!\\S)"+word+"(?!\\S)" ;
     int lastIndex = 0;
     int wordSize = word.length();
 
