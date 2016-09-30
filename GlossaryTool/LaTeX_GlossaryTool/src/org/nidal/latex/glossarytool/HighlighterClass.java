@@ -1,31 +1,18 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.nidal.latex.glossarytool;
 
 
-/**
- *
- * @author nidal
- */
-
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
 
-
-
-/*
+ /*
 Core SWING Advanced Programming 
 By Kim Topley
 ISBN: 0 13 083292 8       
 Publisher: Prentice Hall  
-*/
-
+ */
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FontMetrics;
@@ -34,7 +21,12 @@ import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -55,330 +47,279 @@ import javax.swing.text.Position;
 import javax.swing.text.View;
 
 public class HighlighterClass {
-  public static void main(String[] args) {
-    try {
-        UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
-    } catch (Exception evt) {}
-  
-    JFrame f = new JFrame("Highlight example");
-    final JTextPane textPane = new JTextPane();
-//final RSyntaxTextArea textPane = new RSyntaxTextArea();
-    textPane.setHighlighter(highlighter);
- 
-    JPanel pane = new JPanel();
-    pane.setLayout(new BorderLayout());
-    pane.add(new JLabel("Enter word: "), "West");
-    final JTextField tf = new JTextField();
-    pane.add(tf, "Center");
-    f.getContentPane().add(pane, "South");
-    f.getContentPane().add(new JScrollPane(textPane), "Center");
 
-    try {
-      textPane.read(new FileReader("sampletextfile.txt"), null);
-    } catch (Exception e) {
-      System.out.println("Failed to load file " + args[0]);
-      System.out.println(e);
-    }
-    final WordSearcher searcher = new WordSearcher(textPane);
-
-    tf.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent evt) {
-        word = tf.getText().trim();
-        int offset = searcher.search(word);
-        if (offset != -1) {
-          try {
-            textPane.scrollRectToVisible(textPane
-                .modelToView(offset));
-          } catch (BadLocationException e) {
-          }
+    public static void main(String[] args) {
+        try {
+            UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+        } catch (Exception evt) {
         }
-      }
-    });
 
-    textPane.getDocument().addDocumentListener(new DocumentListener() {
-      public void insertUpdate(DocumentEvent evt) {
-        searcher.search(word);
-      }
+        JFrame f = new JFrame("Highlight example");
+        final JTextPane textPane = new JTextPane();
+//final RSyntaxTextArea textPane = new RSyntaxTextArea();
+        textPane.setHighlighter(highlighter);
 
-      public void removeUpdate(DocumentEvent evt) {
-        searcher.search(word);
-      }
+        JPanel pane = new JPanel();
+        pane.setLayout(new BorderLayout());
+        pane.add(new JLabel("Enter word: "), "West");
+        final JTextField tf = new JTextField();
+        pane.add(tf, "Center");
+        f.getContentPane().add(pane, "South");
+        f.getContentPane().add(new JScrollPane(textPane), "Center");
 
-      public void changedUpdate(DocumentEvent evt) {
-      }
-    });
+        try {
+            textPane.read(new FileReader("sampletextfile.txt"), null);
+        } catch (Exception e) {
+            System.out.println("Failed to load file " + args[0]);
+            System.out.println(e);
+        }
+        final WordSearcher searcher = new WordSearcher(textPane);
 
-    f.setSize(400, 400);
-    f.setVisible(true);
-  }
+        tf.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                word = tf.getText().trim();
+                int offset = searcher.search(word);
+                if (offset != -1) {
+                    try {
+                        textPane.scrollRectToVisible(textPane
+                                .modelToView(offset));
+                    } catch (BadLocationException e) {
+                    }
+                }
+            }
+        });
 
-  public static String word;
+        textPane.getDocument().addDocumentListener(new DocumentListener() {
+            public void insertUpdate(DocumentEvent evt) {
+                searcher.search(word);
+            }
 
-  public static Highlighter highlighter = new UnderlineHighlighter(null);
+            public void removeUpdate(DocumentEvent evt) {
+                searcher.search(word);
+            }
+
+            public void changedUpdate(DocumentEvent evt) {
+            }
+        });
+
+        f.setSize(400, 400);
+        f.setVisible(true);
+    }
+
+    public static String word;
+
+    public static Highlighter highlighter = new UnderlineHighlighter(null);
 }
-
 
 // A simple class that searches for a word in
 // a document and highlights occurrences of that word
-
 class WordSearcherForSingleInstance {
-  public WordSearcherForSingleInstance(JTextComponent comp) {
-    this.comp = comp;
-    this.painter = new UnderlineHighlighter.UnderlineHighlightPainter(
-        Color.red);
-  }
-  
-  
-  public void removehighlighter() {
-    int firstOffset = -1;
-    Highlighter highlighter = comp.getHighlighter();
-    
-   //  Remove any existing highlights for last word
-    Highlighter.Highlight[] highlights = highlighter.getHighlights();
-    for (int i = 0; i < highlights.length; i++) {
-      Highlighter.Highlight h = highlights[i];
-      if (h.getPainter() instanceof UnderlineHighlighter.UnderlineHighlightPainter) {
-        highlighter.removeHighlight(h);
-      
-      }
-    } }
-  
 
-  // Search for a word and return the offset of the
-  // first occurrence. Highlights are added for all
-  // occurrences found.
-  public int search(String word) {
-    int firstOffset = -1;
-    Highlighter highlighter = comp.getHighlighter();
-    //word = " "+word+" ";
-   // String word1 = "(?<!\\S)"+word+"(?!\\S)" ;
-
-    
-//    if(repeatTags.containsKey(text_selected)==true)
-////        textArea.setText(textArea.getText().replaceAll("(\\b"+text_selected+"\\b)", repeatTags.get(text_selected)));
-//               textArea.setText(textArea.getText().replaceAll( "(?<!\\S)"+text_selected+"(?!\\S)", repeatTags.get(text_selected)));
-    
-    
-    // Remove any existing highlights for last word
-//    Highlighter.Highlight[] highlights = highlighter.getHighlights();
-//    for (int i = 0; i < highlights.length; i++) {
-//      Highlighter.Highlight h = highlights[i];
-//      if (h.getPainter() instanceof UnderlineHighlighter.UnderlineHighlightPainter) {
-//        highlighter.removeHighlight(h);
-//      
-//      }
-//    }
-
-    if (word == null || word.equals("")) {
-      return -1;
+    public WordSearcherForSingleInstance(JTextComponent comp) {
+        this.comp = comp;
+        this.painter = new UnderlineHighlighter.UnderlineHighlightPainter(
+                Color.red);
     }
 
-    // Look for the word we are given - insensitive search
-    String content = null;
-     String content1 = null;
-    try {
-      Document d = comp.getDocument();
-      content = d.getText(0, d.getLength()).toLowerCase();
-      content1 = "(?<!\\S)"+content+"(?!\\S)" ;
-    } catch (BadLocationException e) {
-      // Cannot happen
-      return -1;
+    public void removehighlighter() {
+        int firstOffset = -1;
+        Highlighter highlighter = comp.getHighlighter();
+
+        //  Remove any existing highlights for last word
+        Highlighter.Highlight[] highlights = highlighter.getHighlights();
+        for (int i = 0; i < highlights.length; i++) {
+            Highlighter.Highlight h = highlights[i];
+            if (h.getPainter() instanceof UnderlineHighlighter.UnderlineHighlightPainter) {
+                highlighter.removeHighlight(h);
+
+            }
+        }
     }
 
-    word = word.toLowerCase();
-  // String word1 = "(?<!\\S)"+word+"(?!\\S)" ;
-    int lastIndex = 0;
-    int wordSize = word.length();
+ 
+ // Search for a word and return the offset of the
+    // first occurrence. Highlights are added for all
+    // occurrences found.
+    public int search(String word) {
+        int firstOffset = -1;
+        Highlighter highlighter = comp.getHighlighter();
 
-    while ((lastIndex = content.indexOf(word, lastIndex)) != -1) {
-   
-int endIndex = lastIndex + wordSize;
-      try {
-        highlighter.addHighlight(lastIndex, endIndex, painter);
-      } catch (BadLocationException e) {
-        // Nothing to do
-      }
-      if (firstOffset == -1) {
-        firstOffset = lastIndex;
-      }
-      lastIndex = endIndex;
+        String content = null;
+
+        Pattern word1 = Pattern.compile("(?<!\\S)" + word + "(?!\\S)");
+
+        try {
+            Document d = comp.getDocument();
+            content = d.getText(0, d.getLength()).toLowerCase();
+            Matcher m = word1.matcher(content);
+
+            while (m.find()) {
+
+                int start = m.start(0);
+
+                int end = m.end(0);
+
+                try {
+                    highlighter.addHighlight(start, end, painter);
+                } catch (BadLocationException e) {
+
+                }
+            }
+
+        } catch (BadLocationException e) {
+            // Cannot happen
+            return -1;
+        }
+
+        return firstOffset;
     }
 
-    return firstOffset;
-  }
+    protected JTextComponent comp;
 
-  protected JTextComponent comp;
-
-  protected Highlighter.HighlightPainter painter;
+    protected Highlighter.HighlightPainter painter;
 
 }
 
 // A simple class that searches for a word in
 // a document and highlights occurrences of that word
-
 class WordSearcher {
-  public WordSearcher(JTextComponent comp) {
-    this.comp = comp;
-    this.painter = new UnderlineHighlighter.UnderlineHighlightPainter(
-        Color.red);
-  }
-  
-  
-  public void removehighlighter() {
-    int firstOffset = -1;
-    Highlighter highlighter = comp.getHighlighter();
-    
-   //  Remove any existing highlights for last word
-    Highlighter.Highlight[] highlights = highlighter.getHighlights();
-    for (int i = 0; i < highlights.length; i++) {
-      Highlighter.Highlight h = highlights[i];
-      if (h.getPainter() instanceof UnderlineHighlighter.UnderlineHighlightPainter) {
-        highlighter.removeHighlight(h);
-      
-      }
-    } }
-  
 
-  // Search for a word and return the offset of the
-  // first occurrence. Highlights are added for all
-  // occurrences found.
-  public int search(String word) {
-    int firstOffset = -1;
-    Highlighter highlighter = comp.getHighlighter();
-    //word = " "+word+" ";
-   // String word1 = "(?<!\\S)"+word+"(?!\\S)" ;
-
-    
-//    if(repeatTags.containsKey(text_selected)==true)
-////        textArea.setText(textArea.getText().replaceAll("(\\b"+text_selected+"\\b)", repeatTags.get(text_selected)));
-//               textArea.setText(textArea.getText().replaceAll( "(?<!\\S)"+text_selected+"(?!\\S)", repeatTags.get(text_selected)));
-    
-    
-    // Remove any existing highlights for last word
-//    Highlighter.Highlight[] highlights = highlighter.getHighlights();
-//    for (int i = 0; i < highlights.length; i++) {
-//      Highlighter.Highlight h = highlights[i];
-//      if (h.getPainter() instanceof UnderlineHighlighter.UnderlineHighlightPainter) {
-//        highlighter.removeHighlight(h);
-//      
-//      }
-//    }
-
-    if (word == null || word.equals("")) {
-      return -1;
+    public WordSearcher(JTextComponent comp) {
+        this.comp = comp;
+        this.painter = new UnderlineHighlighter.UnderlineHighlightPainter(
+                Color.red);
     }
 
-    // Look for the word we are given - insensitive search
-    String content = null;
-     String content1 = null;
-    try {
-      Document d = comp.getDocument();
-      content = d.getText(0, d.getLength()).toLowerCase();
-      //content1 = "(?<!\\S)"+content+"(?!\\S)" ;
-    } catch (BadLocationException e) {
-      // Cannot happen
-      return -1;
+    public void removehighlighter() {
+        int firstOffset = -1;
+        Highlighter highlighter = comp.getHighlighter();
+
+        //  Remove any existing highlights for last word
+        Highlighter.Highlight[] highlights = highlighter.getHighlights();
+        for (int i = 0; i < highlights.length; i++) {
+            Highlighter.Highlight h = highlights[i];
+            if (h.getPainter() instanceof UnderlineHighlighter.UnderlineHighlightPainter) {
+                highlighter.removeHighlight(h);
+
+            }
+        }
     }
 
-    word = word.toLowerCase();
-  // String word1 = "(?<!\\S)"+word+"(?!\\S)" ;
-    int lastIndex = 0;
-    int wordSize = word.length();
+    // Search for a word and return the offset of the
+    // first occurrence. Highlights are added for all
+    // occurrences found.
+    public int search(String word) {
+        int firstOffset = -1;
+        Highlighter highlighter = comp.getHighlighter();
 
-    while ((lastIndex = content.indexOf(word, lastIndex)) != -1) {
-   
-int endIndex = lastIndex + wordSize;
-      try {
-        highlighter.addHighlight(lastIndex, endIndex, painter);
-      } catch (BadLocationException e) {
-        // Nothing to do
-      }
-      if (firstOffset == -1) {
-        firstOffset = lastIndex;
-      }
-      lastIndex = endIndex;
+        String content = null;
+
+        Pattern word1 = Pattern.compile("(?<!\\S)" + word + "(?!\\S)");
+
+        try {
+            Document d = comp.getDocument();
+            content = d.getText(0, d.getLength()).toLowerCase();
+            Matcher m = word1.matcher(content);
+
+            while (m.find()) {
+
+                int start = m.start(0);
+
+                int end = m.end(0);
+
+                try {
+                    highlighter.addHighlight(start, end, painter);
+                } catch (BadLocationException e) {
+
+                }
+            }
+
+        } catch (BadLocationException e) {
+            // Cannot happen
+            return -1;
+        }
+
+        return firstOffset;
     }
 
-    return firstOffset;
-  }
+    protected JTextComponent comp;
 
-  protected JTextComponent comp;
-
-  protected Highlighter.HighlightPainter painter;
+    protected Highlighter.HighlightPainter painter;
 
 }
 
 class UnderlineHighlighter extends DefaultHighlighter {
-  public UnderlineHighlighter(Color c) {
-    painter = (c == null ? sharedPainter : new UnderlineHighlightPainter(c));
-  }
 
-  // Convenience method to add a highlight with
-  // the default painter.
-  public Object addHighlight(int p0, int p1) throws BadLocationException {
-    return addHighlight(p0, p1, painter);
-  }
-
-  public void setDrawsLayeredHighlights(boolean newValue) {
-    // Illegal if false - we only support layered highlights
-    if (newValue == false) {
-      throw new IllegalArgumentException(
-          "UnderlineHighlighter only draws layered highlights");
-    }
-    super.setDrawsLayeredHighlights(true);
-  }
-
-  // Painter for underlined highlights
-  public static class UnderlineHighlightPainter extends LayeredHighlighter.LayerPainter {
-    public UnderlineHighlightPainter(Color c) {
-      color = c;
+    public UnderlineHighlighter(Color c) {
+        painter = (c == null ? sharedPainter : new UnderlineHighlightPainter(c));
     }
 
-    public void paint(Graphics g, int offs0, int offs1, Shape bounds,
-        JTextComponent c) {
-      // Do nothing: this method will never be called
+    // Convenience method to add a highlight with
+    // the default painter.
+    public Object addHighlight(int p0, int p1) throws BadLocationException {
+        return addHighlight(p0, p1, painter);
     }
 
-    public Shape paintLayer(Graphics g, int offs0, int offs1, Shape bounds,
-        JTextComponent c, View view) {
-      g.setColor(color == null ? c.getSelectionColor() : color);
-
-      Rectangle alloc = null;
-      if (offs0 == view.getStartOffset() && offs1 == view.getEndOffset()) {
-        if (bounds instanceof Rectangle) {
-          alloc = (Rectangle) bounds;
-        } else {
-          alloc = bounds.getBounds();
+    public void setDrawsLayeredHighlights(boolean newValue) {
+        // Illegal if false - we only support layered highlights
+        if (newValue == false) {
+            throw new IllegalArgumentException(
+                    "UnderlineHighlighter only draws layered highlights");
         }
-      } else {
-        try {
-          Shape shape = view.modelToView(offs0,
-              Position.Bias.Forward, offs1,
-              Position.Bias.Backward, bounds);
-          alloc = (shape instanceof Rectangle) ? (Rectangle) shape
-              : shape.getBounds();
-        } catch (BadLocationException e) {
-          return null;
-        }
-      }
-
-      FontMetrics fm = c.getFontMetrics(c.getFont());
-      int baseline = alloc.y + alloc.height - fm.getDescent() + 1;
-      g.drawLine(alloc.x, baseline, alloc.x + alloc.width, baseline);
-      g.drawLine(alloc.x, baseline + 1, alloc.x + alloc.width,
-          baseline + 1);
-
-      return alloc;
+        super.setDrawsLayeredHighlights(true);
     }
 
-    protected Color color; // The color for the underline
-  }
+    // Painter for underlined highlights
+    public static class UnderlineHighlightPainter extends LayeredHighlighter.LayerPainter {
 
-  // Shared painter used for default highlighting
-  protected static final Highlighter.HighlightPainter sharedPainter = new UnderlineHighlightPainter(
-      null);
+        public UnderlineHighlightPainter(Color c) {
+            color = c;
+        }
 
-  // Painter used for this highlighter
-  protected Highlighter.HighlightPainter painter;
+        public void paint(Graphics g, int offs0, int offs1, Shape bounds,
+                JTextComponent c) {
+            // Do nothing: this method will never be called
+        }
+
+        public Shape paintLayer(Graphics g, int offs0, int offs1, Shape bounds,
+                JTextComponent c, View view) {
+            g.setColor(color == null ? c.getSelectionColor() : color);
+
+            Rectangle alloc = null;
+            if (offs0 == view.getStartOffset() && offs1 == view.getEndOffset()) {
+                if (bounds instanceof Rectangle) {
+                    alloc = (Rectangle) bounds;
+                } else {
+                    alloc = bounds.getBounds();
+                }
+            } else {
+                try {
+                    Shape shape = view.modelToView(offs0,
+                            Position.Bias.Forward, offs1,
+                            Position.Bias.Backward, bounds);
+                    alloc = (shape instanceof Rectangle) ? (Rectangle) shape
+                            : shape.getBounds();
+                } catch (BadLocationException e) {
+                    return null;
+                }
+            }
+
+            FontMetrics fm = c.getFontMetrics(c.getFont());
+            int baseline = alloc.y + alloc.height - fm.getDescent() + 1;
+            g.drawLine(alloc.x, baseline, alloc.x + alloc.width, baseline);
+            g.drawLine(alloc.x, baseline + 1, alloc.x + alloc.width,
+                    baseline + 1);
+
+            return alloc;
+        }
+
+        protected Color color; // The color for the underline
+    }
+
+    // Shared painter used for default highlighting
+    protected static final Highlighter.HighlightPainter sharedPainter = new UnderlineHighlightPainter(
+            null);
+
+    // Painter used for this highlighter
+    protected Highlighter.HighlightPainter painter;
 }
-
