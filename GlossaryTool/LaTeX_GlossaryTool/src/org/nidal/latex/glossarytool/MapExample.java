@@ -6,9 +6,7 @@
 package org.nidal.latex.glossarytool;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 import java.util.ArrayList;
 
 public class MapExample {

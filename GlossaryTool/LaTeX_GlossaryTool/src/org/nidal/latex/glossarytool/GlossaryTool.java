@@ -108,8 +108,10 @@ public class GlossaryTool extends JFrame implements SearchListener{
 
 
   int flag = 0 ;
-    String filename = "";
-    String filename_s = "";
+   //
+  
+  // String filename = "" ;
+    String filename_s  = "";
     String filename_final ;
     private KeyListener k1 ;
     String applicationName = "LaTeX_GlossaryTool";
@@ -117,7 +119,7 @@ public class GlossaryTool extends JFrame implements SearchListener{
     String fn;
     String dir;
     boolean textChanged = false;
-    private String fileName;
+   private String fileName = "";
     private CollapsibleSectionPanel csp;
   //  private RSyntaxTextArea textArea;
     private FindDialog findDialog;
@@ -339,18 +341,17 @@ final org.nidal.latex.glossarytool.WordSearcher searcher ;
         this.file.add(this.saveFile);
 
 
-        // and the save as
-        this.saveasFile.setLabel("Save As"); // set the label of the menu item
-        //  this.saveasFile.addActionListener(this); // add an action listener (so we know when it's been clicked
+        // File Menu - SaveAs
+        this.saveasFile.setLabel("Save As"); 
         saveasFile.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                saveasMenuActionPerformed(evt);
+                saveAsMenuActionPerformed(evt); 
             }
         });
        // saveasFile.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, c));
         this.file.add(this.saveasFile); // add it to the "File" menu
 
-        //  close option
+       // File Menu - Exit
         this.exitFile.setLabel("Exit");
         exitFile.addActionListener(new java.awt.event.ActionListener() {
           public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -422,10 +423,6 @@ final org.nidal.latex.glossarytool.WordSearcher searcher ;
         edit.addSeparator();
         edit.add(new JMenuItem(new ShowFindDialogAction()));
         edit.add(new JMenuItem(new ShowReplaceDialogAction()));
-
-
-
-
 
 
         // and searchTool
@@ -692,10 +689,10 @@ this.tools.add(this.add_gls);
             int confirm = JOptionPane.showConfirmDialog(null, "Do you want to save before exiting this application? ");
 
             if (confirm == JOptionPane.YES_OPTION) {
-                if ("".equals(filename)) {
+                if ("".equals(fileName)) {
                     saveAs();
                 } else {
-                    save(filename);
+                    save(fileName);
                 }
 
                 FileDialog fd = new FileDialog(this, "Choose File", FileDialog.LOAD);
@@ -753,7 +750,7 @@ textArea.addParser(parser);
 
    }
 
-    private void saveasMenuActionPerformed(java.awt.event.ActionEvent evt) {
+    private void saveAsMenuActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
         saveAs();
     }
@@ -765,11 +762,11 @@ textArea.addParser(parser);
 
     private void saveMenuActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
-//        if (filename.equals("")) {
-            saveAs();
-//        } else {
-//            save(filename);
-//        }
+        if (fileName.equals("")) {
+            saveAs(); } 
+        else {           
+            save(fileName);
+        }
     }
 
 
@@ -788,10 +785,10 @@ textArea.addParser(parser);
         } else {
             int confirm = JOptionPane.showConfirmDialog(this, "Do you want to save before exiting this application");
             if (confirm == JOptionPane.YES_OPTION) {
-                if (filename.equals("")) {
+                if (fileName.equals("")) {
                     saveAs();
                 } else {
-                    save(filename);
+                    save(fileName);
                 }
 
             }
@@ -851,10 +848,10 @@ textArea.addParser(parser);
         } else {
             int confirm = JOptionPane.showConfirmDialog(this, "Do you want to save before exiting this application ?");
             if (confirm == JOptionPane.YES_OPTION) {
-                if (filename.equals("")) {
+                if (fileName.equals("")) {
                     saveAs();
                 } else {
-                    save(filename);
+                    save(fileName);
                 }
                 System.exit(0);
             }
@@ -866,22 +863,23 @@ textArea.addParser(parser);
     }
 
     private void saveAs() {
-        // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+               
         FileDialog fd = new FileDialog(GlossaryTool.this, "Save As", FileDialog.SAVE);
         fd.show();
+        
+      
         if (fd.getFile() != null) {
             fn = fd.getFile();
             dir = fd.getDirectory();
-          //  this.filename = dir + fn + ".tex";
-             this.filename = dir + fn;
+           fileName = dir + fn + ".tex";
+            // this.filename = dir + fn;
             // this.filename_s = dir + fn ;
                this.filename_final = fd.getDirectory() + "glossary.tex" ;
 
-            setTitle(filename);
+            setTitle(fileName);
 
             try {
-                DataOutputStream d = new DataOutputStream(new FileOutputStream(filename));
-//                holdText = textArea1.getText();
+                DataOutputStream d = new DataOutputStream(new FileOutputStream(fileName));
                 holdText = textArea.getText();
                 BufferedReader br = new BufferedReader(new StringReader(holdText));
 
@@ -889,17 +887,21 @@ textArea.addParser(parser);
                     d.writeBytes(holdText + "\r\n");
                     d.close();
 
+        
                 }
+
+                
             } catch (Exception e) {
                 System.out.println("File not found");
-            }
+            } 
+
 
             //textArea1.requestFocus();
-            textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_LATEX);
-            textArea.requestFocus();
-            save(filename);
+            //textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_LATEX);
+            textArea.requestFocus(); 
+            save(fileName);
         }
-
+               
     }
 
     private void saveGlossary_new_entry() {
@@ -950,56 +952,56 @@ textArea.addParser(parser);
     }
 
     private void save(String filename) {
-        // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         setTitle(applicationName + " " + filename);
-
-        System.out.println(filename);
         try {
-            FileWriter out;
-          //  out = new FileWriter(fn);
-           out = new FileWriter(fn);
-            //  out.write(textArea1.getText());
+            FileWriter out ;
+            out = new FileWriter(filename) ;
+            textArea.requestFocus(); 
             out.write(textArea.getText());
             out.close();
+//            FileWriter w = new FileWriter(fileName);	
+//            textArea.write(w);
+//            w.close();
 
         } catch (Exception err) {
-            System.out.println("Error: " + err);
-        }
-
-
+            System.out.println("Error: " + err); }
 
         textChanged = false;
         saveFile.setEnabled(false);
-
     }
 
+    
+ 
     private void newFile() {
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 //        if (textArea1.getText().length() < 1) {
+
         if (textArea.getText().length() < 1) {
             setTitle("Untitled-" + applicationName);
 //            textArea1.setText("");
             textArea.setText("");
+             fileName = "";
             textChanged = false;
 
         } else if (!textChanged) {
             setTitle("Untitled-" + applicationName);
 //            textArea1.setText("");
             textArea.setText("");
+             fileName = "";
             textChanged = false;
 
         } else {
-            int confirm = JOptionPane.showConfirmDialog(null, "Do you want to save the existing file opening a new one?");
+            int confirm = JOptionPane.showConfirmDialog(null, "Do you want to save the existing file before opening a new one?");
 
             if (confirm == JOptionPane.YES_OPTION) {
-                if ("".equals(filename)) {
+                if ("".equals(fileName)) {
                     saveAs();
                 } else {
-                    save(filename);
+                    save(fileName);
                 }
 
                 setTitle(applicationName);
-                filename = "";
+                fileName = "";
                 //  textArea1.setText("");
                 textArea.setText("");
                 textChanged = false;
@@ -1997,7 +1999,7 @@ JLabel tag_label = new JLabel("Tag");
        /// GlossariseSelectedWordAllOccurances.WordSearcher3(textArea); 
           // (textArea); 
           // searcher5.search(text_selected); 
-           checkavailabilityin_Map3(text_selected);
+           checkavailabilityin_Map4(text_selected);
 //	if(repeatTags.containsKey(text_selected)==true)
 ////        textArea.setText(textArea.getText().replaceAll("(\\b"+text_selected+"\\b)", repeatTags.get(text_selected)));
 //               textArea.setText(textArea.getText().replaceAll( "(?<!\\S)"+text_selected+"(?!\\S)", repeatTags.get(text_selected)));
@@ -2104,7 +2106,7 @@ JLabel tag_label = new JLabel("Tag");
           
          
 
-             value = (String)  entry.getValue().get("Tag") ;
+            value = (String)  entry.getValue().get("Tag") ;
              
             capValue = value.substring(0, 1).toUpperCase() + value.substring(1);
           //  text_replacement=addGlosGlossariecePopup_Method(tag);
@@ -2114,8 +2116,7 @@ JLabel tag_label = new JLabel("Tag");
            //  text_replacement=addglsGlossariecePopup_Method(tag);
             textArea.setText(textArea.getText().replaceAll( "(?<!\\S)"+lowerValue+"(?!\\S)", "\\gls{" + tag + "}")); 
             
-            
-            
+           
             
             value = (String)  entry.getValue().get("Plural") ;
             
@@ -2136,9 +2137,84 @@ JLabel tag_label = new JLabel("Tag");
         }
 
            return text_replacement ;
-      }    
-       
+      } 
+     
+     
+     public String checkavailabilityin_Map4(String text_selected){
+          String tag = null ;
+          String text_replacement = null ;
+          Boolean capitalcheck= capitalornot(text_selected);
+          Iterator<Map.Entry<String, Map>> iterator = gMap.entrySet().iterator();
+           while(iterator.hasNext()){
+            Map.Entry<String, Map> entry = iterator.next();
 
+            if(text_selected.toLowerCase().equals(entry.getValue().get("Tag")))
+            {    tag = (String) entry.getValue().get("Tag");
+                    glossarycheckconditions(tag);
+
+              }
+
+            if(text_selected.toLowerCase().equals(entry.getValue().get("Plural")))
+            { tag = (String) entry.getValue().get("Tag");
+                 glossarycheckconditions(tag);
+               }
+
+            if(text_selected.equals(entry.getValue().get("Symbol")))
+            { tag = (String) entry.getValue().get("Tag");
+                 glossarycheckconditions(tag);
+                }
+           
+            break ;
+
+                //  iterator.remove(); // right way to remove entries from Map, // avoids ConcurrentModificationException
+        }
+
+           return text_replacement ;
+      }
+
+     
+       
+ public void glossarycheckconditions (String str){
+              String capValue ;
+              String lowerValue ;  
+              String value ;
+              String tag =null;
+              
+              Iterator<Map.Entry<String, Map>> iterator = gMap.entrySet().iterator();
+           while(iterator.hasNext()){
+            Map.Entry<String, Map> entry = iterator.next();
+                
+                tag = (String) entry.getValue().get("Tag");
+          
+ 
+            value = (String)  entry.getValue().get("Tag") ;
+             
+            capValue = value.substring(0, 1).toUpperCase() + value.substring(1);
+          //  text_replacement=addGlosGlossariecePopup_Method(tag);
+            textArea.setText(textArea.getText().replaceAll( "(?<!\\S)"+capValue+"(?!\\S)", "\\Gls{" + tag + "}")); 
+             
+            lowerValue = value.substring(0, 1).toLowerCase() + value.substring(1);
+           //  text_replacement=addglsGlossariecePopup_Method(tag);
+            textArea.setText(textArea.getText().replaceAll( "(?<!\\S)"+lowerValue+"(?!\\S)", "\\gls{" + tag + "}")); 
+            
+           
+             value = (String)  entry.getValue().get("Plural") ;
+            
+            capValue = value.substring(0, 1).toUpperCase() + value.substring(1);
+           // text_replacement=addGlosplGlossariecePopup_Method(tag);
+            textArea.setText(textArea.getText().replaceAll( "(?<!\\S)"+capValue+"(?!\\S)", "\\Glspl{" + tag + "}")); 
+             
+            lowerValue = value.substring(0, 1).toLowerCase() + value.substring(1);
+           // text_replacement=addglsplGlossariecePopup_Method(tag);
+            textArea.setText(textArea.getText().replaceAll( "(?<!\\S)"+lowerValue+"(?!\\S)", "\\glspl{" + tag + "}")); 
+            
+            
+            value = (String)  entry.getValue().get("Symbol") ;
+            //text_replacement=addglssymbolGlossariecePopup_Method(tag);
+            textArea.setText(textArea.getText().replaceAll( "(?<!\\S)"+value+"(?!\\S)", "\\glssymbol{" + tag + "}"));
+            
+           }
+ }
  public void repeattags_add(String selected_word2, String replacement_word)
   {
       repeatTags.put(selected_word2,replacement_word);
