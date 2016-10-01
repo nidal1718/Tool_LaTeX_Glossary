@@ -82,6 +82,7 @@ import org.fife.ui.rtextarea.SearchContext;
 import org.fife.ui.rtextarea.SearchEngine;
 import org.fife.ui.rtextarea.SearchResult;
 import org.nidal.latex.glossarytool.UnderlineHighlighter.UnderlineHighlightPainter;
+import org.nidal.latex.glossarytool.Intelligence;
 
 /**
  *
@@ -99,7 +100,7 @@ public class GlossaryTool extends JFrame implements SearchListener {
     private static RecordableTextAction redoAction;
     private static RecordableTextAction selectAllAction;
 
-    Intelligence intelligence = new Intelligence();
+    Intelligence intelligence = new Intelligence(textArea);
     WriteToGlossaryFile writetoglossaryfile_object = new WriteToGlossaryFile();
 
     int flag = 0;
@@ -205,9 +206,9 @@ public class GlossaryTool extends JFrame implements SearchListener {
     public Highlighter highlighterh = new org.nidal.latex.glossarytool.UnderlineHighlighter(null);
 
     
-//     public String getGlossaryFileName() {
-//        return glossaryFileName;
-//    } 
+     public RSyntaxTextArea gettextAreaName() {
+        return textArea;
+    } 
     public GlossaryTool() {
 
 //Reference : https://github.com/bobbylight/RSyntaxTextArea
@@ -668,7 +669,7 @@ public class GlossaryTool extends JFrame implements SearchListener {
 
     private void highlightAllWordsToolMenuActionPerformed(java.awt.event.ActionEvent evt) {
 
-        intelligence.highlightAllInstanceAllWords();
+        intelligence.highlightAllInstanceAllWords(gMap);
     }
 
     private void removeAllHighlightToolMenuActionPerformed(java.awt.event.ActionEvent evt) {
@@ -678,7 +679,7 @@ public class GlossaryTool extends JFrame implements SearchListener {
 
     private void glossariseaAllWordsToolMenuActionPerformed(java.awt.event.ActionEvent evt) {
 
-        intelligence.glossariseAllInstanceAllWords();
+        intelligence.glossariseAllInstanceAllWords(textArea,gMap);
     }
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {
@@ -1060,7 +1061,7 @@ public class GlossaryTool extends JFrame implements SearchListener {
 
                 System.out.println(gMap);
 
-             //  intelligence.checkavailabilityin_Map(textArea.getSelectedText());
+               intelligence.checkIfWordAvailableInMap(textArea,textArea.getSelectedText(),gMap);
                // intelligence.repeattags_add(textArea.getSelectedText(), replacement);
                 readGlossaryFile.addtoArrayListFromDialogSave(tag_gls);
                 d1.dispose();
@@ -1167,51 +1168,12 @@ public class GlossaryTool extends JFrame implements SearchListener {
         // TODO code application logic here
     }
 
-    // for glossaries popup. #1 glossary
-    public String addglsGlossariecePopup_Method(String tag) {
 
-        String text_replacement = "\\gls{" + tag + "}";
-        textArea.replaceSelection(text_replacement);
-        textChanged = true;
-        return text_replacement;
-    }
-
-    // for glossaries popup. #2 glossaries plural glspl
-    public String addglsplGlossariecePopup_Method(String tag) {
-        String text_replacement = "\\glspl{" + tag + "}";
-        textArea.replaceSelection(text_replacement);
-        textChanged = true;
-        return text_replacement;
-    }
-
-    // for glossaries popup. #3 Glossaries Gls
-    public String addGlosGlossariecePopup_Method(String tag) {
-        String text_replacement = "\\Gls{" + tag + "}";
-        textArea.replaceSelection(text_replacement);
-        textChanged = true;
-        return text_replacement;
-    }
-
-    // for glossaries popup. #4 Glossary plural
-    public String addGlosplGlossariecePopup_Method(String tag) {
-        String text_replacement = "\\Glspl{" + tag + "}";
-        textArea.replaceSelection(text_replacement);
-        textChanged = true;
-        return text_replacement;
-    }
-
-    // for glossaries popup. #5 glossaries symbol
-    public String addglssymbolGlossariecePopup_Method(String tag) {
-        String text_replacement = "\\glssymbol{" + tag + "}";
-        textArea.replaceSelection(text_replacement);
-        textChanged = true;
-        return text_replacement;
-    }
 
     // for glossaries popup. #6 glossaries
     private class glossariseSelectedWordPopup extends TextAction {
 
-        Intelligence intelligence = new Intelligence();
+     //   Intelligence intelligence = new Intelligence();
 
         public glossariseSelectedWordPopup() {
 
@@ -1219,7 +1181,26 @@ public class GlossaryTool extends JFrame implements SearchListener {
         }
 
         public void actionPerformed(ActionEvent e) {
-            intelligence.glossariseSelectedWord();
+            
+              String text_selected = textArea.getSelectedText();
+            
+
+            try {
+                int selStart = textArea.getSelectionStart();
+                int selEnd = textArea.getSelectionEnd();
+                if (selStart != selEnd) {
+                    text_selected = textArea.getText(selStart, selEnd - selStart);
+
+                    if (!text_selected.equals("")) {
+                     //   intelligence.checkIfWordAvailableInMap(textArea,text_selected, gMap);
+                    }
+                }
+            } catch (BadLocationException ble) {
+                ble.printStackTrace();
+                UIManager.getLookAndFeel().provideErrorFeedback(textArea);
+                return;
+            }
+            // textChanged = true;
 
         }
 
@@ -1228,7 +1209,7 @@ public class GlossaryTool extends JFrame implements SearchListener {
     // for glossaries popup. #6 glossaries
     private class glossariseAllTheWordPopup extends TextAction {
 
-        Intelligence intelligence = new Intelligence();
+      //  Intelligence intelligence = new Intelligence();
 
         public glossariseAllTheWordPopup() {
 
@@ -1236,7 +1217,7 @@ public class GlossaryTool extends JFrame implements SearchListener {
         }
 
         public void actionPerformed(ActionEvent e) {
-            intelligence.glossariseAllInstanceSelectedWord(textArea.getSelectedText());
+            intelligence.glossariseAllInstanceSelectedWord(textArea ,textArea.getSelectedText(),gMap);
 
         }
 
@@ -1245,7 +1226,7 @@ public class GlossaryTool extends JFrame implements SearchListener {
     // for highlighting single occurance
     private class highlightSingleWordOccurance extends TextAction {
 
-        Intelligence intelligence = new Intelligence();
+       // Intelligence intelligence = new Intelligence();
 
         public highlightSingleWordOccurance() {
 
@@ -1253,7 +1234,7 @@ public class GlossaryTool extends JFrame implements SearchListener {
         }
 
         public void actionPerformed(ActionEvent e) {
-            intelligence.highlightAllInstanceSelectedWord();
+            intelligence.highlightAllInstanceSelectedWord(textArea,gMap);
 
         }
 
@@ -1377,351 +1358,6 @@ public class GlossaryTool extends JFrame implements SearchListener {
 
     }
 
-    
-    //Intelligence *starts here*
-    public class Intelligence {
-
-        private void glossariseSelectedWord() {
-         
-            String tag = null;
-
-            String text_selected = textArea.getSelectedText();
-
-            try {
-                int selStart = textArea.getSelectionStart();
-                int selEnd = textArea.getSelectionEnd();
-                if (selStart != selEnd) {
-                    text_selected = textArea.getText(selStart, selEnd - selStart);
-
-                    if (!text_selected.equals("")) {
-                        checkIfWordAvailableInMap(text_selected);
-                    }
-                }
-            } catch (BadLocationException ble) {
-                ble.printStackTrace();
-                UIManager.getLookAndFeel().provideErrorFeedback(textArea);
-                return;
-            }
-
-            boolean blnExists = repeatTags.containsKey(text_selected);
-
-            textChanged = true;
-
-        }
-
-//        public String replaceOld(String aInput, String text_selected, final String aNewPattern) {
-//            if (text_selected.equals("")) {
-//                throw new IllegalArgumentException("Old pattern must have content.");
-//            }
-//
-//            final StringBuffer result = new StringBuffer();
-//
-//            int startIdx = 0;
-//            int idxOld = 0;
-//            while ((idxOld = aInput.indexOf(text_selected, startIdx)) >= 0) {
-//                //grab a part of aInput which does not include aOldPattern
-//                result.append(aInput.substring(startIdx, idxOld));
-//                //add aNewPattern to take place of aOldPattern
-//                result.append(aNewPattern);
-//
-//                //reset the startIdx to just after the current match, to see
-//                //if there are any further matches
-//                startIdx = idxOld + text_selected.length();
-//            }
-//            //the final chunk will go to the end of aInput
-//            result.append(aInput.substring(startIdx));
-//            return result.toString();
-//        }
-
-//        public String replaceAllglossary(String aInput, String aOldPattern, String aNewPattern) {
-//            return aInput.replace(aOldPattern, aNewPattern);
-//        }
-
-//        private void glossariseAllTheWord() {
-//
-//            String tag = null;
-//
-//            String text_selected = textArea.getSelectedText();
-//
-//            try {
-//                int selStart = textArea.getSelectionStart();
-//                int selEnd = textArea.getSelectionEnd();
-//                if (selStart != selEnd) {
-//                    text_selected = textArea.getText(selStart, selEnd - selStart);
-//
-//                    if (!text_selected.equals("")) {
-//                        checkavailabilityin_Map4(text_selected);
-//                    }
-//                }
-//            } catch (BadLocationException ble) {
-//                ble.printStackTrace();
-//                UIManager.getLookAndFeel().provideErrorFeedback(textArea);
-//                return;
-//            }
-//
-//            textChanged = true;
-//
-//        }
-
-        public Boolean capitalornot(String text_selected) {
-            Boolean capitalcheck;
-            if (Character.isUpperCase(text_selected.charAt(0)) == true) {
-                capitalcheck = true;
-            } else {
-                capitalcheck = false;
-            }
-
-            return capitalcheck;
-        }
-
-        public String checkIfWordAvailableInMap(String text_selected) {
-            String tag = null;
-            String text_replacement = null;
-            Boolean capitalcheck = capitalornot(text_selected);
-            Iterator<Map.Entry<String, Map>> iterator = gMap.entrySet().iterator();
-            while (iterator.hasNext()) {
-                Map.Entry<String, Map> entry = iterator.next();
-
-                if (text_selected.toLowerCase().equals(entry.getValue().get("Tag"))) {
-                    tag = (String) entry.getValue().get("Tag");
-                    if (capitalcheck) {
-                        text_replacement = addGlosGlossariecePopup_Method(tag);
-                     //   repeattags_add(text_selected, text_replacement);
-                    } else {
-                        text_replacement = addglsGlossariecePopup_Method(tag);
-                      //  repeattags_add(text_selected, text_replacement);
-                    }
-
-                    break;
-                } else if (text_selected.toLowerCase().equals(entry.getValue().get("Plural"))) {
-                    tag = (String) entry.getValue().get("Tag");
-                    if (capitalcheck) {
-                        text_replacement = addGlosplGlossariecePopup_Method(tag);
-                      //  repeattags_add(text_selected, text_replacement);
-                    } else {
-                        text_replacement = addglsplGlossariecePopup_Method(tag);
-                       // repeattags_add(text_selected, text_replacement);
-                    }
-                    break;
-                } else if (text_selected.equals(entry.getValue().get("Symbol"))) {
-                    tag = (String) entry.getValue().get("Tag");
-                    text_replacement = addglssymbolGlossariecePopup_Method(tag);
-                 //   repeattags_add(text_selected, text_replacement);
-                    break;
-                }
-
-            }
-
-            return text_replacement;
-        }
-
-        // checks and highlights every instance of all words
-        public String highlightAllInstanceAllWords() {
-
-            String value = null;
-            remove_highlight.removehighlighter();
-
-            Iterator<Map.Entry<String, Map>> iterator = gMap.entrySet().iterator();
-            while (iterator.hasNext()) {
-                Map.Entry<String, Map> entry = iterator.next();
-
-                value = (String) entry.getValue().get("Tag");
-                searcher.search(value);
-
-                value = (String) entry.getValue().get("Plural");
-                searcher.search(value);
-                value = (String) entry.getValue().get("Symbol");
-                searcher.search(value);
-
-            }
-
-            return value;
-        }
-
-        // replace all for instance of all the words
-        public String glossariseAllInstanceAllWords() {
-            String tag = null;
-            String text_replacement = null;
-            String value;
-            String capValue;
-            String lowerValue;
-
-            Iterator<Map.Entry<String, Map>> iterator = gMap.entrySet().iterator();
-            while (iterator.hasNext()) {
-                Map.Entry<String, Map> entry = iterator.next();
-
-                tag = (String) entry.getValue().get("Tag");
-
-                value = (String) entry.getValue().get("Tag");
-
-                capValue = value.substring(0, 1).toUpperCase() + value.substring(1);
-                //  text_replacement=addGlosGlossariecePopup_Method(tag);
-                textArea.setText(textArea.getText().replaceAll("(?<!\\S)" + capValue + "(?!\\S)", "\\\\Gls{" + tag + "}"));
-
-                lowerValue = value.substring(0, 1).toLowerCase() + value.substring(1);
-                //  text_replacement=addglsGlossariecePopup_Method(tag);
-                textArea.setText(textArea.getText().replaceAll("(?<!\\S)" + lowerValue + "(?!\\S)", "\\\\gls{" + tag + "}"));
-
-                value = (String) entry.getValue().get("Plural");
-
-                capValue = value.substring(0, 1).toUpperCase() + value.substring(1);
-                // text_replacement=addGlosplGlossariecePopup_Method(tag);
-                textArea.setText(textArea.getText().replaceAll("(?<!\\S)" + capValue + "(?!\\S)", "\\\\Glspl{" + tag + "}"));
-
-                lowerValue = value.substring(0, 1).toLowerCase() + value.substring(1);
-                // text_replacement=addglsplGlossariecePopup_Method(tag);
-                textArea.setText(textArea.getText().replaceAll("(?<!\\S)" + lowerValue + "(?!\\S)", "\\\\glspl{" + tag + "}"));
-
-                value = (String) entry.getValue().get("Symbol");
-                //text_replacement=addglssymbolGlossariecePopup_Method(tag);
-                textArea.setText(textArea.getText().replaceAll("(?<!\\S)" + value + "(?!\\S)", "\\\\glssymbol{" + tag + "}"));
-
-            }
-
-            return text_replacement;
-        }
-
-        // checks and highlights  instance of a single word
-        public String highlightAllInstanceSelectedWord() {
-            Boolean check;
-            String value = null;
-            String text_selected;
-
-            try {
-                int selStart = textArea.getSelectionStart();
-                int selEnd = textArea.getSelectionEnd();
-                if (selStart != selEnd) {
-                    text_selected = textArea.getText(selStart, selEnd - selStart);
-
-                    if (!text_selected.equals("")) {
-                        Iterator<Map.Entry<String, Map>> iterator = gMap.entrySet().iterator();
-                        while (iterator.hasNext()) {
-                            Map.Entry<String, Map> entry = iterator.next();
-                            check = false;
-                            if (text_selected.toLowerCase().equals(entry.getValue().get("Tag"))) {
-                                check = true;
-                            } else if (text_selected.toLowerCase().equals(entry.getValue().get("Plural"))) {
-                                check = true;
-                            } else if (text_selected.toLowerCase().equals(entry.getValue().get("Symbol"))) {
-                                check = true;
-                            }
-
-                            if (check) {
-                                value = (String) entry.getValue().get("Tag");
-                                searcher.search(value);
-
-                                value = (String) entry.getValue().get("Plural");
-                                searcher.search(value);
-                                value = (String) entry.getValue().get("Symbol");
-                                searcher.search(value);
-                            }
-
-                        }
-                    }
-                }
-            } catch (BadLocationException ble) {
-                ble.printStackTrace();
-
-            }
-
-            return value;
-        }
-
-        // glossarise only the current word
-        public String glossariseAllInstanceSelectedWord(String text_selected) {
-            String tag = null;
-            String plural = null;
-            String capValue;
-            String lowerValue;
-            Boolean check;
-            String symbol = null;
-            String text_replacement = null;
-            Boolean capitalcheck = capitalornot(text_selected);
-            Iterator<Map.Entry<String, Map>> iterator = gMap.entrySet().iterator();
-            while (iterator.hasNext()) {
-                Map.Entry<String, Map> entry = iterator.next();
-                tag = (String) entry.getValue().get("Tag");
-                check = false;
-
-                if (text_selected.toLowerCase().equals(entry.getValue().get("Tag"))) {
-                    check = true;
-                } else if (text_selected.toLowerCase().equals(entry.getValue().get("Plural"))) {
-                    check = true;
-                } else if (text_selected.toLowerCase().equals(entry.getValue().get("Symbol"))) {
-                    check = true;
-                }
-                //else check = false ;
-
-                if (check) {
-                    tag = (String) entry.getValue().get("Tag");
-                    plural = (String) entry.getValue().get("Plural");
-                    symbol = (String) entry.getValue().get("Symbol");
-
-                    capValue = text_selected.substring(0, 1).toUpperCase() + text_selected.substring(1);
-                    textArea.setText(textArea.getText().replaceAll("(?<!\\S)" + capValue + "(?!\\S)", "\\\\Gls{" + tag + "}"));
-
-                    lowerValue = text_selected.substring(0, 1).toLowerCase() + text_selected.substring(1);
-
-                    textArea.setText(textArea.getText().replaceAll("(?<!\\S)" + lowerValue + "(?!\\S)", "\\\\gls{" + tag + "}"));
-
-                    // plural = (String) entry.getValue().get("Plural");
-                    capValue = plural.substring(0, 1).toUpperCase() + plural.substring(1);
-
-                    textArea.setText(textArea.getText().replaceAll("(?<!\\S)" + capValue + "(?!\\S)", "\\\\Glspl{" + tag + "}"));
-
-                    lowerValue = plural.substring(0, 1).toLowerCase() + plural.substring(1);
-                    textArea.setText(textArea.getText().replaceAll("(?<!\\S)" + lowerValue + "(?!\\S)", "\\\\glspl{" + tag + "}"));
-
-                    textArea.setText(textArea.getText().replaceAll("(?<!\\S)" + symbol + "(?!\\S)", "\\\\glssymbol{" + tag + "}"));
-
-                }
-            }
-
-            return text_replacement;
-        }
-
-//        public void glossarycheckconditions(String str) {
-//            String capValue;
-//            String lowerValue;
-//            String value;
-//            String tag = null;
-//
-//            Iterator<Map.Entry<String, Map>> iterator = gMap.entrySet().iterator();
-//            while (iterator.hasNext()) {
-//                Map.Entry<String, Map> entry = iterator.next();
-//
-//                tag = (String) entry.getValue().get("Tag");
-//
-//                value = (String) entry.getValue().get("Tag");
-//
-//                capValue = value.substring(0, 1).toUpperCase() + value.substring(1);
-//                //  text_replacement=addGlosGlossariecePopup_Method(tag);
-//                textArea.setText(textArea.getText().replaceAll("(?<!\\S)" + capValue + "(?!\\S)", "\\Gls{" + tag + "}"));
-//
-//                lowerValue = value.substring(0, 1).toLowerCase() + value.substring(1);
-//                //  text_replacement=addglsGlossariecePopup_Method(tag);
-//                textArea.setText(textArea.getText().replaceAll("(?<!\\S)" + lowerValue + "(?!\\S)", "\\gls{" + tag + "}"));
-//
-//                value = (String) entry.getValue().get("Plural");
-//
-//                capValue = value.substring(0, 1).toUpperCase() + value.substring(1);
-//                // text_replacement=addGlosplGlossariecePopup_Method(tag);
-//                textArea.setText(textArea.getText().replaceAll("(?<!\\S)" + capValue + "(?!\\S)", "\\Glspl{" + tag + "}"));
-//
-//                lowerValue = value.substring(0, 1).toLowerCase() + value.substring(1);
-//                // text_replacement=addglsplGlossariecePopup_Method(tag);
-//                textArea.setText(textArea.getText().replaceAll("(?<!\\S)" + lowerValue + "(?!\\S)", "\\glspl{" + tag + "}"));
-//
-//                value = (String) entry.getValue().get("Symbol");
-//                //text_replacement=addglssymbolGlossariecePopup_Method(tag);
-//                textArea.setText(textArea.getText().replaceAll("(?<!\\S)" + value + "(?!\\S)", "\\glssymbol{" + tag + "}"));
-//
-//            }
-//        }
-
-     
-
-    }
 
 
 
