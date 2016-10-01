@@ -872,9 +872,10 @@ textArea.addParser(parser);
 
     private void glossarysearchToolMenuActionPerformed(java.awt.event.ActionEvent evt) {
       //String word1 = "(?<!\\S)"+word+"(?!\\S)" ;
+      
          intelligence.checkavailabilityin_Map1();
     }
-    
+   
     private void removeAllHighlightToolMenuActionPerformed(java.awt.event.ActionEvent evt) {
       //String word1 = "(?<!\\S)"+word+"(?!\\S)" ;
          remove_highlight.removehighlighter();
@@ -1704,7 +1705,7 @@ JLabel tag_label = new JLabel("Tag");
         }
 
         public void actionPerformed(ActionEvent e) {
-
+ String text_selected ; 
 //            JTextComponent tc = getTextComponent(e);
 //            String gls_word = null;
 //
@@ -1728,8 +1729,23 @@ JLabel tag_label = new JLabel("Tag");
 //            replaceDialog.setVisible(true);
 
 
+      try {
+            int selStart = textArea.getSelectionStart();
+            int selEnd = textArea.getSelectionEnd();
+            if (selStart != selEnd) {
+               text_selected = textArea.getText(selStart, selEnd - selStart);
+               
+               if(!text_selected.equals(""))
+               { createAndShowadd_glsDialog();
+          }
+            } 
+          }catch (BadLocationException ble) {
+            ble.printStackTrace();
+     
+         }
 
-                createAndShowadd_glsDialog();
+
+                
 
         }
 
@@ -2131,8 +2147,8 @@ JLabel tag_label = new JLabel("Tag");
        // checks and highlights every instance of all words  
       public String checkavailabilityin_Map1(){
 
-
           String value=null ;
+           remove_highlight.removehighlighter();
 
           Iterator<Map.Entry<String, Map>> iterator = gMap.entrySet().iterator();
            while(iterator.hasNext()){
