@@ -1050,7 +1050,7 @@ public class GlossaryTool extends JFrame implements SearchListener {
                 System.out.println(gMap);
 
                 String replacement = intelligence.checkavailabilityin_Map(textArea.getSelectedText());
-                intelligence.repeattags_add(textArea.getSelectedText(), replacement);
+               // intelligence.repeattags_add(textArea.getSelectedText(), replacement);
                 readGlossaryFile.addtoArrayListFromDialogSave(tag_gls);
                 d1.dispose();
 
@@ -1492,10 +1492,10 @@ public class GlossaryTool extends JFrame implements SearchListener {
                     tag = (String) entry.getValue().get("Tag");
                     if (capitalcheck) {
                         text_replacement = addGlosGlossariecePopup_Method(tag);
-                        repeattags_add(text_selected, text_replacement);
+                     //   repeattags_add(text_selected, text_replacement);
                     } else {
                         text_replacement = addglsGlossariecePopup_Method(tag);
-                        repeattags_add(text_selected, text_replacement);
+                      //  repeattags_add(text_selected, text_replacement);
                     }
 
                     break;
@@ -1503,16 +1503,16 @@ public class GlossaryTool extends JFrame implements SearchListener {
                     tag = (String) entry.getValue().get("Tag");
                     if (capitalcheck) {
                         text_replacement = addGlosplGlossariecePopup_Method(tag);
-                        repeattags_add(text_selected, text_replacement);
+                      //  repeattags_add(text_selected, text_replacement);
                     } else {
                         text_replacement = addglsplGlossariecePopup_Method(tag);
-                        repeattags_add(text_selected, text_replacement);
+                       // repeattags_add(text_selected, text_replacement);
                     }
                     break;
                 } else if (text_selected.equals(entry.getValue().get("Symbol"))) {
                     tag = (String) entry.getValue().get("Tag");
                     text_replacement = addglssymbolGlossariecePopup_Method(tag);
-                    repeattags_add(text_selected, text_replacement);
+                 //   repeattags_add(text_selected, text_replacement);
                     break;
                 }
 
@@ -1725,10 +1725,7 @@ public class GlossaryTool extends JFrame implements SearchListener {
             }
         }
 
-        public void repeattags_add(String selected_word2, String replacement_word) {
-            repeatTags.put(selected_word2, replacement_word);
-
-        }
+     
 
     }
 
