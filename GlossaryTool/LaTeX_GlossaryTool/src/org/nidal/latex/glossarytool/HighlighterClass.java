@@ -215,7 +215,7 @@ class WordSearcher {
         String content = null;
 
         Pattern word1 = Pattern.compile("(?<!\\S)" + word + "(?!\\S)");
-
+ //Pattern word1 = Pattern.compile("(?<=[{]).*?(?=})");
         try {
             Document d = comp.getDocument();
             content = d.getText(0, d.getLength()).toLowerCase();

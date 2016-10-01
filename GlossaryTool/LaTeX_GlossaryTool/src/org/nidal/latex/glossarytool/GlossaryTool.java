@@ -1308,7 +1308,7 @@ JLabel tag_label = new JLabel("Tag");
 
                 String name_gls = name_tf.getText().trim();;
              //   JTextField name_tf = new JTextField("");
-                String symbol_gls = symbol_tf.getText().toLowerCase().trim();
+                String symbol_gls = symbol_tf.getText().trim();
                 String plural_gls = plural_tf.getText().trim();
                 String desc_gls = desc_Area.getText().trim();
                 GlossaryEntryClass gec  ; //= new GlossaryEntryClass(name_gls,symbol_gls,plural_gls,desc_gls);
@@ -1450,12 +1450,23 @@ JLabel tag_label = new JLabel("Tag");
 
 
         //  fields.put(symbol_gls2, plural_gls2);
+        if(tag_gls2 != null && !tag_gls2.isEmpty())
          fields.put("Tag", tag_gls2);
+        
+         if(name_gls2 != null && !name_gls2.isEmpty())
          fields.put("Name", name_gls2);
+         
+         if(symbol_gls2 != null && !symbol_gls2.isEmpty())
          fields.put("Symbol", symbol_gls2);
+        
+         if(plural_gls2 != null && !plural_gls2.isEmpty())
          fields.put("Plural", plural_gls2);
+         
+        if(desc_gls2 != null && !desc_gls2.isEmpty())
          fields.put("Description", desc_gls2);
 
+        
+        
          gMap.put(tag_gls2, fields) ;
 
     }
@@ -2165,78 +2176,63 @@ JLabel tag_label = new JLabel("Tag");
            return text_replacement ;
       } 
      
-//     // glossarise only the current word
-//     public String checkavailabilityin_Map4(String text_selected){
-//          String tag = null ;
-//          String text_replacement = null ;
-//          Boolean capitalcheck= capitalornot(text_selected);
-//          Iterator<Map.Entry<String, Map>> iterator = gMap.entrySet().iterator();
-//           while(iterator.hasNext()){
-//            Map.Entry<String, Map> entry = iterator.next();
-//
-//            if(text_selected.toLowerCase().equals(entry.getValue().get("Tag")))
-//            {    tag = (String) entry.getValue().get("Tag");
-//                //    glossarycheckconditions(tag);
-//             
-//                            searcherWord.search(tag);
-//
-//              }
-//
-//            if(text_selected.toLowerCase().equals(entry.getValue().get("Plural")))
-//            { tag = (String) entry.getValue().get("Tag");
-//                // glossarycheckconditions(tag);
-//                searcherWord.search(tag);
-//               }
-//
-//            if(text_selected.equals(entry.getValue().get("Symbol")))
-//            { tag = (String) entry.getValue().get("Tag");
-//                // glossarycheckconditions(tag);
-//                searcherWord.search(tag);
-//                }
-//           
-//            break ;
-//
-//                //  iterator.remove(); // right way to remove entries from Map, // avoids ConcurrentModificationException
-//        }
-//
-//           return text_replacement ;
-//      }
-     
-       public String checkavailabilityin_Map4(String text_selected){
+     // glossarise only the current word
+     public String checkavailabilityin_Map4(String text_selected){
           String tag = null ;
+          String plural = null ;
+                String capValue ;
+              String lowerValue ; 
+               Boolean check  ;
+          String symbol = null ;
           String text_replacement = null ;
           Boolean capitalcheck= capitalornot(text_selected);
           Iterator<Map.Entry<String, Map>> iterator = gMap.entrySet().iterator();
            while(iterator.hasNext()){
             Map.Entry<String, Map> entry = iterator.next();
+            tag = (String) entry.getValue().get("Tag");
+           check = false ;
+            
+             if(text_selected.toLowerCase().equals(entry.getValue().get("Tag")))
+                 check = true ;
+             else if(text_selected.toLowerCase().equals(entry.getValue().get("Plural")))
+                 check = true ;
+             else if(text_selected.toLowerCase().equals(entry.getValue().get("Symbol")))
+                   check = true ;
+             //else check = false ;
+            
+            
+             if(check) {
+                  tag = (String) entry.getValue().get("Tag");
+                   plural = (String) entry.getValue().get("Plural");
+                    symbol = (String) entry.getValue().get("Symbol");
 
-            if(text_selected.toLowerCase().equals(entry.getValue().get("Tag")))
-            {    tag = (String) entry.getValue().get("Tag");
-                    glossarycheckconditions(tag);
-                  
-
-              }
-
-            if(text_selected.toLowerCase().equals(entry.getValue().get("Plural")))
-            { tag = (String) entry.getValue().get("Tag");
-                 glossarycheckconditions(tag);
-               }
-
-            if(text_selected.equals(entry.getValue().get("Symbol")))
-            { tag = (String) entry.getValue().get("Tag");
-                 glossarycheckconditions(tag);
-                }
-           
-            break ;
-
-                //  iterator.remove(); // right way to remove entries from Map, // avoids ConcurrentModificationException
-        }
+            capValue = text_selected.substring(0, 1).toUpperCase() + text_selected.substring(1);
+            textArea.setText(textArea.getText().replaceAll( "(?<!\\S)"+capValue+"(?!\\S)", "\\\\Gls{" + tag + "}")); 
+             
+              
+            lowerValue = text_selected.substring(0, 1).toLowerCase() + text_selected.substring(1);
+        
+            textArea.setText(textArea.getText().replaceAll( "(?<!\\S)"+lowerValue+"(?!\\S)", "\\\\gls{" + tag + "}")); 
+    
+            // plural = (String) entry.getValue().get("Plural");
+             
+            capValue = plural.substring(0, 1).toUpperCase() + plural.substring(1);
+        
+            textArea.setText(textArea.getText().replaceAll( "(?<!\\S)"+capValue+"(?!\\S)", "\\\\Glspl{" + tag + "}")); 
+          
+            lowerValue = plural.substring(0, 1).toLowerCase() + plural.substring(1);
+            textArea.setText(textArea.getText().replaceAll( "(?<!\\S)"+lowerValue+"(?!\\S)", "\\\\glspl{" + tag + "}"));  
+        
+    
+             
+            textArea.setText(textArea.getText().replaceAll( "(?<!\\S)"+symbol+"(?!\\S)", "\\\\glssymbol{" + tag + "}"));
+      
+             
+        }}
 
            return text_replacement ;
       }
-
-     
-       
+      
  public void glossarycheckconditions (String str){
               String capValue ;
               String lowerValue ;  
@@ -2247,7 +2243,7 @@ JLabel tag_label = new JLabel("Tag");
            while(iterator.hasNext()){
             Map.Entry<String, Map> entry = iterator.next();
                 
-                tag = (String) entry.getValue().get("Tag");
+            tag = (String) entry.getValue().get("Tag");
           
  
             value = (String)  entry.getValue().get("Tag") ;
@@ -2271,7 +2267,7 @@ JLabel tag_label = new JLabel("Tag");
            // text_replacement=addglsplGlossariecePopup_Method(tag);
             textArea.setText(textArea.getText().replaceAll( "(?<!\\S)"+lowerValue+"(?!\\S)", "\\glspl{" + tag + "}")); 
             
-            
+           
             value = (String)  entry.getValue().get("Symbol") ;
             //text_replacement=addglssymbolGlossariecePopup_Method(tag);
             textArea.setText(textArea.getText().replaceAll( "(?<!\\S)"+value+"(?!\\S)", "\\glssymbol{" + tag + "}"));
