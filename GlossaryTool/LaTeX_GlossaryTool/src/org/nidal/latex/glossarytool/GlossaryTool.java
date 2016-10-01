@@ -198,7 +198,7 @@ final org.nidal.latex.glossarytool.WordSearcherForSingleInstance remove_highligh
     private JMenu tools = new JMenu(); //  tools menu
     private JMenu help = new JMenu(); //  help menu
 
-  //   private Highlighter.HighlightPainter myHighlightPainter = new MyHighlightPainter(Color.red);
+
     private JDialog d1;
 
     private JMenuItem newFile = new JMenuItem();  //  a new option
@@ -554,7 +554,11 @@ this.tools.add(this.add_gls);
 
             popup.addSeparator();
             popup.add(new JMenuItem(new glossariseAllTheWordPopup()));
-
+            
+            
+            popup.addSeparator();
+            popup.add(new JMenuItem(new  highlightSingleWordOccurance()));
+           
 
             popup.addSeparator();
             popup.add(new JMenuItem(new addtoGlossaryPopup()));
@@ -1625,6 +1629,27 @@ JLabel tag_label = new JLabel("Tag");
         }
 
     }
+    
+    
+          // for highlighting single occurance 
+    private class highlightSingleWordOccurance extends TextAction {
+ Intelligence intelligence = new Intelligence();
+        public highlightSingleWordOccurance() {
+
+
+           super("Highlight all the instances of this word");
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            intelligence.checkavailabilityin_Map10();
+//jhgjh
+
+        }
+
+    }
+    
+    
+   
 
 //    protected void appendGlossariecePopupMenu(JPopupMenu popup) {
 //		popup.addSeparator();
@@ -2175,6 +2200,55 @@ JLabel tag_label = new JLabel("Tag");
 
            return text_replacement ;
       } 
+     
+     
+         // checks and highlights  instance of a single word
+      public String checkavailabilityin_Map10(){
+            Boolean check ;
+          String value=null ;
+           String text_selected ;
+          
+          try {
+            int selStart = textArea.getSelectionStart();
+            int selEnd = textArea.getSelectionEnd();
+            if (selStart != selEnd) {
+               text_selected = textArea.getText(selStart, selEnd - selStart);
+               
+               if(!text_selected.equals(""))
+               {
+               Iterator<Map.Entry<String, Map>> iterator = gMap.entrySet().iterator();
+           while(iterator.hasNext()){
+            Map.Entry<String, Map> entry = iterator.next();
+            check = false ;
+              if(text_selected.toLowerCase().equals(entry.getValue().get("Tag")))
+                 check = true ;
+             else if(text_selected.toLowerCase().equals(entry.getValue().get("Plural")))
+                 check = true ;
+             else if(text_selected.toLowerCase().equals(entry.getValue().get("Symbol")))
+                   check = true ;
+
+           if(check)
+           {value = (String) entry.getValue().get("Tag") ;
+            searcher.search(value);
+
+            value = (String) entry.getValue().get("Plural") ;
+            searcher.search(value);
+          value = (String)  entry.getValue().get("Symbol") ;
+            searcher.search(value);
+           }
+
+        }}
+            } 
+          }catch (BadLocationException ble) {
+            ble.printStackTrace();
+     
+         }
+          
+
+       
+
+           return value ;
+      }
      
      // glossarise only the current word
      public String checkavailabilityin_Map4(String text_selected){
