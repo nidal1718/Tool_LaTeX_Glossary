@@ -21,10 +21,7 @@ import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
 import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -111,74 +108,7 @@ public class HighlighterClass {
     public static Highlighter highlighter = new UnderlineHighlighter(null);
 }
 
-// A simple class that searches for a word in
-// a document and highlights occurrences of that word
-class WordSearcherForSingleInstance {
 
-    public WordSearcherForSingleInstance(JTextComponent comp) {
-        this.comp = comp;
-        this.painter = new UnderlineHighlighter.UnderlineHighlightPainter(
-                Color.red);
-    }
-
-    public void removehighlighter() {
-        int firstOffset = -1;
-        Highlighter highlighter = comp.getHighlighter();
-
-        //  Remove any existing highlights for last word
-        Highlighter.Highlight[] highlights = highlighter.getHighlights();
-        for (int i = 0; i < highlights.length; i++) {
-            Highlighter.Highlight h = highlights[i];
-            if (h.getPainter() instanceof UnderlineHighlighter.UnderlineHighlightPainter) {
-                highlighter.removeHighlight(h);
-
-            }
-        }
-    }
-
- 
- // Search for a word and return the offset of the
-    // first occurrence. Highlights are added for all
-    // occurrences found.
-    public int search(String word) {
-        int firstOffset = -1;
-        Highlighter highlighter = comp.getHighlighter();
-
-        String content = null;
-
-        Pattern word1 = Pattern.compile("(?<!\\S)" + word + "(?!\\S)");
-
-        try {
-            Document d = comp.getDocument();
-            content = d.getText(0, d.getLength()).toLowerCase();
-            Matcher m = word1.matcher(content);
-
-            while (m.find()) {
-
-                int start = m.start(0);
-
-                int end = m.end(0);
-
-                try {
-                    highlighter.addHighlight(start, end, painter);
-                } catch (BadLocationException e) {
-
-                }
-            }
-
-        } catch (BadLocationException e) {
-            // Cannot happen
-            return -1;
-        }
-
-        return firstOffset;
-    }
-
-    protected JTextComponent comp;
-
-    protected Highlighter.HighlightPainter painter;
-
-}
 
 // A simple class that searches for a word in
 // a document and highlights occurrences of that word
@@ -215,7 +145,7 @@ class WordSearcher {
         String content = null;
 
         Pattern word1 = Pattern.compile("(?<!\\S)" + word + "(?!\\S)");
- //Pattern word1 = Pattern.compile("(?<=[{]).*?(?=})");
+
         try {
             Document d = comp.getDocument();
             content = d.getText(0, d.getLength()).toLowerCase();

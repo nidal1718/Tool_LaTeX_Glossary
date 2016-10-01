@@ -17,6 +17,7 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.TextEvent;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -32,7 +33,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Stream;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import static javax.swing.Action.ACCELERATOR_KEY;
@@ -59,15 +59,15 @@ import javax.swing.event.CaretListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultHighlighter;
 import javax.swing.text.Highlighter;
-import javax.swing.text.JTextComponent;
 import javax.swing.text.TextAction;
 import org.fife.rsta.ui.CollapsibleSectionPanel;
 import org.fife.rsta.ui.SizeGripIcon;
-import org.fife.rsta.ui.search.FindDialog;
-import org.fife.rsta.ui.search.FindToolBar;
-import org.fife.rsta.ui.search.ReplaceDialog;
-import org.fife.rsta.ui.search.ReplaceToolBar;
-import org.fife.rsta.ui.search.SearchEvent;
+import org.fife.rsta.ui.search.*;
+//import org.fife.rsta.ui.search.FindDialog;
+//import org.fife.rsta.ui.search.FindToolBar;
+//import org.fife.rsta.ui.search.ReplaceDialog;
+//import org.fife.rsta.ui.search.ReplaceToolBar;
+//import org.fife.rsta.ui.search.SearchEvent;
 import static org.fife.rsta.ui.search.SearchEvent.Type.FIND;
 import static org.fife.rsta.ui.search.SearchEvent.Type.MARK_ALL;
 import static org.fife.rsta.ui.search.SearchEvent.Type.REPLACE;
@@ -76,7 +76,6 @@ import org.fife.rsta.ui.search.SearchListener;
 import org.fife.ui.rsyntaxtextarea.ErrorStrip;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
-import org.fife.ui.rsyntaxtextarea.spell.SpellingParser;
 import org.fife.ui.rtextarea.RTextScrollPane;
 import org.fife.ui.rtextarea.RecordableTextAction;
 import org.fife.ui.rtextarea.SearchContext;
@@ -424,7 +423,7 @@ public class GlossaryTool extends JFrame implements SearchListener {
         textArea.addKeyListener(new KeyAdapter() {
             public void keyPressed(KeyEvent e) {
                 // TODO add your handling code here:
-                if (RTextEvent.TEXT_VALUE_CHANGED != 0) {
+                if (TextEvent.TEXT_VALUE_CHANGED != 0) { //chg
                     if (!textChanged) {
                         setTitle("* " + getTitle());
                     }
@@ -439,7 +438,7 @@ public class GlossaryTool extends JFrame implements SearchListener {
 
             public void caretUpdate(CaretEvent e) {
                 // TODO add your handling code here:
-                if (RTextEvent.TEXT_VALUE_CHANGED != 0) {
+                if (TextEvent.TEXT_VALUE_CHANGED != 0) { ///chg
                     if (!textChanged) {
                         setTitle("* " + getTitle());
                     }
@@ -820,9 +819,10 @@ public class GlossaryTool extends JFrame implements SearchListener {
         }
     }
 
-    private void textAreaTextValueChanged(org.nidal.latex.glossarytool.RTextEvent evt) {
+   // private void textAreaTextValueChanged(org.nidal.latex.glossarytool.RTextEvent evt) {
+    private void textAreaTextValueChanged(TextEvent evt) {
         // TODO add your handling code here:
-        if (RTextEvent.TEXT_VALUE_CHANGED != 0) {
+        if (TextEvent.TEXT_VALUE_CHANGED != 0) {
             if (!textChanged) {
                 setTitle("* " + getTitle());
             }

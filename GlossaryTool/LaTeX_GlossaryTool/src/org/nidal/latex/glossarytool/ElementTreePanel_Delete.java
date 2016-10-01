@@ -7,7 +7,7 @@ package org.nidal.latex.glossarytool;
 
 
 /*
- * @(#)ElementTreePanel.java  1.17 05/11/17
+ * @(#)ElementTreePanel_Delete.java  1.17 05/11/17
  * 
  * Copyright (c) 2006 Sun Microsystems, Inc. All Rights Reserved.
  * 
@@ -43,7 +43,7 @@ package org.nidal.latex.glossarytool;
  */
 
 /*
- * @(#)ElementTreePanel.java  1.17 05/11/17
+ * @(#)ElementTreePanel_Delete.java  1.17 05/11/17
  */
 
 import javax.swing.*;
@@ -63,7 +63,7 @@ import java.util.*;
  * @author Scott Violet
  * @version 1.17 11/17/05
  */
-public class ElementTreePanel extends JPanel implements CaretListener, DocumentListener, PropertyChangeListener, TreeSelectionListener {
+public class ElementTreePanel_Delete extends JPanel implements CaretListener, DocumentListener, PropertyChangeListener, TreeSelectionListener {
     /** Tree showing the documents element structure. */
     protected JTree             tree;
     /** Text component showing elemenst for. */
@@ -73,7 +73,7 @@ public class ElementTreePanel extends JPanel implements CaretListener, DocumentL
     /** Set to true when updatin the selection. */
     protected boolean           updatingSelection;
 
-    public ElementTreePanel(JTextComponent editor) {
+    public ElementTreePanel_Delete(JTextComponent editor) {
   this.editor = editor;
 
   Document document = editor.getDocument();

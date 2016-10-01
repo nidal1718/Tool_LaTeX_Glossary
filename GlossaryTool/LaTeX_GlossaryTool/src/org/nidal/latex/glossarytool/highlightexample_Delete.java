@@ -34,13 +34,13 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 //public class SearchTextFile {
-    public class highlightexample {
+    public class highlightexample_Delete {
 
     public static void main(String[] args) {
-        new highlightexample();
+        new highlightexample_Delete();
     }
 
-    public highlightexample() {
+    public highlightexample_Delete() {
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {

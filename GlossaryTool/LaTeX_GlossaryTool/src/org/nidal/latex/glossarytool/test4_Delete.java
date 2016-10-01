@@ -16,7 +16,7 @@ package org.nidal.latex.glossarytool;
  
 
 /*
- * @(#)test4.java  1.31 05/11/17
+ * @(#)test4_Delete.java  1.31 05/11/17
  * 
  * Copyright (c) 2006 Sun Microsystems, Inc. All Rights Reserved.
  * 
@@ -52,7 +52,7 @@ package org.nidal.latex.glossarytool;
  */
 
 /*
- * @(#)test4.java  1.31 05/11/17
+ * @(#)test4_Delete.java  1.31 05/11/17
  */
 
 import static com.sun.javafx.fxml.expression.Expression.add;
@@ -69,6 +69,9 @@ import javax.swing.event.*;
 import javax.swing.*;
 import org.fife.ui.rtextarea.RTextAreaEditorKit.RedoAction;
 import org.fife.ui.rtextarea.RTextAreaEditorKit.UndoAction;
+import static com.sun.javafx.fxml.expression.Expression.add;
+import static com.sun.javafx.fxml.expression.Expression.add;
+import static com.sun.javafx.fxml.expression.Expression.add;
 
 /**
  * Sample application using the simple text editor component that
@@ -77,7 +80,7 @@ import org.fife.ui.rtextarea.RTextAreaEditorKit.UndoAction;
  * @author  Timothy Prinzing
  * @version 1.31 11/17/05 
  */
-class test4 extends JPanel {
+class test4_Delete extends JPanel {
 
     private static ResourceBundle resources;
     private final static String EXIT_AFTER_PAINT = new String("-exit");
@@ -100,7 +103,7 @@ class test4 extends JPanel {
         }
     }
 
-    test4() {
+    test4_Delete() {
   super(true);
 
   // Force SwingSet to come up in the Cross Platform L&F
@@ -164,7 +167,7 @@ class test4 extends JPanel {
         frame.setTitle(resources.getString("Title"));
   frame.setBackground(Color.lightGray);
   frame.getContentPane().setLayout(new BorderLayout());
-        test4 notepad = new test4();
+        test4_Delete notepad = new test4_Delete();
   frame.getContentPane().add("Center", notepad);
         frame.setJMenuBar(notepad.createMenubar());
   frame.addWindowListener(new AppCloser());
@@ -469,7 +472,7 @@ class test4 extends JPanel {
     private JToolBar toolbar;
     private JComponent status;
     private JFrame elementTreeFrame;
-    protected ElementTreePanel elementTreePanel;
+    protected ElementTreePanel_Delete elementTreePanel;
 
     protected FileDialog fileDialog;
 
@@ -546,7 +549,7 @@ class test4 extends JPanel {
     private RedoAction redoAction = new RedoAction();
 
     /**
-     * Actions defined by the test4 class
+     * Actions defined by the test4_Delete class
      */
     private Action[] defaultActions = {
   new NewAction(),
@@ -727,7 +730,7 @@ class test4 extends JPanel {
         public void actionPerformed(ActionEvent e) {
       if(elementTreeFrame == null) {
     // Create a frame containing an instance of 
-    // ElementTreePanel.
+    // ElementTreePanel_Delete.
     try {
         String    title = resources.getString
                       ("ElementTreeFrameTitle");
@@ -744,7 +747,7 @@ class test4 extends JPanel {
     Container fContentPane = elementTreeFrame.getContentPane();
 
     fContentPane.setLayout(new BorderLayout());
-    elementTreePanel = new ElementTreePanel(getEditor());
+    elementTreePanel = new ElementTreePanel_Delete(getEditor());
     fContentPane.add(elementTreePanel);
     elementTreeFrame.pack();
       }
