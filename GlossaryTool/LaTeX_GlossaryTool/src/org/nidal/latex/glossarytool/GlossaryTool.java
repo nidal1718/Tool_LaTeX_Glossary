@@ -65,7 +65,9 @@ import org.fife.ui.rtextarea.SearchEngine;
 import org.fife.ui.rtextarea.SearchResult;
 
 /**
- *
+ * Main Class 
+ * Creates the UI for the TextArea
+ * Allows you to open and save the document etc
  * @author nidal
  */
 public class GlossaryTool extends JFrame implements SearchListener {
@@ -77,7 +79,7 @@ public class GlossaryTool extends JFrame implements SearchListener {
     Boolean checktagExists; //checks if tag exists in the glossary file
     public Map<String, Map> gMap; //creates the gMap hashmap
     
-    RSyntaxTextArea textArea = new RSyntaxTextArea(30, 90);  //TextArea textArea
+    RSyntaxTextArea textArea = new RSyntaxTextArea(40, 90);  //TextArea textArea
     private JMenuBar menubar = new JMenuBar(); //menubar on top
     private JPopupMenu popup = textArea.getPopupMenu(); //popup menu on right click
     private CollapsibleSectionPanel csp;
@@ -160,9 +162,12 @@ public class GlossaryTool extends JFrame implements SearchListener {
         cp.add(csp);
         cp.add(sp);
 
-        this.setSize(500, 300);
+       // this.setSize(500, 300);
+        textArea.setSize(600, 400);
         this.setTitle("Glossary Tool");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
+        textArea.setLineWrap(true);
+       // sp.setLineNumbersEnabled(true);
 
         textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_LATEX);
         textArea.setCodeFoldingEnabled(true);
