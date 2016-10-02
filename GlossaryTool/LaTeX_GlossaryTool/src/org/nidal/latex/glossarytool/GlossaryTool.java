@@ -9,6 +9,7 @@ import java.awt.BorderLayout;
 import java.awt.FileDialog;
 import java.awt.datatransfer.Clipboard;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -24,7 +25,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -32,7 +32,6 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import static javax.swing.Action.ACCELERATOR_KEY;
 import javax.swing.ButtonGroup;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import static javax.swing.JFrame.EXIT_ON_CLOSE;
 import javax.swing.JLabel;
@@ -43,7 +42,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
-import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
@@ -54,12 +52,9 @@ import javax.swing.text.Highlighter;
 import javax.swing.text.TextAction;
 import org.fife.rsta.ui.CollapsibleSectionPanel;
 import org.fife.rsta.ui.SizeGripIcon;
-import org.fife.rsta.ui.search.*;
-//import org.fife.rsta.ui.search.FindDialog;
-//import org.fife.rsta.ui.search.FindToolBar;
-//import org.fife.rsta.ui.search.ReplaceDialog;
-//import org.fife.rsta.ui.search.ReplaceToolBar;
-//import org.fife.rsta.ui.search.SearchEvent;
+import org.fife.rsta.ui.search.FindDialog;
+import org.fife.rsta.ui.search.ReplaceDialog;
+import org.fife.rsta.ui.search.SearchEvent;
 import static org.fife.rsta.ui.search.SearchEvent.Type.FIND;
 import static org.fife.rsta.ui.search.SearchEvent.Type.MARK_ALL;
 import static org.fife.rsta.ui.search.SearchEvent.Type.REPLACE;
@@ -69,7 +64,6 @@ import org.fife.ui.rsyntaxtextarea.ErrorStrip;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rtextarea.RTextScrollPane;
-import org.fife.ui.rtextarea.RecordableTextAction;
 import org.fife.ui.rtextarea.SearchContext;
 import org.fife.ui.rtextarea.SearchEngine;
 import org.fife.ui.rtextarea.SearchResult;
@@ -80,171 +74,113 @@ import org.fife.ui.rtextarea.SearchResult;
  */
 public class GlossaryTool extends JFrame implements SearchListener {
 
-    RSyntaxTextArea textArea = new RSyntaxTextArea(30, 90);
-
-    private static RecordableTextAction cutAction;
-    private static RecordableTextAction copyAction;
-    private static RecordableTextAction pasteAction;
-    private static RecordableTextAction deleteAction;
-    private static RecordableTextAction undoAction;
-    private static RecordableTextAction redoAction;
-    private static RecordableTextAction selectAllAction;
-
-    Intelligence intelligence = new Intelligence(textArea);
-    WriteToGlossaryFile writetoglossaryfile_object = new WriteToGlossaryFile();
-
-    int flag = 0;
-
-    String filename_s = "";
-    String filename_final;
-    private KeyListener k1;
-    String applicationName = "LaTeX_GlossaryTool";
-    String holdText;
-    String fn;
-    String dir;
-    boolean textChanged = false;
-    private String fileName = "";
+    String applicationName = "LaTeX_GlossaryTool"; //sets application name
+    boolean textChanged = false; //to check if textArea changed or not
+    private String fileName = ""; 
+    String glossaryFileName; //stores the file name of the glossary file later
+    Boolean checktagExists; //checks if tag exists in the glossary file
+    public Map<String, Map> gMap; //creates the gMap hashmap
+    
+    RSyntaxTextArea textArea = new RSyntaxTextArea(30, 90);  //TextArea textArea
+    private JMenuBar menubar = new JMenuBar(); //menubar on top
+    private JPopupMenu popup = textArea.getPopupMenu(); //popup menu on right click
     private CollapsibleSectionPanel csp;
+    private FindDialog findDialog;  // FindDialog on Edit Menu
+    private ReplaceDialog replaceDialog; //ReplaceDialog on Edit Menu
+    private final StatusBar statusBar; //status bar on bottom
+    
+    
+    
+    private KeyListener k1;
+    //Clipboard clip = getToolkit().getSystemClipboard();
+    int ctrl = getToolkit().getMenuShortcutKeyMask();
+    int shift = InputEvent.SHIFT_MASK;
+    KeyStroke ks = KeyStroke.getKeyStroke(KeyEvent.VK_F, ctrl | shift);
 
-    private FindDialog findDialog;
-    private ReplaceDialog replaceDialog;
-    private ReplaceDialog add_glsDialog;
-    private FindToolBar findToolBar;
-    private ReplaceToolBar replaceToolBar;
-    private final StatusBar statusBar;
-
-    String glossaryFileName;
-    Clipboard clip = getToolkit().getSystemClipboard();
-
+//    private static RecordableTextAction cutAction;
+//    private static RecordableTextAction copyAction;
+//    private static RecordableTextAction pasteAction;
+//    private static RecordableTextAction deleteAction;
+//    private static RecordableTextAction undoAction;
+//    private static RecordableTextAction redoAction;
+//    private static RecordableTextAction selectAllAction;
+    
+    
+    
+    Intelligence intelligence = new Intelligence(textArea); 
+    WriteToGlossaryFile writetoglossaryfile_object = new WriteToGlossaryFile();
     ReadGlossaryFile readGlossaryFile = new ReadGlossaryFile();
-
-    final static boolean shouldFill = true;
-    final static boolean shouldWeightX = true;
-    final static boolean RIGHT_TO_LEFT = false;
-
-    Boolean checktagExists;
-
-    GlossaryEntryClass glossaryentryclass ; // = new GlossaryEntryClass(gMap);
-    private Map<String, GlossaryEntryClass> fieldsMap;
-    public Map<String, Map> gMap ; //= new HashMap<>();
-    
-//     public HashMap<String, Map> getgMap() {
-//        return gMap;
-//    }  
-     
-      
-
-    private Map<String, String> repeatTags;
-    
-    AddToGlossaryMap addtoglossary = new AddToGlossaryMap(textArea,gMap);
-
-    List<Object> collect;
-
-    JTextField name_tf = new JTextField("");
-    JTextField plural_tf = new JTextField("");
-    JTextField tag_tf = new JTextField("");
-    JTextField symbol_tf = new JTextField("");
-    RSyntaxTextArea desc_Area = new RSyntaxTextArea("");
-
-    final org.nidal.latex.glossarytool.WordSearcher searcher;
-    final org.nidal.latex.glossarytool.WordSearcher remove_highlight;
-
-    private JMenuBar menubar = new JMenuBar(); //menubar item
-    private JPopupMenu popup = textArea.getPopupMenu();
-
-    private JMenu glossaryMenu;
-    private JMenuItem glsToolItem;
-    private JMenuItem glsplToolItem;
-    private JMenuItem GlsToolItem;
-    private JMenuItem GlsplToolItem;
-    private JMenuItem glssymbolToolItem;
-//    private static RecordableTextAction toggleCurrentFoldAction;
-//    private static RecordableTextAction collapseAllCommentFoldsAction;
-//    private static RecordableTextAction collapseAllFoldsAction;
-//    private static RecordableTextAction expandAllFoldsAction;
+    GlossaryEntryClass glossaryentryclass; 
+    AddToGlossaryMap addtoglossary = new AddToGlossaryMap(textArea, gMap);
+    final WordSearcher searcher;  //object of Wordsearcher class -> HighlighterClass.java
+    final WordSearcher remove_highlight; //object of Wordsearcher class -> HighlighterClass.java
+   
 
     private JMenu file = new JMenu(); //  File menu
     private JMenu edit = new JMenu(); // edit menu
     private JMenu tools = new JMenu(); //  tools menu
     private JMenu help = new JMenu(); //  help menu
-
-    private JDialog d1;
-
-    private JMenuItem newFile = new JMenuItem();  //  a new option
-    private JMenuItem openFile = new JMenuItem();  // an open option
-    private JMenuItem saveFile = new JMenuItem(); // a save option
-    private JMenuItem saveasFile = new JMenuItem(); // a save as option
-    private JMenuItem exitFile = new JMenuItem(); // and a close option!
-
-    private JMenuItem cut = new JMenuItem();  //  a cut option
-    private JMenuItem copy = new JMenuItem();  // an copy option
-    private JMenuItem paste = new JMenuItem(); // a paste option
-    private JMenuItem undo = new JMenuItem(); // a undo as option
-    private JMenuItem redo = new JMenuItem(); // a redo option!
-
-//     JTextComponent jtc ; //= new JTextComponent();
-    private JMenuItem search_and_highlight_Tool = new JMenuItem(); // a searchandhighlighttool menu option
+    //File Menu Items
+    private JMenuItem newFile = new JMenuItem();  //   new file option
+    private JMenuItem openFile = new JMenuItem();  //  open file option
+    private JMenuItem saveFile = new JMenuItem(); //  save file option
+    private JMenuItem saveasFile = new JMenuItem(); // save file as option
+    private JMenuItem exitFile = new JMenuItem(); //  Exit application option!
+    //Edit Menu Items
+    private JMenuItem cut = new JMenuItem();  //   cut option
+    private JMenuItem copy = new JMenuItem();  //  copy option
+    private JMenuItem paste = new JMenuItem(); //  paste option
+    private JMenuItem undo = new JMenuItem(); //  undo as option
+    private JMenuItem redo = new JMenuItem(); //  redo option!
+    //Tools Menu Items
+    private JMenuItem search_and_highlight_Tool = new JMenuItem(); // a search and highlighttool menu option
     private JMenuItem remove_all_highlight_Tool = new JMenuItem(); // remove all highlight menu option
     private JMenuItem glossarise_All_WordsTool = new JMenuItem(); // glossarise all the words menu option
-    int ctrl = getToolkit().getMenuShortcutKeyMask();
-    int shift = InputEvent.SHIFT_MASK;
-    KeyStroke ks = KeyStroke.getKeyStroke(KeyEvent.VK_F, ctrl | shift);
+   //Help Menu Items
+    private JMenuItem readme = new JMenuItem(); // readme option!
 
-    private JMenuItem add_gls = new JMenuItem(); // a tools option
-
-    private JMenuItem about = new JMenuItem(); // about option!
-    File zip = new File("english_dic.zip");
-    boolean usEnglish = true; // "false" will use British English
-
-    public Highlighter highlighterh = new org.nidal.latex.glossarytool.UnderlineHighlighter(null);
 
     
-     public RSyntaxTextArea gettextAreaName() {
-        return textArea;
-    } 
     public GlossaryTool() {
 
 //Reference : https://github.com/bobbylight/RSyntaxTextArea
 //reference : http://www.dreamincode.net/forums/topic/66176-creating-a-basic-notepad-application/
-        initSearchDialogs();
+        
 
+        initSearchDialogs();
+        
         JPanel cp = new JPanel(new BorderLayout());
         int c = getToolkit().getMenuShortcutKeyMask();
-
-        fieldsMap = new HashMap<>();
+        RTextScrollPane sp = new RTextScrollPane(textArea);
+         ErrorStrip errorStrip = new ErrorStrip(textArea);
+        
         gMap = new HashMap<>();
-        //    repeatTags = new HashMap<>();
-
+        glossaryentryclass = new GlossaryEntryClass(gMap);
+        searcher = new WordSearcher(textArea);
+        remove_highlight = new WordSearcher(textArea);
+        statusBar = new StatusBar();
+     
         csp = new CollapsibleSectionPanel();
         cp.add(csp);
+        cp.add(sp);
 
         this.setSize(500, 300);
         this.setTitle("Glossary Tool");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
         textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_LATEX);
-
-        searcher = new org.nidal.latex.glossarytool.WordSearcher(textArea);
-        remove_highlight = new org.nidal.latex.glossarytool.WordSearcher(textArea);
-
-        //dictionary feature.
         textArea.setCodeFoldingEnabled(true);
         textArea.setMarkOccurrences(true);
 
-        RTextScrollPane sp = new RTextScrollPane(textArea);
-
-        //this.getContentPane().setLayout(new BorderLayout()); // the BorderLayout bit makes it fill it automatically
-        //this.getContentPane().add(textArea);
-        cp.add(sp);
-        ErrorStrip errorStrip = new ErrorStrip(textArea);
+        this.setContentPane(cp);
         cp.add(errorStrip, BorderLayout.LINE_END);
         this.setContentPane(cp);
 
         textArea.addKeyListener(k1);
-
-        glossaryentryclass = new GlossaryEntryClass(gMap);
-        statusBar = new StatusBar();
         cp.add(statusBar, BorderLayout.SOUTH);
+       
+        
+
         // add our menu bar into the GUI
         this.setJMenuBar(this.menubar);
 
@@ -252,12 +188,11 @@ public class GlossaryTool extends JFrame implements SearchListener {
         this.menubar.add(this.edit);
         this.menubar.add(this.tools);
 
-        //   this.menubar.add(this.help);
+        this.menubar.add(this.help);
         this.file.setLabel("File");
-
         this.edit.setLabel("Edit");
         this.tools.setLabel("Tools");
-        //    this.help.setLabel("Help");
+        this.help.setLabel("Help");
 
         // new
         this.newFile.setLabel("New"); // set the label of the menu item
@@ -267,12 +202,10 @@ public class GlossaryTool extends JFrame implements SearchListener {
                 newMenuActionPerformed(evt);
             }
         });
-
         this.file.add(this.newFile); // add it to the "File" menu
 
         // open
         this.openFile.setLabel("Open"); // set the label of the menu item
-        //  this.openFile.addActionListener(this); // add an action listener (so we know when it's been clicked
         openFile.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 try {
@@ -287,7 +220,6 @@ public class GlossaryTool extends JFrame implements SearchListener {
 
         // and the save...
         this.saveFile.setLabel("Save");
-        //  this.saveFile.addActionListener(this);
         saveFile.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 saveMenuActionPerformed(evt);
@@ -301,28 +233,24 @@ public class GlossaryTool extends JFrame implements SearchListener {
         saveasFile.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 saveAsMenuActionPerformed(evt);
-            }
+            } 
         });
-        // saveasFile.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, c));
         this.file.add(this.saveasFile); // add it to the "File" menu
 
         // File Menu - Exit
         this.exitFile.setLabel("Exit");
         exitFile.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                exitMenuActionPerformed(evt);
-            }
-        });
+                exitMenuActionPerformed(evt); } });
         exitFile.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, c));
         this.file.add(this.exitFile);
 
         //Edit Menu tool
         this.undo.setLabel("Undo"); // set the label of the menu item
-
         this.undo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 undoEditActionPerformed(evt);
-            }
+            } 
         });
         this.undo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, c));
         this.edit.add(this.undo); // add it to the "File" menu
@@ -332,7 +260,7 @@ public class GlossaryTool extends JFrame implements SearchListener {
         this.redo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 redoEditActionPerformed(evt);
-            }
+            } 
         });
         this.redo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, c));
         this.edit.add(this.redo); // add it to the "File" menu
@@ -342,7 +270,7 @@ public class GlossaryTool extends JFrame implements SearchListener {
         this.cut.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cutEditActionPerformed(evt);
-            }
+            }    
         });
         this.cut.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, c));
         this.edit.add(this.cut); // add it to the "File" menu
@@ -372,13 +300,13 @@ public class GlossaryTool extends JFrame implements SearchListener {
         edit.add(new JMenuItem(new ShowReplaceDialogAction()));
 
         // add highlight
-        this.search_and_highlight_Tool.setLabel("Search & Highlight Word");
+        this.search_and_highlight_Tool.setLabel("Search & Highlight Words");
         search_and_highlight_Tool.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 highlightAllWordsToolMenuActionPerformed(evt);
             }
         });
-        // search_and_highlight_Tool.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, c));
+        search_and_highlight_Tool.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, c));
         this.tools.add(this.search_and_highlight_Tool); // add it to the "File" menu
 
         // remove highlight
@@ -388,7 +316,7 @@ public class GlossaryTool extends JFrame implements SearchListener {
                 removeAllHighlightToolMenuActionPerformed(evt);
             }
         });
-        //search_and_highlight_Tool.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, c));
+        remove_all_highlight_Tool.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, c));
         this.tools.add(this.remove_all_highlight_Tool); // add it to the "File" menu
 
         // and searchTool
@@ -398,15 +326,25 @@ public class GlossaryTool extends JFrame implements SearchListener {
                 glossariseaAllWordsToolMenuActionPerformed(evt);
             }
         });
-        //search_and_highlight_Tool.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, c));
+        glossarise_All_WordsTool.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, c));
         this.tools.add(this.glossarise_All_WordsTool); // add it to the "File" menu
 
-//help menu
-// about us
-//     this.about.setLabel("Help");
-//    this.about.addActionListener(this);
-//      //this.add_gls.setShortcut(new MenuShortcut(KeyEvent.VK_S, false));
-//        this.help.add(this.about);
+
+ 
+        this.readme.setLabel("Read Me");
+        this.readme.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                pasteEditActionPerformed(evt);
+            }
+        });
+        this.help.add(this.readme); // add it to the "Help" menu
+
+        
+        
+        
+        
+        
+        
         popup.addSeparator();
         popup.add(new JMenuItem(new glossariseSelectedWordPopup())); //#6
 
@@ -433,7 +371,6 @@ public class GlossaryTool extends JFrame implements SearchListener {
                     if (!textChanged) {
                         setTitle("* " + getTitle());
                     }
-
                     textChanged = true;
                     saveFile.setEnabled(true);
                 }
@@ -443,7 +380,6 @@ public class GlossaryTool extends JFrame implements SearchListener {
         textArea.addCaretListener(new CaretListener() {
 
             public void caretUpdate(CaretEvent e) {
-                // TODO add your handling code here:
                 if (TextEvent.TEXT_VALUE_CHANGED != 0) { ///chg
                     if (!textChanged) {
                         setTitle("* " + getTitle());
@@ -477,7 +413,7 @@ public class GlossaryTool extends JFrame implements SearchListener {
             while ((line = read.readLine()) != null) {
                 sb.append(line + "\n");
             }
-            // textArea1.setText(sb.toString());
+
             textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_LATEX);
             textArea.setText(sb.toString());
 
@@ -497,7 +433,6 @@ public class GlossaryTool extends JFrame implements SearchListener {
             fd.show();
             if (fd.getFile() != null) {
                 this.fileName = fd.getDirectory() + fd.getFile();
-                this.filename_final = fd.getDirectory() + "glossary.tex";
                 setTitle(fileName);
                 checkFile();
             }
@@ -511,7 +446,6 @@ public class GlossaryTool extends JFrame implements SearchListener {
             fd.show();
             if (fd.getFile() != null) {
                 this.fileName = fd.getDirectory() + fd.getFile();
-                this.filename_final = fd.getDirectory() + "glossary.tex";
                 setTitle(fileName);
                 checkFile();
 
@@ -536,8 +470,7 @@ public class GlossaryTool extends JFrame implements SearchListener {
 
                 if (fd.getFile() != null) {
                     this.fileName = fd.getDirectory() + fd.getFile();
-                    // this.filename_final = fd.getDirectory() + fd.getFile().replaceFirst(".tex", ".gls");
-                    this.filename_final = fd.getDirectory() + "glossary.tex";
+
                     setTitle(fileName);
                     checkFile();
 
@@ -554,7 +487,7 @@ public class GlossaryTool extends JFrame implements SearchListener {
 
                 if (fd.getFile() != null) {
                     this.fileName = fd.getDirectory() + fd.getFile();
-                    this.filename_final = fd.getDirectory() + "glossary.tex";
+                  
                     setTitle(fileName);
                     checkFile();
                     gMap.clear();
@@ -566,11 +499,6 @@ public class GlossaryTool extends JFrame implements SearchListener {
         selectGlossaryFile();
     }
 
-//    private void dictionarycheck() throws IOException {
-//             SpellingParser parser = SpellingParser.createEnglishSpellingParser(zip, usEnglish);
-//             //SpellingParser parser = SpellingParser.createEnglishSpellingParser(glossaryFileName, usEnglish);
-//                textArea.addParser(parser);
-//    }
     private void selectGlossaryFile() throws IOException {
         // TODO add your handling code here:
 
@@ -578,7 +506,6 @@ public class GlossaryTool extends JFrame implements SearchListener {
         fd.show();
         if (fd.getFile() != null) {
             glossaryFileName = fd.getDirectory() + fd.getFile();
-            //   checkFile();
             readGlossaryFile.addtoArrayList(glossaryFileName);
 
         }
@@ -673,7 +600,7 @@ public class GlossaryTool extends JFrame implements SearchListener {
 
     private void glossariseaAllWordsToolMenuActionPerformed(java.awt.event.ActionEvent evt) {
 
-        intelligence.glossariseAllInstanceAllWords(textArea,gMap);
+        intelligence.glossariseAllInstanceAllWords(textArea, gMap);
     }
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {
@@ -701,7 +628,9 @@ public class GlossaryTool extends JFrame implements SearchListener {
     }
 
     private void saveAs() {
-
+    String fn;
+    String dir;
+      String holdText;
         FileDialog fd = new FileDialog(GlossaryTool.this, "Save As", FileDialog.SAVE);
         fd.show();
 
@@ -709,9 +638,6 @@ public class GlossaryTool extends JFrame implements SearchListener {
             fn = fd.getFile();
             dir = fd.getDirectory();
             fileName = dir + fn + ".tex";
-            // this.filename = dir + fn;
-            // this.filename_s = dir + fn ;
-            //   this.filename_final = fd.getDirectory() + "glossary.tex" ;
 
             setTitle(fileName);
 
@@ -736,37 +662,6 @@ public class GlossaryTool extends JFrame implements SearchListener {
 
     }
 
-    private void saveGlossary_new_entry() {
-
-        try {
-            DataOutputStream d = new DataOutputStream(new FileOutputStream(filename_final));
-            System.out.println(filename_final);
-
-            holdText = textArea.getText();
-            BufferedReader br = new BufferedReader(new StringReader(holdText));
-
-            while ((holdText = br.readLine()) != null) {
-                d.writeBytes(holdText + "\r\n");
-                d.close();
-
-            }
-        } catch (Exception e) {
-            System.out.println("File not found");
-        }
-
-        try {
-            FileWriter out;
-            // out = new FileWriter(fn);
-            out = new FileWriter(filename_final);
-            out.write(textArea.getText());
-            out.close();
-
-        } catch (Exception err) {
-            System.out.println("Error: " + err);
-        }
-
-    }
-
     private void save(String filename) {
         setTitle(applicationName + " " + filename);
         try {
@@ -782,7 +677,7 @@ public class GlossaryTool extends JFrame implements SearchListener {
 
         textChanged = false;
         saveFile.setEnabled(false);
-        writetoglossaryfile_object.writeto_GlossaryFileMethod(gMap,glossaryFileName);
+        writetoglossaryfile_object.writeto_GlossaryFileMethod(gMap, glossaryFileName);
         gMap.clear();
     }
 
@@ -825,7 +720,6 @@ public class GlossaryTool extends JFrame implements SearchListener {
         }
     }
 
-   // private void textAreaTextValueChanged(org.nidal.latex.glossarytool.RTextEvent evt) {
     private void textAreaTextValueChanged(TextEvent evt) {
         // TODO add your handling code here:
         if (TextEvent.TEXT_VALUE_CHANGED != 0) {
@@ -902,257 +796,6 @@ public class GlossaryTool extends JFrame implements SearchListener {
 
     }
 
-//    //to add \gls{text}
-//    private void addglsprefix() {
-//        String text_selected = textArea.getSelectedText();
-//        String text_replacement = "\\gls{" + text_selected + "}";
-//        textArea.replaceSelection(text_replacement);
-//        textChanged = true;
-//    }
-
-    
-    
-    
-  /*  
-    private void createAndShowadd_glsDialog() {
-
-        //https://docs.oracle.com/javase/tutorial/displayCode.html?code=https://docs.oracle.com/javase/tutorial/uiswing/examples/layout/SpringBoxProject/src/layout/SpringBox.java
-        JPanel dpan = new JPanel();
-        JPanel dpan1 = new JPanel();
-        JPanel dpanel_master = new JPanel();
-        //  Container dpan = d1.getContentPane();
-
-        // dpan.setLayout(new BorderLayout());
-        dpan.setLayout(new SpringLayout());
-        //  dpan.setLayout(new GridLayout(5,2));
-        // dpan.setLayout(new FlowLayout());
-        dpan1.setLayout(new FlowLayout());
-        //  dpan1.setLayout(new GridLayout(0,3));
-
-        dpan.setMaximumSize(new Dimension(520, 400));
-        dpan1.setMaximumSize(new Dimension(520, 150));
-        // dpan1.setLayout(null);
-        dpanel_master.setLayout(new BorderLayout());
-        // dpanel_master.setLayout(new GridLayout(2,0));
-        //dpan.setLayout(new GridBagLayout());
-
-        //  GridBagConstraints c = new GridBagConstraints();
-        //       if(shouldFill) {
-        //natural height, maximum width
-        //   c.fill = GridBagConstraints.HORIZONTAL;
-//}
-        // setDefaultCloseOperation(EXIT_ON_CLOSE);
-        //  d1.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-        // setLayout(new FlowLayout());
-        // Must be called before creating JDialog for
-        // the desired effect
-        JDialog.setDefaultLookAndFeelDecorated(true);
-
-        // A perfect constructor, mostly used.
-        // A dialog with current frame as parent
-        // a given title, and modal
-        d1 = new JDialog(this, "Add to Glossary", true);
-
-        // Set size
-//        if (RIGHT_TO_LEFT)
-//            dpan.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
-//
-        // Set some layout
-        //  d1.setLayout(new FlowLayout());
-//    current_y += 30;
-        JLabel selectedword_label = new JLabel("Selected Word");
-        JTextField selectedword_tf = new JTextField(textArea.getSelectedText());
-        selectedword_tf.setEditable(false);
-
-        JLabel tag_label = new JLabel("Tag");
-
-        JTextField tag_tf = new JTextField("");
-        tag_label.setLabelFor(tag_tf);
-
-        JLabel name_label = new JLabel("Name");
-//
-        JTextField name_tf = new JTextField("");
-//
-        JLabel plural_label = new JLabel("Plural");
-//
-        JTextField plural_tf = new JTextField("");
-//
-        JLabel symbol_label = new JLabel("Symbol");
-//
-        JTextField symbol_tf = new JTextField("");
-//
-        JLabel desc_label = new JLabel("Desciption");
-//
-        RSyntaxTextArea desc_Area = new RSyntaxTextArea("");
-
-        JButton cancel_gls = new JButton("Cancel");
-
-        JButton save_gls = new JButton("Save");
-        JButton clear_gls = new JButton("Clear");
-
-        tag_label.setLabelFor(tag_tf);
-        // name_label.setLabelFor(name_tf);
-        //plural_label.setLabelFor(plural_tf);
-        //   symbol_label.setLabelFor(symbol_tf);
-        //   desc_label.setLabelFor(desc_Area);
-
-        dpan.add(selectedword_label);
-        dpan.add(selectedword_tf);
-        dpan.add(tag_label);
-        dpan.add(tag_tf);
-        dpan.add(name_label);
-        dpan.add(name_tf);
-        dpan.add(plural_label);
-        dpan.add(plural_tf);
-        dpan.add(symbol_label);
-        dpan.add(symbol_tf);
-        dpan.add(desc_label);
-        dpan.add(desc_Area);
-
-        dpan1.add(cancel_gls);
-        cancel_gls.setPreferredSize(new Dimension(120, 50));
-        dpan1.add(save_gls);
-        save_gls.setPreferredSize(new Dimension(120, 50));
-//     dpan1.add(clear_gls,BorderLayout.LINE_END);
-        dpan1.add(clear_gls);
-        clear_gls.setPreferredSize(new Dimension(120, 50));
-
-        //Lay out the buttons in one row and as many columns
-        //as necessary, with 6 pixels of padding all around.
-        //if the word already exists then it disables the save button
-        checktagExists = readGlossaryFile.checkifSavedinGlossaryFile(textArea.getSelectedText());
-
-        if (checktagExists) {
-            save_gls.setVisible(false);
-        }
-
-        cancel_gls.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-
-                d1.dispose();
-
-            }
-        });
-
-        save_gls.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-
-                String tag_gls = tag_tf.getText().trim();
-
-                String name_gls = name_tf.getText().trim();;
-                //   JTextField name_tf = new JTextField("");
-                String symbol_gls = symbol_tf.getText().trim();
-                String plural_gls = plural_tf.getText().trim();
-                String desc_gls = desc_Area.getText().trim();
-                GlossaryEntryClass gec;
-
-                //sort use
-                String all_gls;
-
-                System.out.println(tag_gls + "" + name_gls + "" + symbol_gls + "" + plural_gls + "" + desc_gls);
-
-                GlossaryEntryClass1 glossaryentryclass1 = new GlossaryEntryClass1(tag_gls.toLowerCase(), name_gls, symbol_gls, plural_gls, desc_gls);
-
-                System.out.println(gMap);
-
-               intelligence.checkIfWordAvailableInMap(textArea,textArea.getSelectedText(),gMap);
-               // intelligence.repeattags_add(textArea.getSelectedText(), replacement);
-                readGlossaryFile.addtoArrayListFromDialogSave(tag_gls);
-                d1.dispose();
-
-            }
-        });
-
-        clear_gls.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-
-                name_tf.setText("");
-                plural_tf.setText("");
-                symbol_tf.setText("");
-                desc_Area.setText("");
-
-            }
-        });
-        int count = dpan.getComponentCount() / 2;
-        System.out.println(count);
-
-        SpringUtilities.makeCompactGrid(dpan, count, 2, 10, 10, 10, 10);
-
-        dpanel_master.add(dpan, BorderLayout.CENTER);
-        dpanel_master.add(dpan1, BorderLayout.SOUTH);
-
-        d1.add(dpanel_master);
-
-        d1.setSize(520, 500);
-        d1.setMinimumSize(new Dimension(520, 400));
-
-        d1.setLocationRelativeTo(null);
-
-        d1.setVisible(true);
-    } */
-/*
-    @SuppressWarnings("serial")
-    public class GlossaryEntryClass1 {
-
-        private HashMap<String, String> fields;
-
-        public GlossaryEntryClass1(String tag_gls2, String name_gls2, String symbol_gls2, String plural_gls2, String desc_gls2) {
-            fields = new HashMap<String, String>();
-
-            //  fields.put(symbol_gls2, plural_gls2);
-            if (tag_gls2 != null && !tag_gls2.isEmpty()) {
-                fields.put("Tag", tag_gls2);
-            }
-
-            if (name_gls2 != null && !name_gls2.isEmpty()) {
-                fields.put("Name", name_gls2);
-            }
-
-            if (symbol_gls2 != null && !symbol_gls2.isEmpty()) {
-                fields.put("Symbol", symbol_gls2);
-            }
-
-            if (plural_gls2 != null && !plural_gls2.isEmpty()) {
-                fields.put("Plural", plural_gls2);
-            }
-
-            if (desc_gls2 != null && !desc_gls2.isEmpty()) {
-                fields.put("Description", desc_gls2);
-            }
-
-            gMap.put(tag_gls2, fields);
-
-        }
-
-        String getTag() {
-            return fields.get("Tag");
-        }
-
-        String getName() {
-            return fields.get("Name");
-        }
-
-        String getSymbol() {
-            return fields.get("Symbol");
-        }
-
-        String getPlural() {
-            return fields.get("Plural");
-        }
-
-        String getDesc() {
-            return fields.get("Description");
-        }
-
-    }
-    */
-
     /**
      * @param args the command line arguments
      */
@@ -1164,15 +807,11 @@ public class GlossaryTool extends JFrame implements SearchListener {
 
             }
         });
-        // TODO code application logic here
+
     }
-
-
 
     // for glossaries popup. #6 glossaries
     private class glossariseSelectedWordPopup extends TextAction {
-
-     //   Intelligence intelligence = new Intelligence();
 
         public glossariseSelectedWordPopup() {
 
@@ -1180,9 +819,8 @@ public class GlossaryTool extends JFrame implements SearchListener {
         }
 
         public void actionPerformed(ActionEvent e) {
-            
-              String text_selected = textArea.getSelectedText();
-            
+
+            String text_selected = textArea.getSelectedText();
 
             try {
                 int selStart = textArea.getSelectionStart();
@@ -1191,7 +829,7 @@ public class GlossaryTool extends JFrame implements SearchListener {
                     text_selected = textArea.getText(selStart, selEnd - selStart);
 
                     if (!text_selected.equals("")) {
-                     //   intelligence.checkIfWordAvailableInMap(textArea,text_selected, gMap);
+                        intelligence.checkIfWordAvailableInMap(textArea, text_selected, gMap);
                     }
                 }
             } catch (BadLocationException ble) {
@@ -1208,15 +846,13 @@ public class GlossaryTool extends JFrame implements SearchListener {
     // for glossaries popup. #6 glossaries
     private class glossariseAllTheWordPopup extends TextAction {
 
-      //  Intelligence intelligence = new Intelligence();
-
         public glossariseAllTheWordPopup() {
 
             super("Glossarise all instances of this word");
         }
 
         public void actionPerformed(ActionEvent e) {
-            intelligence.glossariseAllInstanceSelectedWord(textArea ,textArea.getSelectedText(),gMap);
+            intelligence.glossariseAllInstanceSelectedWord(textArea, textArea.getSelectedText(), gMap);
 
         }
 
@@ -1225,20 +861,17 @@ public class GlossaryTool extends JFrame implements SearchListener {
     // for highlighting single occurance
     private class highlightSingleWordOccurance extends TextAction {
 
-       // Intelligence intelligence = new Intelligence();
-
         public highlightSingleWordOccurance() {
 
             super("Highlight all instances of this word");
         }
 
         public void actionPerformed(ActionEvent e) {
-            intelligence.highlightAllInstanceSelectedWord(textArea,gMap);
+            intelligence.highlightAllInstanceSelectedWord(textArea, gMap);
 
         }
 
     }
-
 
     // private class add_gls extends  TextAction {
     private class addtoGlossaryPopup extends TextAction {
@@ -1258,7 +891,7 @@ public class GlossaryTool extends JFrame implements SearchListener {
                     text_selected = textArea.getText(selStart, selEnd - selStart);
 
                     if (!text_selected.equals("")) {
-                        addtoglossary.createAndShowadd_glsDialog(textArea,gMap);
+                        addtoglossary.createAndShowadd_glsDialog(textArea, gMap);
                     }
                 }
             } catch (BadLocationException ble) {
@@ -1268,9 +901,8 @@ public class GlossaryTool extends JFrame implements SearchListener {
 
         }
 
-        private void add_to_glossary(String word) {
-        }
-
+//        private void add_to_glossary(String word) {
+//        }
     }
 
     private class ShowFindDialogAction extends AbstractAction {
@@ -1325,7 +957,5 @@ public class GlossaryTool extends JFrame implements SearchListener {
         }
 
     }
-
-
 
 }
