@@ -19,24 +19,6 @@ import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 
 public class ViewGlossaryFile {    
 
-//    public static void main(String args[]) {
-//
-//        try {
-//
-//            SwingUtilities.invokeAndWait(new Runnable() {
-//
-//                public void run() {
-//                    new HighlightGlossary().createAndShowGUI();
-//                }
-//            });
-//
-//        } catch (InterruptedException ex) {
-//            ex.printStackTrace();
-//
-//        } catch (InvocationTargetException ex) {
-//            ex.printStackTrace();
-//        }
-//    }
 
     public void createAndShowGUI() {
   RSyntaxTextArea textAreaGlossaryFile = new RSyntaxTextArea(30, 90);

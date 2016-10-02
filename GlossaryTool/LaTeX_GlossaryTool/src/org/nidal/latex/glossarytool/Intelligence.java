@@ -15,10 +15,7 @@ import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
  * @author nidal
  */
 public class Intelligence {
-    
-    
 
-    //GlossaryTool glossarytool ; // = new GlossaryTool();
    
      final org.nidal.latex.glossarytool.WordSearcher searcher ;
           final org.nidal.latex.glossarytool.WordSearcher remove_highlight; 

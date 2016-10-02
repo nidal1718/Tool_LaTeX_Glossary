@@ -6,13 +6,9 @@
 package org.nidal.latex.glossarytool;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.FileDialog;
-import java.awt.FlowLayout;
 import java.awt.datatransfer.Clipboard;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -28,7 +24,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -37,7 +32,6 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import static javax.swing.Action.ACCELERATOR_KEY;
 import javax.swing.ButtonGroup;
-import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import static javax.swing.JFrame.EXIT_ON_CLOSE;
@@ -51,13 +45,11 @@ import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
-import javax.swing.SpringLayout;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.text.BadLocationException;
-import javax.swing.text.DefaultHighlighter;
 import javax.swing.text.Highlighter;
 import javax.swing.text.TextAction;
 import org.fife.rsta.ui.CollapsibleSectionPanel;
@@ -81,8 +73,6 @@ import org.fife.ui.rtextarea.RecordableTextAction;
 import org.fife.ui.rtextarea.SearchContext;
 import org.fife.ui.rtextarea.SearchEngine;
 import org.fife.ui.rtextarea.SearchResult;
-import org.nidal.latex.glossarytool.UnderlineHighlighter.UnderlineHighlightPainter;
-import org.nidal.latex.glossarytool.Intelligence;
 
 /**
  *
@@ -134,8 +124,9 @@ public class GlossaryTool extends JFrame implements SearchListener {
 
     Boolean checktagExists;
 
-    private Map<String, GlossaryEntryClass1> fieldsMap;
-    public Map<String, Map> gMap  = new HashMap<>();
+    GlossaryEntryClass glossaryentryclass ; // = new GlossaryEntryClass(gMap);
+    private Map<String, GlossaryEntryClass> fieldsMap;
+    public Map<String, Map> gMap ; //= new HashMap<>();
     
 //     public HashMap<String, Map> getgMap() {
 //        return gMap;
@@ -144,6 +135,8 @@ public class GlossaryTool extends JFrame implements SearchListener {
       
 
     private Map<String, String> repeatTags;
+    
+    AddToGlossaryMap addtoglossary = new AddToGlossaryMap(textArea,gMap);
 
     List<Object> collect;
 
@@ -249,6 +242,7 @@ public class GlossaryTool extends JFrame implements SearchListener {
 
         textArea.addKeyListener(k1);
 
+        glossaryentryclass = new GlossaryEntryClass(gMap);
         statusBar = new StatusBar();
         cp.add(statusBar, BorderLayout.SOUTH);
         // add our menu bar into the GUI
@@ -908,14 +902,18 @@ public class GlossaryTool extends JFrame implements SearchListener {
 
     }
 
-    //to add \gls{text}
-    private void addglsprefix() {
-        String text_selected = textArea.getSelectedText();
-        String text_replacement = "\\gls{" + text_selected + "}";
-        textArea.replaceSelection(text_replacement);
-        textChanged = true;
-    }
+//    //to add \gls{text}
+//    private void addglsprefix() {
+//        String text_selected = textArea.getSelectedText();
+//        String text_replacement = "\\gls{" + text_selected + "}";
+//        textArea.replaceSelection(text_replacement);
+//        textChanged = true;
+//    }
 
+    
+    
+    
+  /*  
     private void createAndShowadd_glsDialog() {
 
         //https://docs.oracle.com/javase/tutorial/displayCode.html?code=https://docs.oracle.com/javase/tutorial/uiswing/examples/layout/SpringBoxProject/src/layout/SpringBox.java
@@ -1097,8 +1095,8 @@ public class GlossaryTool extends JFrame implements SearchListener {
         d1.setLocationRelativeTo(null);
 
         d1.setVisible(true);
-    }
-
+    } */
+/*
     @SuppressWarnings("serial")
     public class GlossaryEntryClass1 {
 
@@ -1153,6 +1151,7 @@ public class GlossaryTool extends JFrame implements SearchListener {
         }
 
     }
+    */
 
     /**
      * @param args the command line arguments
@@ -1259,7 +1258,7 @@ public class GlossaryTool extends JFrame implements SearchListener {
                     text_selected = textArea.getText(selStart, selEnd - selStart);
 
                     if (!text_selected.equals("")) {
-                        createAndShowadd_glsDialog();
+                        addtoglossary.createAndShowadd_glsDialog(textArea,gMap);
                     }
                 }
             } catch (BadLocationException ble) {
@@ -1326,38 +1325,6 @@ public class GlossaryTool extends JFrame implements SearchListener {
         }
 
     }
-
-    // http://www.java2s.com/Code/Java/Swing-JFC/JTextPaneHighlightExample.htm
-    class UnderlineHighlighter extends DefaultHighlighter {
-        // Shared painter used for default highlighting
-
-        protected final HighlightPainter sharedPainter = new UnderlineHighlightPainter(null);
-
-        // Painter used for this highlighter
-        protected Highlighter.HighlightPainter painter;
-        protected Color color; // The color for the underline
-
-        public UnderlineHighlighter(Color c) {
-            painter = (c == null ? sharedPainter : new UnderlineHighlightPainter(c));
-        }
-
-        // Convenience method to add a highlight with
-        // the default painter.
-        public Object addHighlight(int p0, int p1) throws BadLocationException {
-            return addHighlight(p0, p1, painter);
-        }
-
-        public void setDrawsLayeredHighlights(boolean newValue) {
-            // Illegal if false - we only support layered highlights
-            if (newValue == false) {
-                throw new IllegalArgumentException(
-                        "UnderlineHighlighter only draws layered highlights");
-            }
-            super.setDrawsLayeredHighlights(true);
-        }
-
-    }
-
 
 
 
