@@ -175,7 +175,7 @@ public class AddToGlossaryMap extends JFrame {
                 String desc_gls = desc_Area.getText().trim();
           
               checktagExists = readGlossaryFile.checkifSavedinGlossaryFile(tag_gls);
-              boolean selectedWordExists = selectedWordExistsMethod(selectedword_label.getText(),tag_gls,symbol_gls,plural_gls);
+            //  boolean selectedWordExists = selectedWordExistsMethod(selectedword_label.getText(),tag_gls,symbol_gls,plural_gls);
 
              
         if(!("").equals(tag_gls))
@@ -191,21 +191,24 @@ public class AddToGlossaryMap extends JFrame {
             clear_gls.setEnabled(false);
              save_gls.setEnabled(false);
           JOptionPane.showMessageDialog(null, "Entry Not Saved, Tag already exists in the glossary file!!");
+           d1.dispose();
         }
-        else if (!selectedWordExists)
-        {  JOptionPane.showMessageDialog(null, "The Selected word doesnt exists in any of the fields[Tag, Symbol & Plural}, Please reenter the details!");
-        }
+        
+//        else if (!selectedWordExists)
+//        {  JOptionPane.showMessageDialog(null, "The Selected word doesnt exists in any of the fields[Tag, Symbol & Plural}, Please reenter the details!");
+//        }
         else{
             glossaryentryclass = new GlossaryEntryClass(tag_gls.toLowerCase(), name_gls, symbol_gls, plural_gls, desc_gls,gMap);
 
-      //      glossaryentryclass1 = new GlossaryEntryClass1(tag_gls.toLowerCase(), name_gls, symbol_gls, plural_gls, desc_gls);
-                System.out.println(gMap);
+     
+          //      System.out.println(gMap);
 
-               intelligence.checkIfWordAvailableInMap(textArea,textArea.getSelectedText(),gMap);
+               intelligence.glossariseTheWord(textArea,textArea.getSelectedText(),gMap);
                // intelligence.repeattags_add(textArea.getSelectedText(), replacement);
                 readGlossaryFile.addtoArrayListFromDialogSave(tag_gls);
                 d1.dispose();
-        }}
+        }
+        }
         else 
             JOptionPane.showMessageDialog(null, "Please enter value for Tag field");
             }
@@ -225,7 +228,7 @@ public class AddToGlossaryMap extends JFrame {
             }
         });
         int count = dpan.getComponentCount() / 2;
-        System.out.println(count);
+       // System.out.println(count);
 
         SpringUtilities.makeCompactGrid(dpan, count, 2, 10, 10, 10, 10);
 
@@ -242,16 +245,16 @@ public class AddToGlossaryMap extends JFrame {
         d1.setVisible(true);
     }
     
-    public boolean selectedWordExistsMethod(String selectedWordExists, String tag_gls, String symbol_gls, String plural_gls)
-   { boolean check =false ;
-        if(tag_gls.equals(selectedWordExists))
-            check = true ;
-        else if(symbol_gls.equals(selectedWordExists))
-                   check = true ;
-        else if(plural_gls.equals(selectedWordExists))
-                   check = true ;
-        
-        return check ;
-    }
+//    public boolean selectedWordExistsMethod(String selectedWordExists, String tag_gls, String symbol_gls, String plural_gls)
+//   { boolean check =false ;
+//        if(tag_gls.equals(selectedWordExists))
+//            check = true ;
+//        else if(symbol_gls.equals(selectedWordExists))
+//                   check = true ;
+//        else if(plural_gls.equals(selectedWordExists))
+//                   check = true ;
+//        
+//        return check ;
+//    }
 
 }

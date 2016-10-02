@@ -13,14 +13,14 @@ import javax.swing.text.Document;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 
 /**
- *
+ * Class to View the Glossary File in a new window 
+ * * not implemented at the moment*
  * @author nidal
  */
 
 public class ViewGlossaryFile {    
 
-
-    public void createAndShowGUI() {
+  public void createAndShowGUI() {
   RSyntaxTextArea textAreaGlossaryFile = new RSyntaxTextArea(30, 90);
         JFrame frame = new JFrame("Glossary File");
         frame.setLayout(new GridLayout(2, 1));
@@ -34,12 +34,8 @@ public class ViewGlossaryFile {
 
         frame.add(new JScrollPane(field));
 
-        
-
         Document doc1 = field.getDocument();
       
-
-
         frame.getContentPane().add(new JScrollPane(textAreaGlossaryFile));
         frame.pack();
         frame.setLocationRelativeTo(null);

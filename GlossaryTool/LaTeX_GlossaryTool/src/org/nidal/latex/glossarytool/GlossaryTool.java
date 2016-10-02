@@ -418,6 +418,7 @@ public class GlossaryTool extends JFrame implements SearchListener {
 
     }
 
+    // Method to open the .Tex file
     private void openMenuActionPerformed(java.awt.event.ActionEvent evt) throws IOException {
         // TODO add your handling code here:
 
@@ -822,7 +823,7 @@ public class GlossaryTool extends JFrame implements SearchListener {
                     text_selected = textArea.getText(selStart, selEnd - selStart);
 
                     if (!text_selected.trim().equals("")) 
-                        intelligence.checkIfWordAvailableInMap(textArea, text_selected, gMap);
+                        intelligence.glossariseTheWord(textArea, text_selected, gMap);
                     else 
                        JOptionPane.showMessageDialog(null, "Please select a word");
                     

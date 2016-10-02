@@ -11,7 +11,7 @@ import javax.swing.text.BadLocationException;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 
 /**
- *
+ *Class to implement the intelligence to detect the selected word and to put the appropriate tag
  * @author nidal
  */
 public class Intelligence {
@@ -81,7 +81,7 @@ public class Intelligence {
             return capitalcheck;
         }
 //
-        public String checkIfWordAvailableInMap(RSyntaxTextArea textArea,String text_selected, Map<String, Map> gMap) {
+        public String glossariseTheWord(RSyntaxTextArea textArea,String text_selected, Map<String, Map> gMap) {
             String tag = null;
             String text_replacement = null;
             Boolean capitalcheck = capitalornot(text_selected);

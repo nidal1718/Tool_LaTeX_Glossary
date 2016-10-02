@@ -1,5 +1,9 @@
 package org.nidal.latex.glossarytool;
 
+/*  Referece : https://docs.oracle.com/javase/tutorial/uiswing/examples/layout/SpringGridProject/src/layout/SpringUtilities.java"
+Used to align the add glossary dialog 
+*/
+
 /*
  * Copyright (c) 1995, 2008, Oracle and/or its affiliates. All rights reserved.
  *

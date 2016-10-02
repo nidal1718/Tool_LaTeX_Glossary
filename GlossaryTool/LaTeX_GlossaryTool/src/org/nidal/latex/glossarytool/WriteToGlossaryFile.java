@@ -10,7 +10,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 /**
- *
+ * Class to write the HashMap and .tex file to selected file. ( .Tex - >  Write to .Tex File) ( HashMap -> append to glossary file )
  * @author nidal
  */
 public class WriteToGlossaryFile {
@@ -58,7 +58,7 @@ public class WriteToGlossaryFile {
 
             all_gls = all_gls + "\n}";
 
-            System.out.println("after desc" + all_gls);
+          //  System.out.println("after desc" + all_gls);
 
             try {
                 FileWriter out_gls;

@@ -1,37 +1,26 @@
 package org.nidal.latex.glossarytool;
 
-
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
- /*
+/* Reference : 
 Core SWING Advanced Programming 
 By Kim Topley
 ISBN: 0 13 083292 8       
 Publisher: Prentice Hall  
  */
-import java.awt.BorderLayout;
+
+/* Code modified to suit this application */
+
+
+/* Class to Highlight the glossarised word  */
+
 import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.Shape;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.FileReader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
 import javax.swing.JTextPane;
-import javax.swing.UIManager;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
@@ -46,45 +35,13 @@ import javax.swing.text.View;
 public class HighlighterClass {
 
     public static void main(String[] args) {
-        try {
-            UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
-        } catch (Exception evt) {
-        }
 
-        JFrame f = new JFrame("Highlight example");
         final JTextPane textPane = new JTextPane();
-//final RSyntaxTextArea textPane = new RSyntaxTextArea();
+
         textPane.setHighlighter(highlighter);
 
-        JPanel pane = new JPanel();
-        pane.setLayout(new BorderLayout());
-        pane.add(new JLabel("Enter word: "), "West");
-        final JTextField tf = new JTextField();
-        pane.add(tf, "Center");
-        f.getContentPane().add(pane, "South");
-        f.getContentPane().add(new JScrollPane(textPane), "Center");
-
-        try {
-            textPane.read(new FileReader("sampletextfile.txt"), null);
-        } catch (Exception e) {
-            System.out.println("Failed to load file " + args[0]);
-            System.out.println(e);
-        }
         final WordSearcher searcher = new WordSearcher(textPane);
 
-        tf.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                word = tf.getText().trim();
-                int offset = searcher.search(word);
-                if (offset != -1) {
-                    try {
-                        textPane.scrollRectToVisible(textPane
-                                .modelToView(offset));
-                    } catch (BadLocationException e) {
-                    }
-                }
-            }
-        });
 
         textPane.getDocument().addDocumentListener(new DocumentListener() {
             public void insertUpdate(DocumentEvent evt) {
@@ -99,16 +56,13 @@ public class HighlighterClass {
             }
         });
 
-        f.setSize(400, 400);
-        f.setVisible(true);
+   
     }
 
     public static String word;
 
     public static Highlighter highlighter = new UnderlineHighlighter(null);
 }
-
-
 
 // A simple class that searches for a word in
 // a document and highlights occurrences of that word
