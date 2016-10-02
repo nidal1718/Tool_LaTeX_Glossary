@@ -175,20 +175,11 @@ public class AddToGlossaryMap extends JFrame {
                 String desc_gls = desc_Area.getText().trim();
           
               checktagExists = readGlossaryFile.checkifSavedinGlossaryFile(tag_gls);
-//              if (checktagExists) {
-//            save_gls.setVisible(false);
-//            tag_tf.setText("'"+selectedword_label+"'"+" "+"exists in the glossary file");
-//            tag_tf.setEditable(false);
-//            name_tf.setEditable(false);
-//            plural_tf.setEditable(false);
-//            symbol_tf.setEditable(false);
-//            desc_Area.setEditable(false);
-//            clear_gls.setEnabled(false);
-//        }   
+              boolean selectedWordExists = selectedWordExistsMethod(selectedword_label.getText(),tag_gls,symbol_gls,plural_gls);
 
              
         if(!("").equals(tag_gls))
-        {      if (checktagExists) 
+        {      if (checktagExists) //if true dialog box display error 
         
         {     //save_gls.setVisible(false);
             //tag_tf.setText("Tag ex");
@@ -200,6 +191,9 @@ public class AddToGlossaryMap extends JFrame {
             clear_gls.setEnabled(false);
              save_gls.setEnabled(false);
           JOptionPane.showMessageDialog(null, "Entry Not Saved, Tag already exists in the glossary file!!");
+        }
+        else if (!selectedWordExists)
+        {  JOptionPane.showMessageDialog(null, "The Selected word doesnt exists in any of the tag, Please reenter the details!");
         }
         else{
             glossaryentryclass = new GlossaryEntryClass(tag_gls.toLowerCase(), name_gls, symbol_gls, plural_gls, desc_gls,gMap);
@@ -245,6 +239,18 @@ public class AddToGlossaryMap extends JFrame {
         d1.setLocationRelativeTo(null);
 
         d1.setVisible(true);
+    }
+    
+    public boolean selectedWordExistsMethod(String selectedWordExists, String tag_gls, String symbol_gls, String plural_gls)
+   { boolean check =false ;
+        if(tag_gls.equals(selectedWordExists))
+            check = true ;
+        else if(symbol_gls.equals(selectedWordExists))
+                   check = true ;
+        else if(plural_gls.equals(selectedWordExists))
+                   check = true ;
+        
+        return check ;
     }
 
 }
