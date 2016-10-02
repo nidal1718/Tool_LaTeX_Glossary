@@ -7,9 +7,7 @@ package org.nidal.latex.glossarytool;
 
 import java.awt.BorderLayout;
 import java.awt.FileDialog;
-import java.awt.datatransfer.Clipboard;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -17,7 +15,6 @@ import java.awt.event.KeyListener;
 import java.awt.event.TextEvent;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -48,7 +45,6 @@ import javax.swing.UIManager;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.text.BadLocationException;
-import javax.swing.text.Highlighter;
 import javax.swing.text.TextAction;
 import org.fife.rsta.ui.CollapsibleSectionPanel;
 import org.fife.rsta.ui.SizeGripIcon;
@@ -330,7 +326,6 @@ public class GlossaryTool extends JFrame implements SearchListener {
         this.tools.add(this.glossarise_All_WordsTool); // add it to the "File" menu
 
 
- 
         this.readme.setLabel("Read Me");
         this.readme.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -341,9 +336,7 @@ public class GlossaryTool extends JFrame implements SearchListener {
 
         
         
-        
-        
-        
+            
         
         popup.addSeparator();
         popup.add(new JMenuItem(new glossariseSelectedWordPopup())); //#6
@@ -517,10 +510,10 @@ public class GlossaryTool extends JFrame implements SearchListener {
         saveAs();
     }
 
-    private void add_glsMenuActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
-        saveAs();
-    }
+//    private void add_glsMenuActionPerformed(java.awt.event.ActionEvent evt) {
+//        // TODO add your handling code here:
+//        saveAs();
+//    }
 
     private void saveMenuActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
@@ -733,7 +726,7 @@ public class GlossaryTool extends JFrame implements SearchListener {
     }
 
     public String getSelectedText() {
-        checktagExists = false;
+       // checktagExists = false;
         return textArea.getSelectedText();
     }
 
@@ -820,18 +813,24 @@ public class GlossaryTool extends JFrame implements SearchListener {
 
         public void actionPerformed(ActionEvent e) {
 
-            String text_selected = textArea.getSelectedText();
+            String text_selected ;
 
             try {
                 int selStart = textArea.getSelectionStart();
                 int selEnd = textArea.getSelectionEnd();
-                if (selStart != selEnd) {
+                if (selStart != selEnd ) {
                     text_selected = textArea.getText(selStart, selEnd - selStart);
 
-                    if (!text_selected.equals("")) {
+                    if (!text_selected.trim().equals("")) 
                         intelligence.checkIfWordAvailableInMap(textArea, text_selected, gMap);
-                    }
+                    else 
+                       JOptionPane.showMessageDialog(null, "Please select a word");
+                    
+                 
+                    
                 }
+                   else 
+                       JOptionPane.showMessageDialog(null, "Please select a word");
             } catch (BadLocationException ble) {
                 ble.printStackTrace();
                 UIManager.getLookAndFeel().provideErrorFeedback(textArea);
@@ -852,7 +851,28 @@ public class GlossaryTool extends JFrame implements SearchListener {
         }
 
         public void actionPerformed(ActionEvent e) {
-            intelligence.glossariseAllInstanceSelectedWord(textArea, textArea.getSelectedText(), gMap);
+           String text_selected ;
+
+            try {
+                int selStart = textArea.getSelectionStart();
+                int selEnd = textArea.getSelectionEnd();
+                if (selStart != selEnd ) {
+                    text_selected = textArea.getText(selStart, selEnd - selStart);
+
+                    if (!text_selected.trim().equals("")) 
+                     intelligence.glossariseAllInstanceSelectedWord(textArea, textArea.getSelectedText(), gMap);
+                     else 
+                       JOptionPane.showMessageDialog(null, "Please select a word");
+//                    
+                
+                }
+                   else 
+                       JOptionPane.showMessageDialog(null, "Please select a word");
+            } catch (BadLocationException ble) {
+                ble.printStackTrace();
+                UIManager.getLookAndFeel().provideErrorFeedback(textArea);
+                return;
+            }
 
         }
 
@@ -867,7 +887,31 @@ public class GlossaryTool extends JFrame implements SearchListener {
         }
 
         public void actionPerformed(ActionEvent e) {
-            intelligence.highlightAllInstanceSelectedWord(textArea, gMap);
+       
+            
+               String text_selected ;
+
+            try {
+                int selStart = textArea.getSelectionStart();
+                int selEnd = textArea.getSelectionEnd();
+                if (selStart != selEnd ) {
+                    text_selected = textArea.getText(selStart, selEnd - selStart);
+
+                    if (!text_selected.trim().equals("")) 
+                       intelligence.highlightAllInstanceSelectedWord(textArea, gMap);
+                     else 
+                       JOptionPane.showMessageDialog(null, "Please select a word");
+//                    
+                
+                }
+                   else 
+                       JOptionPane.showMessageDialog(null, "Please select a word");
+            } catch (BadLocationException ble) {
+                ble.printStackTrace();
+                UIManager.getLookAndFeel().provideErrorFeedback(textArea);
+                return;
+            }
+            
 
         }
 
@@ -890,10 +934,14 @@ public class GlossaryTool extends JFrame implements SearchListener {
                 if (selStart != selEnd) {
                     text_selected = textArea.getText(selStart, selEnd - selStart);
 
-                    if (!text_selected.equals("")) {
+                    if (!text_selected.trim().equals("")) 
                         addtoglossary.createAndShowadd_glsDialog(textArea, gMap);
-                    }
+                    else 
+                       JOptionPane.showMessageDialog(null, "Please select a word");
+//                   
                 }
+                 else 
+                       JOptionPane.showMessageDialog(null, "Please select a word");
             } catch (BadLocationException ble) {
                 ble.printStackTrace();
 

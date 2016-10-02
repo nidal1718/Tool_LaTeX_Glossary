@@ -15,6 +15,7 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
@@ -28,14 +29,14 @@ public class AddToGlossaryMap extends JFrame {
     
  private JDialog d1;
  Intelligence intelligence ; //= new Intelligence();
-  ReadGlossaryFile readGlossaryFile ; // = new ReadGlossaryFile();
-  boolean checktagExists = false ;
+  ReadGlossaryFile readGlossaryFile = new ReadGlossaryFile(); ; // = new ReadGlossaryFile();
+  
   GlossaryEntryClass glossaryentryclass ;
  
  
   public AddToGlossaryMap(RSyntaxTextArea textArea,Map<String,Map> gMap)
   { intelligence = new Intelligence(textArea);
-  readGlossaryFile = new ReadGlossaryFile();
+ // readGlossaryFile = new ReadGlossaryFile();
   glossaryentryclass =  new GlossaryEntryClass(gMap);
   }
 
@@ -145,11 +146,10 @@ public class AddToGlossaryMap extends JFrame {
         //Lay out the buttons in one row and as many columns
         //as necessary, with 6 pixels of padding all around.
         //if the word already exists then it disables the save button
-        checktagExists = readGlossaryFile.checkifSavedinGlossaryFile(textArea.getSelectedText());
+     
 
-        if (checktagExists) {
-            save_gls.setVisible(false);
-        }
+       
+        
 
         cancel_gls.addActionListener(new ActionListener() {
 
@@ -165,21 +165,43 @@ public class AddToGlossaryMap extends JFrame {
 
             @Override
             public void actionPerformed(ActionEvent e) {
+                boolean checktagExists = false ;
 
                 String tag_gls = tag_tf.getText().trim();
 
                 String name_gls = name_tf.getText().trim();;
-                //   JTextField name_tf = new JTextField("");
                 String symbol_gls = symbol_tf.getText().trim();
                 String plural_gls = plural_tf.getText().trim();
                 String desc_gls = desc_Area.getText().trim();
-                GlossaryEntryClass gec;
+          
+              checktagExists = readGlossaryFile.checkifSavedinGlossaryFile(tag_gls);
+//              if (checktagExists) {
+//            save_gls.setVisible(false);
+//            tag_tf.setText("'"+selectedword_label+"'"+" "+"exists in the glossary file");
+//            tag_tf.setEditable(false);
+//            name_tf.setEditable(false);
+//            plural_tf.setEditable(false);
+//            symbol_tf.setEditable(false);
+//            desc_Area.setEditable(false);
+//            clear_gls.setEnabled(false);
+//        }   
 
-                //sort use
-                String all_gls;
-
-                System.out.println(tag_gls + "" + name_gls + "" + symbol_gls + "" + plural_gls + "" + desc_gls);
-
+             
+        if(!("").equals(tag_gls))
+        {      if (checktagExists) 
+        
+        {     //save_gls.setVisible(false);
+            //tag_tf.setText("Tag ex");
+            tag_tf.setEditable(false);
+            name_tf.setEditable(false);
+            plural_tf.setEditable(false);
+            symbol_tf.setEditable(false);
+            desc_Area.setEditable(false);
+            clear_gls.setEnabled(false);
+             save_gls.setEnabled(false);
+          JOptionPane.showMessageDialog(null, "Entry Not Saved, Tag already exists in the glossary file!!");
+        }
+        else{
             glossaryentryclass = new GlossaryEntryClass(tag_gls.toLowerCase(), name_gls, symbol_gls, plural_gls, desc_gls,gMap);
 
       //      glossaryentryclass1 = new GlossaryEntryClass1(tag_gls.toLowerCase(), name_gls, symbol_gls, plural_gls, desc_gls);
@@ -189,7 +211,9 @@ public class AddToGlossaryMap extends JFrame {
                // intelligence.repeattags_add(textArea.getSelectedText(), replacement);
                 readGlossaryFile.addtoArrayListFromDialogSave(tag_gls);
                 d1.dispose();
-
+        }}
+        else 
+            JOptionPane.showMessageDialog(null, "Please enter value for Tag field");
             }
         });
 

@@ -25,8 +25,8 @@ public class ReadGlossaryFile {
 //    Pattern pattern_symbol = Pattern.compile("(?<=symbol=[{]).*?(?=},)");
 //    Pattern pattern_plural = Pattern.compile("(?<=plural=[{]).*?(?=},)");
 //    Pattern pattern_desc = Pattern.compile("(?<=description=[{]).*?(?=})");
-    ArrayList<String> glossary_saved = new ArrayList<String>();
-    Boolean checktagAvailability = false ;
+    private static ArrayList<String> glossary_saved = new ArrayList<String>();
+    //Boolean checktagAvailability = false ;
 
  
    void addtoArrayList(String glossaryFileName) throws FileNotFoundException, IOException
@@ -55,7 +55,7 @@ public class ReadGlossaryFile {
 
         glossary_saved.add(line.substring(start, end));
     
-     //   System.out.println(line.substring(start, end));
+       System.out.println(line.substring(start, end));
        
      // 
         
@@ -69,7 +69,7 @@ public class ReadGlossaryFile {
   
   
   private void printarrayList(){
-     System.out.println(glossary_saved);
+     System.out.println("Print"+glossary_saved);
   }
 
     void addtoArrayList() {
@@ -77,8 +77,14 @@ public class ReadGlossaryFile {
     }
     
     Boolean checkifSavedinGlossaryFile(String checktag) 
-    { checktagAvailability = false;
-if(glossary_saved.contains(checktag)) checktagAvailability=true;
+    { Boolean checktagAvailability = false;
+    System.out.println(checktag);
+    printarrayList();
+if(glossary_saved.contains(checktag)) 
+     checktagAvailability=true;
+
+System.out.println("checktag true or false "+checktagAvailability);
+
 
 return checktagAvailability ;
     }
