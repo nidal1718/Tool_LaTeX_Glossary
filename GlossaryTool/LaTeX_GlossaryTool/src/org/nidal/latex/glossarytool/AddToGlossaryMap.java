@@ -193,7 +193,7 @@ public class AddToGlossaryMap extends JFrame {
           JOptionPane.showMessageDialog(null, "Entry Not Saved, Tag already exists in the glossary file!!");
         }
         else if (!selectedWordExists)
-        {  JOptionPane.showMessageDialog(null, "The Selected word doesnt exists in any of the tag, Please reenter the details!");
+        {  JOptionPane.showMessageDialog(null, "The Selected word doesnt exists in any of the fields[Tag, Symbol & Plural}, Please reenter the details!");
         }
         else{
             glossaryentryclass = new GlossaryEntryClass(tag_gls.toLowerCase(), name_gls, symbol_gls, plural_gls, desc_gls,gMap);
@@ -220,6 +220,7 @@ public class AddToGlossaryMap extends JFrame {
                 plural_tf.setText("");
                 symbol_tf.setText("");
                 desc_Area.setText("");
+                tag_tf.setText("");
 
             }
         });
