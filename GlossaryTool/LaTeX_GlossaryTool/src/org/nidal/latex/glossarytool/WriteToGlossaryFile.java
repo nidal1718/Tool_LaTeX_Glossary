@@ -6,7 +6,6 @@
 package org.nidal.latex.glossarytool;
 
 import java.io.FileWriter;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -53,7 +52,6 @@ public class WriteToGlossaryFile {
             }
 
             value = (String) entry.getValue().get("Description");
-            //if(!"".equals(value))
             if (value != null && !value.isEmpty()) {
                 all_gls = all_gls + "\n\tdescription={" + value + "}";
             }
