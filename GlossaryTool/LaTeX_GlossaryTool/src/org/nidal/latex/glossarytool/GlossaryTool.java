@@ -189,11 +189,11 @@ public class GlossaryTool extends JFrame implements SearchListener {
         this.menubar.add(this.edit);
         this.menubar.add(this.tools);
 
-        this.menubar.add(this.help);
+     //   this.menubar.add(this.help);
         this.file.setLabel("File");
         this.edit.setLabel("Edit");
         this.tools.setLabel("Tools");
-        this.help.setLabel("Help");
+       // this.help.setLabel("Help");
 
         // new
         this.newFile.setLabel("New"); // set the label of the menu item
@@ -246,55 +246,55 @@ public class GlossaryTool extends JFrame implements SearchListener {
         exitFile.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, c));
         this.file.add(this.exitFile);
 
-        //Edit Menu tool
-        this.undo.setLabel("Undo"); // set the label of the menu item
-        this.undo.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                undoEditActionPerformed(evt);
-            } 
-        });
-        this.undo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, c));
-        this.edit.add(this.undo); // add it to the "File" menu
-
-        // Redo
-        this.redo.setLabel("Redo"); // set the label of the menu item
-        this.redo.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                redoEditActionPerformed(evt);
-            } 
-        });
-        this.redo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, c));
-        this.edit.add(this.redo); // add it to the "File" menu
-
-        // and cut
-        this.cut.setLabel("Cut");
-        this.cut.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cutEditActionPerformed(evt);
-            }    
-        });
-        this.cut.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, c));
-        this.edit.add(this.cut); // add it to the "File" menu
-
-        // and copy
-        this.copy.setLabel("Copy");
-        this.copy.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                copyEditActionPerformed(evt);
-            }
-        });
-        this.copy.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, c));
-        this.edit.add(this.copy); // add it to the "File" menu
-
-        // and paste
-        this.paste.setLabel("Paste");
-        this.paste.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                pasteEditActionPerformed(evt);
-            }
-        });
-        paste.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, c));
-        this.edit.add(this.paste); // add it to the "File" menu
+//        //Edit Menu tool
+//        this.undo.setLabel("Undo"); // set the label of the menu item
+//        this.undo.addActionListener(new java.awt.event.ActionListener() {
+//            public void actionPerformed(java.awt.event.ActionEvent evt) {
+//                undoEditActionPerformed(evt);
+//            } 
+//        });
+//        this.undo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, c));
+//        this.edit.add(this.undo); // add it to the "File" menu
+//
+//        // Redo
+//        this.redo.setLabel("Redo"); // set the label of the menu item
+//        this.redo.addActionListener(new java.awt.event.ActionListener() {
+//            public void actionPerformed(java.awt.event.ActionEvent evt) {
+//                redoEditActionPerformed(evt);
+//            } 
+//        });
+//        this.redo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, c));
+//        this.edit.add(this.redo); // add it to the "File" menu
+//
+//        // and cut
+//        this.cut.setLabel("Cut");
+//        this.cut.addActionListener(new java.awt.event.ActionListener() {
+//            public void actionPerformed(java.awt.event.ActionEvent evt) {
+//                cutEditActionPerformed(evt);
+//            }    
+//        });
+//        this.cut.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, c));
+//        this.edit.add(this.cut); // add it to the "File" menu
+//
+//        // and copy
+//        this.copy.setLabel("Copy");
+//        this.copy.addActionListener(new java.awt.event.ActionListener() {
+//            public void actionPerformed(java.awt.event.ActionEvent evt) {
+//                copyEditActionPerformed(evt);
+//            }
+//        });
+//        this.copy.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, c));
+//        this.edit.add(this.copy); // add it to the "File" menu
+//
+//        // and paste
+//        this.paste.setLabel("Paste");
+//        this.paste.addActionListener(new java.awt.event.ActionListener() {
+//            public void actionPerformed(java.awt.event.ActionEvent evt) {
+//                pasteEditActionPerformed(evt);
+//            }
+//        });
+//        paste.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, c));
+//        this.edit.add(this.paste); // add it to the "File" menu
 
         edit.addSeparator();
         edit.add(new JMenuItem(new ShowFindDialogAction()));
@@ -331,13 +331,13 @@ public class GlossaryTool extends JFrame implements SearchListener {
         this.tools.add(this.glossarise_All_WordsTool); // add it to the "File" menu
 
 
-        this.readme.setLabel("Read Me");
-        this.readme.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                pasteEditActionPerformed(evt);
-            }
-        });
-        this.help.add(this.readme); // add it to the "Help" menu
+//        this.readme.setLabel("Read Me");
+//        this.readme.addActionListener(new java.awt.event.ActionListener() {
+//            public void actionPerformed(java.awt.event.ActionEvent evt) {
+//                pasteEditActionPerformed(evt);
+//            }
+//        });
+//        this.help.add(this.readme); // add it to the "Help" menu
 
         
         
@@ -427,6 +427,7 @@ public class GlossaryTool extends JFrame implements SearchListener {
     private void openMenuActionPerformed(java.awt.event.ActionEvent evt) throws IOException {
         // TODO add your handling code here:
 
+       //  gMap.clear();
         if (textArea.getText().length() < 1) {
             FileDialog fd = new FileDialog(this, "Choose File", FileDialog.LOAD);
             fd.show();
@@ -436,7 +437,7 @@ public class GlossaryTool extends JFrame implements SearchListener {
                 checkFile();
             }
 
-            gMap.clear();
+               gMap.clear();
             textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_LATEX);
             textArea.requestFocus();
 
@@ -558,34 +559,34 @@ public class GlossaryTool extends JFrame implements SearchListener {
         }
     }
 
-    private void undoEditActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
-        //undoAction.isEnabled();
-    }
-
-    private void redoEditActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
-        //  redoAction.isEnabled();
-    }
-
-    private void cutEditActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
-        // RTextAreaEditorKit.CutAction();
-        //  cutAction.isEnabled();
-
-    }
-
-    private void copyEditActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
-        //copyAction.isEnabled();
-
-    }
-
-    private void pasteEditActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
-        //pasteAction.isEnabled();
-
-    }
+//    private void undoEditActionPerformed(java.awt.event.ActionEvent evt) {
+//        // TODO add your handling code here:
+//        //undoAction.isEnabled();
+//    }
+//
+//    private void redoEditActionPerformed(java.awt.event.ActionEvent evt) {
+//        // TODO add your handling code here:
+//        //  redoAction.isEnabled();
+//    }
+//
+//    private void cutEditActionPerformed(java.awt.event.ActionEvent evt) {
+//        // TODO add your handling code here:
+//        // RTextAreaEditorKit.CutAction();
+//        //  cutAction.isEnabled();
+//
+//    }
+//
+//    private void copyEditActionPerformed(java.awt.event.ActionEvent evt) {
+//        // TODO add your handling code here:
+//        //copyAction.isEnabled();
+//
+//    }
+//
+//    private void pasteEditActionPerformed(java.awt.event.ActionEvent evt) {
+//        // TODO add your handling code here:
+//        //pasteAction.isEnabled();
+//
+//    }
 
     private void highlightAllWordsToolMenuActionPerformed(java.awt.event.ActionEvent evt) {
 
